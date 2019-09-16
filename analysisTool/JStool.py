@@ -1,7 +1,6 @@
 import wx
 from wx.lib.expando import ExpandoTextCtrl, EVT_ETC_LAYOUT_NEEDED
 import wx.lib.scrolledpanel
-
 import os
 import jsbeautifier
 
@@ -60,7 +59,7 @@ class JSCleaner(wx.Frame):
 			f.write(self.html)
 			f.close()
 
-			driver.get("file:///Users/yz48/Desktop/after.html")
+			driver.get("file://" + os.getcwd() + "/after.html")
 
 		else:
 			self.textBox.SetValue("")
@@ -72,7 +71,7 @@ class JSCleaner(wx.Frame):
 			f.write(self.html)
 			f.close()
 
-			driver.get("file:///Users/yz48/Desktop/after.html")
+			driver.get("file://" + os.getcwd() + "/after.html")
 
 	def on_press(self, event):
 		url = self.display.GetValue()
