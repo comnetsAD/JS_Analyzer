@@ -62,6 +62,7 @@ class JSCleaner(wx.Frame):
 			driver.get("file://" + os.getcwd() + "/after.html")
 
 		else:
+			self.selectAll.SetValue(False)
 			self.textBox.SetValue("")
 
 			os.system("clear")
@@ -81,10 +82,23 @@ class JSCleaner(wx.Frame):
 			toggle = True
 
 		if toggle:
-			#press all script buttons
-			driver.get("file://" + os.getcwd() + "/before.html")
+			# Insert all scripts
+			for name in self.JavaScripts:
+				if "<!--"+name+"-->" in self.html:
+					self.html = self.html.replace("<!--"+name+"-->", self.JavaScripts[name][2])
+			
+			f = open("after.html","w")
+			f.write(self.html)
+			f.close()
+			
+			# Toggle all script buttons
+			for btn in self.scriptButtons:
+				btn.SetValue(True)
+
+			driver.get("file://" + os.getcwd() + "/after.html")
+
 		else:
-			#unpress all script buttons
+			# Remove all scripts
 			for name in self.JavaScripts:
 				if self.JavaScripts[name][2] in self.html:
 					self.html = self.html.replace(self.JavaScripts[name][2], "<!--"+name+"-->")
@@ -92,7 +106,12 @@ class JSCleaner(wx.Frame):
 			f.write(self.html)
 			f.close()
 
+			# Untoggle all script buttons
+			for btn in self.scriptButtons:
+				btn.SetValue(False)
+
 			driver.get("file://" + os.getcwd() + "/after.html")
+
 
 	def on_press(self, event):
 		url = self.display.GetValue()
@@ -100,6 +119,7 @@ class JSCleaner(wx.Frame):
 			return
 
 		self.JavaScripts = {}
+		self.scriptButtons = []
 
 		driver.get(url)
 		html_source = driver.page_source
@@ -109,15 +129,15 @@ class JSCleaner(wx.Frame):
 		f.write(self.html)
 		f.close()
 
-		#driver.get("file://" + os.getcwd() + "/before.html")
+		driver.get("file://" + os.getcwd() + "/before.html")
 
 		#Here is the part which extracts Scripts
 		scripts = driver.find_elements_by_tag_name("script")
 		scriptsCount = self.html.count("<script")
 
-		my_btn = wx.ToggleButton(self, label='Select All')
-		my_btn.Bind(wx.EVT_TOGGLEBUTTON, self.on_all_press)
-		self.vbox.Add(my_btn, 0, wx.ALIGN_LEFT | wx.ALL, 5)
+		self.selectAll = wx.ToggleButton(self, label='Select All')
+		self.selectAll.Bind(wx.EVT_TOGGLEBUTTON, self.on_all_press)
+		self.vbox.Add(self.selectAll, 0, wx.ALIGN_LEFT | wx.ALL, 5)
 		self.number_of_buttons += 1
 
 		self.panel = wx.lib.scrolledpanel.ScrolledPanel(self,-1, size=(600,700), style=wx.SIMPLE_BORDER) #pos=(20,100)
@@ -151,14 +171,13 @@ class JSCleaner(wx.Frame):
 				contentText = text
 
 			self.html = self.html.replace(text,"<!--script"+str(cnt)+"-->")
-
-			textBox = wx.ToggleButton(self.panel, label="script"+str(cnt), size=(100,50))
-			textBox.Bind(wx.EVT_TOGGLEBUTTON, self.on_script_press)
-			textBox.myname = "script"+str(cnt)
-			self.gs.Add(textBox, 0, wx.ALL,0)
+			self.scriptButtons.append(wx.ToggleButton(self.panel, label="script"+str(cnt), size=(100,50)))
+			self.scriptButtons[cnt].Bind(wx.EVT_TOGGLEBUTTON, self.on_script_press)
+			self.scriptButtons[cnt].myname = "script"+str(cnt)
+			self.gs.Add(self.scriptButtons[cnt], 0, wx.ALL, 0)
 
 			if firstButton == False:
-				firstButton = textBox
+				firstButton = self.scriptButtons[cnt]
 
 			labels = ["critical","non-critical","translatable"]
 			colors = [wx.Colour(255, 0, 0),wx.Colour(0, 255, 0),wx.Colour(0, 0, 255)]
@@ -182,6 +201,11 @@ class JSCleaner(wx.Frame):
 			self.number_of_buttons += 1
 			cnt += 1
 
+		f = open("after.html","w")
+		f.write(self.html)
+		f.close()
+
+		driver.get("file://" + os.getcwd() + "/after.html")
 
 		self.panel.SetSizer(self.gs)
 		self.textBox.SetValue("Feature display will be here\n\n\n\n\n")
