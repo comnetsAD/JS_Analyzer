@@ -23,7 +23,7 @@ class JSCleaner(wx.Frame):
 
 		self.vbox = wx.BoxSizer(wx.VERTICAL)
 		self.display = wx.TextCtrl(self, style=wx.TE_LEFT)
-		self.display.SetValue("http://yasirzaki.net")
+		self.display.SetValue("http://thegazelle.org")
 		# self.display.SetValue("http://nyuad.nyu.edu")
 		self.vbox.Add(self.display, flag=wx.EXPAND|wx.TOP|wx.BOTTOM, border=4)
 
@@ -54,7 +54,7 @@ class JSCleaner(wx.Frame):
 			os.system("clear")
 			print (jsbeautifier.beautify(self.JavaScripts[name][1]))
 
-			self.html = self.html.replace("</body>",self.JavaScripts[name][2]+"</body>")
+			self.html = self.html.replace("<!--"+name+"-->",self.JavaScripts[name][2])
 			f = open("after.html","w")
 			f.write(self.html)
 			f.close()
@@ -66,7 +66,7 @@ class JSCleaner(wx.Frame):
 
 			os.system("clear")
 			
-			self.html = self.html.replace(self.JavaScripts[name][2]+"</body>", "</body>")
+			self.html = self.html.replace(self.JavaScripts[name][2], "<!--"+name+"-->")
 			f = open("after.html","w")
 			f.write(self.html)
 			f.close()
@@ -123,7 +123,7 @@ class JSCleaner(wx.Frame):
 			else:
 				contentText = text
 
-			self.html = self.html.replace(text,"\n")
+			self.html = self.html.replace(text,"<!--script"+str(cnt)+"-->")
 
 			textBox = wx.ToggleButton(self.panel, label="script"+str(cnt), size=(100,50))
 			textBox.myname = "script"+str(cnt)
