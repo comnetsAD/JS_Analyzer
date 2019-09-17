@@ -23,7 +23,7 @@ class JSCleaner(wx.Frame):
 
 		self.vbox = wx.BoxSizer(wx.VERTICAL)
 		self.display = wx.TextCtrl(self, style=wx.TE_LEFT)
-		self.display.SetValue("http://thegazelle.org")
+		self.display.SetValue("http://yasirzaki.net")
 		# self.display.SetValue("http://nyuad.nyu.edu")
 		self.vbox.Add(self.display, flag=wx.EXPAND|wx.TOP|wx.BOTTOM, border=4)
 
@@ -73,6 +73,27 @@ class JSCleaner(wx.Frame):
 
 			driver.get("file://" + os.getcwd() + "/after.html")
 
+
+	def on_all_press(self, event):
+		try:
+			toggle = event.GetEventObject().GetValue()
+		except:
+			toggle = True
+
+		if toggle:
+			#press all script buttons
+			driver.get("file://" + os.getcwd() + "/before.html")
+		else:
+			#unpress all script buttons
+			for name in self.JavaScripts:
+				if self.JavaScripts[name][2] in self.html:
+					self.html = self.html.replace(self.JavaScripts[name][2], "<!--"+name+"-->")
+			f = open("after.html","w")
+			f.write(self.html)
+			f.close()
+
+			driver.get("file://" + os.getcwd() + "/after.html")
+
 	def on_press(self, event):
 		url = self.display.GetValue()
 		if not url:
@@ -88,9 +109,16 @@ class JSCleaner(wx.Frame):
 		f.write(self.html)
 		f.close()
 
+		#driver.get("file://" + os.getcwd() + "/before.html")
+
 		#Here is the part which extracts Scripts
 		scripts = driver.find_elements_by_tag_name("script")
 		scriptsCount = self.html.count("<script")
+
+		my_btn = wx.ToggleButton(self, label='Select All')
+		my_btn.Bind(wx.EVT_TOGGLEBUTTON, self.on_all_press)
+		self.vbox.Add(my_btn, 0, wx.ALIGN_LEFT | wx.ALL, 5)
+		self.number_of_buttons += 1
 
 		self.panel = wx.lib.scrolledpanel.ScrolledPanel(self,-1, size=(600,700), style=wx.SIMPLE_BORDER) #pos=(20,100)
 		self.panel.SetupScrolling()
@@ -100,7 +128,6 @@ class JSCleaner(wx.Frame):
 		self.SetSizer(self.vbox)
 
 		self.gs = wx.GridSizer(scriptsCount,4,5,5)
-	
 
 		cnt = 0
 
@@ -126,7 +153,6 @@ class JSCleaner(wx.Frame):
 			self.html = self.html.replace(text,"<!--script"+str(cnt)+"-->")
 
 			textBox = wx.ToggleButton(self.panel, label="script"+str(cnt), size=(100,50))
-			textBox.myname = "script"+str(cnt)
 			textBox.Bind(wx.EVT_TOGGLEBUTTON, self.on_script_press)
 			textBox.myname = "script"+str(cnt)
 			self.gs.Add(textBox, 0, wx.ALL,0)
@@ -187,7 +213,7 @@ class JSCleaner(wx.Frame):
 
 if __name__ == '__main__':
 	app = wx.App()
-	ex = JSCleaner(parent=None, id=-1, title='Calculator')
+	ex = JSCleaner(parent=None, id=-1, title='JStool')
 	ex.SetSize(800, 800)
 	ex.Show()
 	driver = webdriver.Chrome()
