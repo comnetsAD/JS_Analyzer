@@ -52,7 +52,7 @@ def getScriptText(filename):
 	encoding = None
 	contentText = ""
 
-	with open("/Users/yz48/Desktop/data/"+filename + ".h") as f:
+	with open(os.getcwd() + "../proxy/data/"+filename + ".h") as f:
 		for line in f:
 			if "Content-Encoding:" in line:
 				encoding = line.split(' ',1)[1]
@@ -60,13 +60,13 @@ def getScriptText(filename):
 	if encoding != None:
 		#Decode gzip
 		if "gzip" in encoding:
-			contentText = decode_gzip("/Users/yz48/Desktop/data/"+filename).decode("utf-8")
+			contentText = decode_gzip(os.getcwd() + "../proxy/data/"+filename).decode("utf-8")
 
 		#Decode br
 		if "br" in encoding:
-			contentText = decode_br_content("/Users/yz48/Desktop/data/"+filename).decode("utf-8")
+			contentText = decode_br_content(os.getcwd() + "../proxy/data/"+filename).decode("utf-8")
 	else:
-		f = open("/Users/yz48/Desktop/data/"+filename+".c", "r")
+		f = open(os.getcwd() + "../proxy/data/"+filename+".c", "r")
 		contentText = f.read()
 		f.close()
 
@@ -115,7 +115,7 @@ class JSCleaner(wx.Frame):
 			# print (self.JavaScripts[name][2])
 
 			self.html = self.html.replace("</body>",self.JavaScripts[name][2]+"</body>")
-			self.encode_save_index (self.html, "irs.gov", "/Users/yz48/Desktop/data/")
+			self.encode_save_index (self.html, "irs.gov", os.getcwd() + "../proxy/data/")
 			driver.get(self.url + "/js.html")
 
 		else:
@@ -124,7 +124,7 @@ class JSCleaner(wx.Frame):
 			os.system("clear")
 			
 			self.html = self.html.replace(self.JavaScripts[name][2]+"</body>", "</body>")
-			self.encode_save_index (self.html, "irs.gov", "/Users/yz48/Desktop/data/")
+			self.encode_save_index (self.html, "irs.gov", os.getcwd() + "../proxy/data/")
 			driver.get(self.url + "/js.html")
 
 	def on_press(self, event):
@@ -241,7 +241,7 @@ class JSCleaner(wx.Frame):
 		self.panel.SetSizer(self.gs)
 		self.textBox.SetValue("Feature display will be here\n\n\n\n\n")
 
-		self.encode_save_index (self.html, "irs.gov", "/Users/yz48/Desktop/data/")
+		self.encode_save_index (self.html, "irs.gov", os.getcwd() + "../proxy/data/")
 
 		driver.get(self.url + "/js.html")
 
