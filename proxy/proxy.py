@@ -46,7 +46,7 @@ if not os.path.exists("data"):
 # read DB user name and password
 db_name = "JSCleaner"
 db_user = "root"
-db_password = input ("please enter DB password ")
+db_password = raw_input ("please enter DB password ")
 
 # def decode_gzip(filepath):
 # 	print "Trying to decode: " + filepath

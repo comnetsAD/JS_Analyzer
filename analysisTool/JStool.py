@@ -138,9 +138,9 @@ class JSCleaner(wx.Frame):
 		html_source = driver.page_source
 
 		self.html = str(BeautifulSoup(html_source, 'html.parser'))
-		f = open("before.html","w")
-		f.write(self.html)
-		f.close()
+		# f = open("before.html","w")
+		# f.write(self.html)
+		# f.close()
 
 		#Here is the part which extracts Scripts
 		scripts = driver.find_elements_by_tag_name("script")
