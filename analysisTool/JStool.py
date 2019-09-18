@@ -52,7 +52,7 @@ def getScriptText(filename):
 	encoding = None
 	contentText = ""
 
-	with open(os.getcwd() + "../proxy/data/"+filename + ".h") as f:
+	with open(os.getcwd() + "/../proxy/data/"+filename + ".h") as f:
 		for line in f:
 			if "Content-Encoding:" in line:
 				encoding = line.split(' ',1)[1]
@@ -60,13 +60,13 @@ def getScriptText(filename):
 	if encoding != None:
 		#Decode gzip
 		if "gzip" in encoding:
-			contentText = decode_gzip(os.getcwd() + "../proxy/data/"+filename).decode("utf-8")
+			contentText = decode_gzip(os.getcwd() + "/../proxy/data/"+filename).decode("utf-8")
 
 		#Decode br
 		if "br" in encoding:
-			contentText = decode_br_content(os.getcwd() + "../proxy/data/"+filename).decode("utf-8")
+			contentText = decode_br_content(os.getcwd() + "/../proxy/data/"+filename).decode("utf-8")
 	else:
-		f = open(os.getcwd() + "../proxy/data/"+filename+".c", "r")
+		f = open(os.getcwd() + "/../proxy/data/"+filename+".c", "r")
 		contentText = f.read()
 		f.close()
 
@@ -115,7 +115,7 @@ class JSCleaner(wx.Frame):
 			# print (self.JavaScripts[name][2])
 
 			self.html = self.html.replace("<!--"+name+"-->",self.JavaScripts[name][2])
-			self.encode_save_index (self.html, "irs.gov", os.getcwd() + "../proxy/data/")
+			self.encode_save_index (self.html, "irs.gov", os.getcwd() + "/../proxy/data/")
 			driver.get(self.url + "/js.html")
 
 		else:
@@ -125,7 +125,7 @@ class JSCleaner(wx.Frame):
 			os.system("clear")
 			
 			self.html = self.html.replace(self.JavaScripts[name][2], "<!--"+name+"-->")
-			self.encode_save_index (self.html, "irs.gov", os.getcwd() + "../proxy/data/")
+			self.encode_save_index (self.html, "irs.gov", os.getcwd() + "/../proxy/data/")
 			driver.get(self.url + "/js.html")
 
 	def on_all_press(self, event):
@@ -140,30 +140,25 @@ class JSCleaner(wx.Frame):
 				if "<!--"+name+"-->" in self.html:
 					self.html = self.html.replace("<!--"+name+"-->", self.JavaScripts[name][2])
 			
-			f = open("after.html","w")
-			f.write(self.html)
-			f.close()
+			self.encode_save_index (self.html, "irs.gov", os.getcwd() + "/../proxy/data/")
+			driver.get(self.url + "/js.html")
 			
 			# Toggle all script buttons
 			for btn in self.scriptButtons:
 				btn.SetValue(True)
-
-			driver.get("file://" + os.getcwd() + "/after.html")
 
 		else:
 			# Remove all scripts
 			for name in self.JavaScripts:
 				if self.JavaScripts[name][2] in self.html:
 					self.html = self.html.replace(self.JavaScripts[name][2], "<!--"+name+"-->")
-			f = open("after.html","w")
-			f.write(self.html)
-			f.close()
+
+			self.encode_save_index (self.html, "irs.gov", os.getcwd() + "/../proxy/data/")
+			driver.get(self.url + "/js.html")
 
 			# Untoggle all script buttons
 			for btn in self.scriptButtons:
 				btn.SetValue(False)
-
-			driver.get("file://" + os.getcwd() + "/after.html")
 
 
 	def on_press(self, event):
@@ -178,11 +173,6 @@ class JSCleaner(wx.Frame):
 		html_source = driver.page_source
 
 		self.html = str(BeautifulSoup(html_source, 'html.parser'))
-		# f = open("before.html","w")
-		# f.write(self.html)
-		# f.close()
-
-		driver.get("file://" + os.getcwd() + "/before.html")
 
 		#Here is the part which extracts Scripts
 		scripts = driver.find_elements_by_tag_name("script")
@@ -250,7 +240,7 @@ class JSCleaner(wx.Frame):
 			else:
 				contentText = text
 
-			self.html = self.html.replace(text,"<!--script"+str(cnt)+"-->")
+			self.html = self.html.replace(text,"\n<!--script"+str(cnt)+"-->\n")
 			self.scriptButtons.append(wx.ToggleButton(self.panel, label="script"+str(cnt), size=(100,50)))
 			self.scriptButtons[cnt].Bind(wx.EVT_TOGGLEBUTTON, self.on_script_press)
 			self.scriptButtons[cnt].myname = "script"+str(cnt)
@@ -281,16 +271,10 @@ class JSCleaner(wx.Frame):
 			self.number_of_buttons += 1
 			cnt += 1
 
-		f = open("after.html","w")
-		f.write(self.html)
-		f.close()
-
-		driver.get("file://" + os.getcwd() + "/after.html")
-
 		self.panel.SetSizer(self.gs)
 		self.textBox.SetValue("Feature display will be here\n\n\n\n\n")
 
-		self.encode_save_index (self.html, "irs.gov", os.getcwd() + "../proxy/data/")
+		self.encode_save_index (self.html, "irs.gov", os.getcwd() + "/../proxy/data/")
 
 		driver.get(self.url + "/js.html")
 
