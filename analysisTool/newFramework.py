@@ -32,6 +32,10 @@ class MyPanel(wx.Panel):
         vbox.Add(self.content_panel, 0, wx.CENTER, 5)
         self.mainSizer.Add(vbox, 0, wx.CENTER, 5)
 
+        select_all_btn = wx.Button(self, label='Select all')
+        # select_all_btn.Bind(wx.EVT_BUTTON, self.on_select_all_press)
+        self.mainSizer.Add(select_all_btn, 0, wx.ALL | wx.TE_LEFT, 5)
+
         self.scripts_panel = wx.lib.scrolledpanel.ScrolledPanel(self,-1, size=(750,400), style=wx.SIMPLE_BORDER)
         self.scripts_panel.SetupScrolling()
         self.scripts_panel.SetBackgroundColour('#FFFFFF')
@@ -105,5 +109,5 @@ class MyFrame(wx.Frame):
 if __name__ == "__main__":
     app = wx.App(False)
     frame = MyFrame()
-    frame.SetSize(800, 800)
+    frame.SetSize(800, 850)
     app.MainLoop()
