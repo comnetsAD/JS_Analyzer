@@ -6,6 +6,7 @@ import lorem
 class MyPanel(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)
+
         self.number_of_buttons = 0
         self.colors = {"":wx.Colour(255, 255, 255, 100), "critical":wx.Colour(255, 0, 0, 100), "non-critical":wx.Colour(0, 255, 0, 100),"translatable":wx.Colour(0, 0, 255, 100)}
         self.frame = parent
@@ -14,11 +15,12 @@ class MyPanel(wx.Panel):
 
         url_input = wx.TextCtrl(self, style=wx.TE_LEFT)
         url_input.SetValue("http://www.irs.gov")
-        self.mainSizer.Add(url_input, flag=wx.EXPAND|wx.TOP|wx.BOTTOM, border=4)
+        # self.mainSizer.Add(url_input, flag=wx.EXPAND|wx.TOP|wx.BOTTOM, border=4)
+        self.mainSizer.Add(url_input, flag=wx.EXPAND|wx.TOP|wx.LEFT|wx.RIGHT, border=25)
 
         analyze_btn = wx.Button(self, label='Analyze page')
         analyze_btn.Bind(wx.EVT_BUTTON, self.on_analyze_press)
-        self.mainSizer.Add(analyze_btn, 0, wx.ALL | wx.CENTER, 5)
+        self.mainSizer.Add(analyze_btn, 0, wx.ALL | wx.CENTER, 25)
 
         vbox = wx.BoxSizer(wx.HORIZONTAL)
         self.features_panel = wx.lib.scrolledpanel.ScrolledPanel(self,-1, size=(375,300), style=wx.SIMPLE_BORDER)
@@ -34,7 +36,7 @@ class MyPanel(wx.Panel):
 
         select_all_btn = wx.Button(self, label='Select all')
         # select_all_btn.Bind(wx.EVT_BUTTON, self.on_select_all_press)
-        self.mainSizer.Add(select_all_btn, 0, wx.ALL | wx.TE_LEFT, 5)
+        self.mainSizer.Add(select_all_btn, 0, wx.ALL | wx.TE_LEFT, 25)
 
         self.scripts_panel = wx.lib.scrolledpanel.ScrolledPanel(self,-1, size=(750,400), style=wx.SIMPLE_BORDER)
         self.scripts_panel.SetupScrolling()
@@ -78,7 +80,7 @@ class MyPanel(wx.Panel):
             self.scriptButtons.append(wx.ToggleButton(self.scripts_panel, label="script"+str(cnt), size=(100,25)))
             # self.scriptButtons[cnt].Bind(wx.EVT_TOGGLEBUTTON, self.on_script_press)
             self.scriptButtons[cnt].myname = "script"+str(cnt)
-            self.gs.Add(self.scriptButtons[cnt], 0, wx.ALL, 0)
+            self.gs.Add(self.scriptButtons[cnt], 0, wx.LEFT|wx.TOP, 25)
             self.number_of_buttons += 1
 
             choiceBox = wx.ComboBox(self.scripts_panel, value="", style=wx.CB_READONLY, choices=("","critical","non-critical","translatable"))
@@ -86,7 +88,7 @@ class MyPanel(wx.Panel):
             choiceBox.index = len(self.choiceBoxes)
             self.choiceBoxes.append(choiceBox)
 
-            self.gs.Add(choiceBox, 0, wx.ALL,0)
+            self.gs.Add(choiceBox, 0, wx.TOP, 25)
             self.number_of_buttons += 1
 
         self.scripts_panel.SetSizer(self.gs)
@@ -96,18 +98,39 @@ class MyPanel(wx.Panel):
         choiceBox = self.choiceBoxes[event.GetEventObject().index]
         choiceBox.SetBackgroundColour(self.colors[choiceBox.GetValue()])
 
+
 class MyFrame(wx.Frame):
     def __init__(self):
         wx.Frame.__init__(self, parent=None, title="JS Cleaner")
+        
+        menuBar = wx.MenuBar()
+        fileMenu = wx.Menu()
+        exitMenuItem = fileMenu.Append(101, "Exit", "Exit the application")
+        aboutMenuItem = fileMenu.Append(102, "About", "About")
+
+        menuBar.Append(fileMenu, "&File")
+        self.Bind(wx.EVT_MENU, self.onExit, exitMenuItem)
+        self.Bind(wx.EVT_MENU, self.onAbout, aboutMenuItem)
+        self.SetMenuBar(menuBar)
+
         self.fSizer = wx.BoxSizer(wx.VERTICAL)
         panel = MyPanel(self)
         self.fSizer.Add(panel, 1, wx.EXPAND)
         self.SetSizer(self.fSizer)
         self.Fit()
         self.Show()
- 
+
+    def onExit(self, event):
+        self.Close()
+
+    def onAbout(self, event):
+        msg = wx.MessageDialog(self, "This tool is built for JS analyses by the ComNets AD lab @ NYUAD. September 2019.","About",wx.OK | wx.ICON_INFORMATION)
+        msg.ShowModal()
+
 if __name__ == "__main__":
     app = wx.App(False)
     frame = MyFrame()
-    frame.SetSize(800, 850)
+    frame.SetSize(800, 950)
+    frame.SetMaxSize(wx.Size(800, 950))
+    frame.SetMinSize(wx.Size(800, 950))
     app.MainLoop()
