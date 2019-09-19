@@ -1,0 +1,1323 @@
+1568702488948	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.FRYu8HZ9HrbK"
+1568702489467	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: mozillaAddons
+1568702489467	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: telemetry
+1568702489467	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: resource://pdf.js/
+1568702489467	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: about:reader*
+1568702491158	Marionette	INFO	Listening on port 49438
+1568702491204	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1568702556538	Marionette	INFO	Stopped listening on port 49438
+1568702581048	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.HZrQqukquJ4z"
+1568702582858	Marionette	INFO	Listening on port 49482
+1568702582895	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568702609992	Marionette	INFO	Stopped listening on port 49482
+[Parent 91126, Gecko_IOThread] WARNING: pipe error: Broken pipe: file /builds/worker/workspace/build/src/ipc/chromium/src/chrome/common/ipc_channel_posix.cc, line 728
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x36011E,name=PContent::Msg_DetachBrowsingContext) Closed channel: cannot send/recv
+
+1568702617523	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.04ktrrkdm9XR"
+1568702619189	Marionette	INFO	Listening on port 49912
+1568702619269	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568702753489	Marionette	INFO	Stopped listening on port 49912
+1568702762309	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.REksT68V2pQL"
+1568702764026	Marionette	INFO	Listening on port 50417
+1568702764053	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568702866879	Marionette	INFO	Stopped listening on port 50417
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x36011E,name=PContent::Msg_DetachBrowsingContext) Closed channel: cannot send/recv
+
+1568702875207	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.pkixWn2MCapM"
+1568702876867	Marionette	INFO	Listening on port 50908
+1568702876959	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568702954877	Marionette	INFO	Stopped listening on port 50908
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x36011E,name=PContent::Msg_DetachBrowsingContext) Closed channel: cannot send/recv
+
+1568703047478	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.Unq3bM79q70y"
+1568703049216	Marionette	INFO	Listening on port 51408
+1568703049223	Marionette	WARN	TLS certificate errors will be ignored for this session
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568703361154	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.Z1dZje7OYRPM"
+1568703362723	Marionette	INFO	Listening on port 52048
+1568703362801	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568703419478	Marionette	INFO	Stopped listening on port 52048
+1568703427239	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.1jtCnvuEuRiI"
+1568703428785	Marionette	INFO	Listening on port 52526
+1568703428883	Marionette	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568703559055	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.ttrvJV8UD1Ed"
+1568703560621	Marionette	INFO	Listening on port 52887
+1568703560688	Marionette	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568703782488	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.UCDcva1vRNE8"
+1568703784026	Marionette	INFO	Listening on port 53255
+1568703784132	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568703811672	Marionette	INFO	Stopped listening on port 53255
+1568704845775	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.o3NPhJp0Ogqb"
+1568704847344	Marionette	INFO	Listening on port 53673
+1568704847418	Marionette	WARN	TLS certificate errors will be ignored for this session
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+Exiting due to channel error.
+1568714448054	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.Ok77cU32bLQn"
+1568714449545	Marionette	INFO	Listening on port 57256
+1568714449602	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568714478559	Marionette	INFO	Stopped listening on port 57256
+1568714512722	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.TUxa77C2XRuw"
+1568714514198	Marionette	INFO	Listening on port 57681
+1568714514262	Marionette	WARN	TLS certificate errors will be ignored for this session
+Exiting due to channel error.
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568714618761	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.oOUi2JOEZKdf"
+1568714620282	Marionette	INFO	Listening on port 58112
+1568714620314	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568715042920	Marionette	INFO	Stopped listening on port 58112
+1568715051055	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.iT7QiuBCRjEo"
+1568715052554	Marionette	INFO	Listening on port 59498
+1568715052606	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.irs.gov/js.html, line 1: ReferenceError: ga is not defined
+1568715172396	Marionette	INFO	Stopped listening on port 59498
+1568715239512	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.jtEDdvte6gRE"
+1568715240997	Marionette	INFO	Listening on port 60079
+1568715241050	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568715495785	Marionette	INFO	Stopped listening on port 60079
+
+###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+1568715504072	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.tMhLIcpdkPIu"
+1568715505588	Marionette	INFO	Listening on port 62740
+1568715505627	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: resource://devtools/server/actors/highlighters/utils/markup.js, line 259: TypeError: this.highlighterEnv is null
+JavaScript error: resource://devtools/server/actors/inspector/walker.js, line 514: TypeError: this._refMap is null
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+1568716157936	Marionette	INFO	Stopped listening on port 62740
+1568716169569	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.6InMi0Oj9Ra5"
+1568716171237	Marionette	INFO	Listening on port 49700
+1568716171303	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+console.error: "Task cancelled"
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://www.youtube.com/yts/jsbin/player_ias-vfl8E5RS_/en_US/base.js, line 1038: NS_ERROR_FAILURE: 
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/js.html, line 1170: ReferenceError: addLinkerEvents is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/js.html, line 1170: ReferenceError: addLinkerEvents is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/js.html, line 1170: ReferenceError: addLinkerEvents is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/js.html, line 1170: ReferenceError: addLinkerEvents is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/js.html, line 1170: ReferenceError: addLinkerEvents is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/js.html, line 1170: ReferenceError: addLinkerEvents is not defined
+1568716837337	Marionette	INFO	Stopped listening on port 49700
+1568716848852	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.j20lLWmXZZSA"
+1568716850558	Marionette	INFO	Listening on port 64082
+1568716850612	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+console.error: "TypeError: currentNode is null: canMutationImpactCurrentStyles@resource://devtools/client/inspector/shared/style-change-tracker.js:64:20\nonMutations@resource://devtools/client/inspector/shared/style-change-tracker.js:82:11\nemit@resource://devtools/shared/event-emitter.js:190:24\nemit@resource://devtools/shared/event-emitter.js:271:18\ngetMutations/<@resource://devtools/shared/fronts/inspector.js:429:12\n"
+TypeError: currentNode is null: canMutationImpactCurrentStyles@resource://devtools/client/inspector/shared/style-change-tracker.js:64:20
+onMutations@resource://devtools/client/inspector/shared/style-change-tracker.js:82:11
+emit@resource://devtools/shared/event-emitter.js:190:24
+emit@resource://devtools/shared/event-emitter.js:271:18
+getMutations/<@resource://devtools/shared/fronts/inspector.js:429:12
+
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+console.error: "TypeError: currentNode is null: canMutationImpactCurrentStyles@resource://devtools/client/inspector/shared/style-change-tracker.js:64:20\nonMutations@resource://devtools/client/inspector/shared/style-change-tracker.js:82:11\nemit@resource://devtools/shared/event-emitter.js:190:24\nemit@resource://devtools/shared/event-emitter.js:271:18\ngetMutations/<@resource://devtools/shared/fronts/inspector.js:429:12\n"
+TypeError: currentNode is null: canMutationImpactCurrentStyles@resource://devtools/client/inspector/shared/style-change-tracker.js:64:20
+onMutations@resource://devtools/client/inspector/shared/style-change-tracker.js:82:11
+emit@resource://devtools/shared/event-emitter.js:190:24
+emit@resource://devtools/shared/event-emitter.js:271:18
+getMutations/<@resource://devtools/shared/fronts/inspector.js:429:12
+
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+1568717001397	Marionette	INFO	Stopped listening on port 64082
+1568717010123	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.JtVLnTG5NRAB"
+1568717011852	Marionette	INFO	Listening on port 55436
+1568717011873	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: , line 0: uncaught exception: Object
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/js.html, line 1170: ReferenceError: addLinkerEvents is not defined
+1568717063386	Marionette	INFO	Stopped listening on port 55436
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x36011E,name=PContent::Msg_DetachBrowsingContext) Closed channel: cannot send/recv
+
+1568717071180	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.Y4WlZoYSRqTx"
+1568717072852	Marionette	INFO	Listening on port 57933
+1568717072928	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+console.error: "TypeError: currentNode is null: canMutationImpactCurrentStyles@resource://devtools/client/inspector/shared/style-change-tracker.js:64:20\nonMutations@resource://devtools/client/inspector/shared/style-change-tracker.js:82:11\nemit@resource://devtools/shared/event-emitter.js:190:24\nemit@resource://devtools/shared/event-emitter.js:271:18\ngetMutations/<@resource://devtools/shared/fronts/inspector.js:429:12\n"
+TypeError: currentNode is null: canMutationImpactCurrentStyles@resource://devtools/client/inspector/shared/style-change-tracker.js:64:20
+onMutations@resource://devtools/client/inspector/shared/style-change-tracker.js:82:11
+emit@resource://devtools/shared/event-emitter.js:190:24
+emit@resource://devtools/shared/event-emitter.js:271:18
+getMutations/<@resource://devtools/shared/fronts/inspector.js:429:12
+
+JavaScript error: resource:///modules/BrowserContentHandler.jsm, line 255: NS_ERROR_XPC_GS_RETURNED_FAILURE: ServiceManager::GetService returned failure code:
+console.error: "Error while calling actor 'pagestyle's method 'getLayout'" "node is null"
+console.error: "getLayout@resource://devtools/server/actors/styles.js:914:5\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+console.error: "Protocol error (unknownError): node is null"
+1568717184708	Marionette	INFO	Stopped listening on port 57933
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x36011E,name=PContent::Msg_DetachBrowsingContext) Closed channel: cannot send/recv
+
+1568717193294	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.M1VkObkqxxwz"
+1568717194936	Marionette	INFO	Listening on port 62052
+1568717194944	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+1568717254215	Marionette	INFO	Stopped listening on port 62052
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x36011E,name=PContent::Msg_DetachBrowsingContext) Closed channel: cannot send/recv
+
+1568717262147	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.zxPMxsMdObC0"
+1568717263829	Marionette	INFO	Listening on port 64928
+1568717263897	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568717357938	Marionette	INFO	Stopped listening on port 64928
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x36011E,name=PContent::Msg_DetachBrowsingContext) Closed channel: cannot send/recv
+
+1568717366074	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.yEN5S0G7L0ms"
+1568717367744	Marionette	INFO	Listening on port 49775
+1568717367809	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568717428497	Marionette	INFO	Stopped listening on port 49775
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x36011E,name=PContent::Msg_DetachBrowsingContext) Closed channel: cannot send/recv
+
+1568717436767	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.hG0kcEtzKJbd"
+1568717438442	Marionette	INFO	Listening on port 51530
+1568717438502	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568717547052	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.fVIQx8X6erA5"
+1568717548706	Marionette	INFO	Listening on port 53474
+1568717548801	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568717605522	Marionette	INFO	Stopped listening on port 53474
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x36011E,name=PContent::Msg_DetachBrowsingContext) Closed channel: cannot send/recv
+
+1568717708354	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.xCBW7tL6K9Jt"
+1568717709985	Marionette	INFO	Listening on port 54556
+1568717709993	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568717779764	Marionette	INFO	Stopped listening on port 54556
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x36011E,name=PContent::Msg_DetachBrowsingContext) Closed channel: cannot send/recv
+
+1568717811958	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.tOtfPKYNjSQe"
+1568717813610	Marionette	INFO	Listening on port 55356
+1568717813714	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "TypeError: currentNode is null: canMutationImpactCurrentStyles@resource://devtools/client/inspector/shared/style-change-tracker.js:64:20\nonMutations@resource://devtools/client/inspector/shared/style-change-tracker.js:82:11\nemit@resource://devtools/shared/event-emitter.js:190:24\nemit@resource://devtools/shared/event-emitter.js:271:18\ngetMutations/<@resource://devtools/shared/fronts/inspector.js:429:12\n"
+TypeError: currentNode is null: canMutationImpactCurrentStyles@resource://devtools/client/inspector/shared/style-change-tracker.js:64:20
+onMutations@resource://devtools/client/inspector/shared/style-change-tracker.js:82:11
+emit@resource://devtools/shared/event-emitter.js:190:24
+emit@resource://devtools/shared/event-emitter.js:271:18
+getMutations/<@resource://devtools/shared/fronts/inspector.js:429:12
+
+1568717895083	Marionette	INFO	Stopped listening on port 55356
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x36011E,name=PContent::Msg_DetachBrowsingContext) Closed channel: cannot send/recv
+
+1568717903889	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.OMgzATUvLqBN"
+1568717905597	Marionette	INFO	Listening on port 56158
+1568717905701	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+1568718027576	Marionette	INFO	Stopped listening on port 56158
+1568718075258	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.LBsFhZ09xlQC"
+1568718076970	Marionette	INFO	Listening on port 57206
+1568718077004	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568718122353	Marionette	INFO	Stopped listening on port 57206
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x36011E,name=PContent::Msg_DetachBrowsingContext) Closed channel: cannot send/recv
+
+1568718190639	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.GoEmjAhuDx8R"
+1568718192350	Marionette	INFO	Listening on port 57885
+1568718192379	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568718228443	Marionette	INFO	Stopped listening on port 57885
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x36011E,name=PContent::Msg_DetachBrowsingContext) Closed channel: cannot send/recv
+
+1568718236921	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.YWYNzmZKjHdj"
+1568718238650	Marionette	INFO	Listening on port 58645
+1568718238686	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "TypeError: currentNode is null: canMutationImpactCurrentStyles@resource://devtools/client/inspector/shared/style-change-tracker.js:64:20\nonMutations@resource://devtools/client/inspector/shared/style-change-tracker.js:82:11\nemit@resource://devtools/shared/event-emitter.js:190:24\nemit@resource://devtools/shared/event-emitter.js:271:18\ngetMutations/<@resource://devtools/shared/fronts/inspector.js:429:12\n"
+TypeError: currentNode is null: canMutationImpactCurrentStyles@resource://devtools/client/inspector/shared/style-change-tracker.js:64:20
+onMutations@resource://devtools/client/inspector/shared/style-change-tracker.js:82:11
+emit@resource://devtools/shared/event-emitter.js:190:24
+emit@resource://devtools/shared/event-emitter.js:271:18
+getMutations/<@resource://devtools/shared/fronts/inspector.js:429:12
+
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+Exiting due to channel error.
+1568718480958	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.Nm8TbUbdMhEH"
+1568718482602	Marionette	INFO	Listening on port 59718
+1568718482691	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568718700386	Marionette	INFO	Stopped listening on port 59718
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+1568718714736	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.ux83BBF2Cpmv"
+1568718716588	Marionette	INFO	Listening on port 60079
+1568718716684	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568719270546	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.f0erz8aIDb9V"
+1568719272341	Marionette	INFO	Listening on port 61133
+1568719272400	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568719313028	Marionette	INFO	Stopped listening on port 61133
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x36011E,name=PContent::Msg_DetachBrowsingContext) Closed channel: cannot send/recv
+
+1568719394565	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.C6ZQKzsAUN4y"
+1568719396341	Marionette	INFO	Listening on port 61660
+JavaScript error: https://www.irs.gov/, line 139: ReferenceError: jQuery is not defined
+1568719396411	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.priceline.com/, line 139: ReferenceError: jQuery is not defined
+JavaScript error: https://www.irs.gov/, line 139: ReferenceError: jQuery is not defined
+JavaScript error: https://www.sephora.com/, line 139: ReferenceError: jQuery is not defined
+JavaScript error: https://www.mercurynews.com/, line 139: ReferenceError: jQuery is not defined
+JavaScript error: https://www.military.com/, line 139: ReferenceError: jQuery is not defined
+JavaScript error: https://www.ets.org/, line 139: ReferenceError: jQuery is not defined
+JavaScript error: https://www.irs.gov/, line 139: ReferenceError: jQuery is not defined
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+[Child 7233, Chrome_ChildThread] WARNING: pipe error: Broken pipe: file /builds/worker/workspace/build/src/ipc/chromium/src/chrome/common/ipc_channel_posix.cc, line 728
+Exiting due to channel error.
+1568719470587	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.jvj5NMOvoJEP"
+1568719472295	Marionette	INFO	Listening on port 62082
+1568719472319	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568719614381	Marionette	INFO	Stopped listening on port 62082
+1568719624677	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.2ubFnzVOFj7D"
+1568719626329	Marionette	INFO	Listening on port 62292
+1568719626424	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "TypeError: currentNode is null: canMutationImpactCurrentStyles@resource://devtools/client/inspector/shared/style-change-tracker.js:64:20\nonMutations@resource://devtools/client/inspector/shared/style-change-tracker.js:82:11\nemit@resource://devtools/shared/event-emitter.js:190:24\nemit@resource://devtools/shared/event-emitter.js:271:18\ngetMutations/<@resource://devtools/shared/fronts/inspector.js:429:12\n"
+TypeError: currentNode is null: canMutationImpactCurrentStyles@resource://devtools/client/inspector/shared/style-change-tracker.js:64:20
+onMutations@resource://devtools/client/inspector/shared/style-change-tracker.js:82:11
+emit@resource://devtools/shared/event-emitter.js:190:24
+emit@resource://devtools/shared/event-emitter.js:271:18
+getMutations/<@resource://devtools/shared/fronts/inspector.js:429:12
+
+console.error: "Error while calling actor 'pagestyle's method 'getLayout'" "node is null"
+console.error: "getLayout@resource://devtools/server/actors/styles.js:914:5\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+console.error: "Protocol error (unknownError): node is null"
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568721605420	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.4LdaGPf7OzoS"
+1568721607084	Marionette	INFO	Listening on port 63637
+1568721607175	Marionette	WARN	TLS certificate errors will be ignored for this session
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+Exiting due to channel error.
+1568721632564	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.BzsUDYulNCPy"
+1568721634068	Marionette	INFO	Listening on port 64079
+1568721634104	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+[Child 9631, Chrome_ChildThread] WARNING: pipe error: Broken pipe: file /builds/worker/workspace/build/src/ipc/chromium/src/chrome/common/ipc_channel_posix.cc, line 728
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568721715341	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.DnGk4eldQmBF"
+1568721716868	Marionette	INFO	Listening on port 64777
+1568721716880	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568721742282	Marionette	INFO	Stopped listening on port 64777
+1568721816644	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.CcRAlv7rfOA1"
+1568721818129	Marionette	INFO	Listening on port 65373
+1568721818196	Marionette	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568721933096	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.oJT2sPrclvJE"
+1568721934630	Marionette	INFO	Listening on port 49356
+1568721934640	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+[Child 9853, Chrome_ChildThread] WARNING: pipe error: Broken pipe: file /builds/worker/workspace/build/src/ipc/chromium/src/chrome/common/ipc_channel_posix.cc, line 728
+Exiting due to channel error.
+Exiting due to channel error.
+1568722029312	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.06YdHa82VE5u"
+1568722030836	Marionette	INFO	Listening on port 49726
+1568722030852	Marionette	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568722078245	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.tiys9VsnQgQg"
+1568722079767	Marionette	INFO	Listening on port 50087
+1568722079792	Marionette	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568722134540	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.iD98Zolq7RGW"
+1568722136117	Marionette	INFO	Listening on port 50458
+1568722136167	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568722343211	Marionette	INFO	Stopped listening on port 50458
+1568722352418	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.HF5u0MmozRsd"
+1568722353934	Marionette	INFO	Listening on port 50873
+1568722353959	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://devtools/client/jsonview/converter-observer.js, line 84: NS_ERROR_NOT_AVAILABLE: Component returned failure code: 0x80040111 (NS_ERROR_NOT_AVAILABLE) [nsIHttpChannel.contentType]
+1568722398454	Marionette	INFO	Stopped listening on port 50873
+1568722507181	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.19ekx8RmXbO4"
+1568722508704	Marionette	INFO	Listening on port 51766
+1568722508728	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+1568722658104	Marionette	INFO	Stopped listening on port 51766
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+1568722786153	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.CsmfcdIs76u5"
+1568722787632	Marionette	INFO	Listening on port 54421
+1568722787687	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+1568722833120	Marionette	INFO	Stopped listening on port 54421
+1568722890824	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.xLkz1jvfysIy"
+1568722892387	Marionette	INFO	Listening on port 55168
+1568722892474	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568722928513	Marionette	INFO	Stopped listening on port 55168
+1568723022462	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.GQbMIV3sRnvl"
+1568723023986	Marionette	INFO	Listening on port 55706
+1568723023998	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568723027862	Marionette	INFO	Stopped listening on port 55706
+1568723040775	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.A2GQQV2dFAYU"
+1568723042311	Marionette	INFO	Listening on port 55757
+1568723042419	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568723076605	Marionette	INFO	Stopped listening on port 55757
+1568723237218	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.ywarm6sfrcfk"
+1568723238769	Marionette	INFO	Listening on port 57004
+1568723238867	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+1568723273206	Marionette	INFO	Stopped listening on port 57004
+1568723311498	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.xtJMrDHjkIIx"
+1568723313109	Marionette	INFO	Listening on port 57717
+1568723313144	Marionette	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568723961922	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.AXWQrqcMHyUD"
+1568723963459	Marionette	INFO	Listening on port 58450
+1568723963563	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568724043129	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.fdUQ05dEB9hA"
+1568724044642	Marionette	INFO	Listening on port 58819
+1568724044660	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568724191693	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.UoCsBGYsfNmQ"
+1568724193229	Marionette	INFO	Listening on port 59208
+1568724193244	Marionette	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568724223132	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.jAMRVWiVtZlO"
+1568724224649	Marionette	INFO	Listening on port 59556
+1568724224666	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568724260444	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.8Fe1k365QYEk"
+1568724261997	Marionette	INFO	Listening on port 59901
+1568724262091	Marionette	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568724338224	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.S2hKbcsP323p"
+1568724339729	Marionette	INFO	Listening on port 60260
+1568724339775	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+1568724432467	Marionette	INFO	Stopped listening on port 60260
+
+###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+1568724464355	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.mIDxUvbHjV5t"
+1568724465883	Marionette	INFO	Listening on port 62097
+1568724465901	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+1568724601165	Marionette	INFO	Stopped listening on port 62097
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+1568724641111	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.m75tpr9314Xn"
+1568724642740	Marionette	INFO	Listening on port 62651
+1568724642764	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568724662043	Marionette	INFO	Stopped listening on port 62651
+1568724711336	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.OCoF6nfMNn5P"
+1568724712845	Marionette	INFO	Listening on port 63234
+1568724712866	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+console.error: "TypeError: this.nodeHierarchy[this.currentIndex] is undefined: scroll@resource://devtools/client/inspector/breadcrumbs.js:815:23\nemit@resource://devtools/shared/event-emitter.js:190:24\nemit@resource://devtools/shared/event-emitter.js:271:18\nonOverflow@resource://devtools/client/inspector/breadcrumbs.js:217:10\n"
+TypeError: this.nodeHierarchy[this.currentIndex] is undefined: scroll@resource://devtools/client/inspector/breadcrumbs.js:815:23
+emit@resource://devtools/shared/event-emitter.js:190:24
+emit@resource://devtools/shared/event-emitter.js:271:18
+onOverflow@resource://devtools/client/inspector/breadcrumbs.js:217:10
+
+console.error: "Task cancelled"
+console.error: "Task cancelled"
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+1568724899163	Marionette	INFO	Stopped listening on port 63234
+1568724946153	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.U7qveOvRZjo5"
+1568724947714	Marionette	INFO	Listening on port 50187
+1568724947806	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568725104765	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.czeJnZdwtGTk"
+1568725106270	Marionette	INFO	Listening on port 50723
+1568725106303	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+1568725354834	Marionette	INFO	Stopped listening on port 50723
+1568725493431	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.oDoaqdisXYop"
+1568725494980	Marionette	INFO	Listening on port 52939
+1568725494993	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://devtools/client/jsonview/converter-observer.js, line 84: NS_ERROR_NOT_AVAILABLE: Component returned failure code: 0x80040111 (NS_ERROR_NOT_AVAILABLE) [nsIHttpChannel.contentType]
+1568725509359	Marionette	INFO	Stopped listening on port 52939
+1568783815357	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.gbND3QxV0ck3"
+1568783817713	Marionette	INFO	Listening on port 55790
+1568783817818	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568783858897	Marionette	INFO	Stopped listening on port 55790
+1568783871926	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.N8gzwinWBCw5"
+1568783873589	Marionette	INFO	Listening on port 56322
+1568783873667	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+console.error: "Task cancelled"
+1568784312175	Marionette	INFO	Stopped listening on port 56322
+1568784323735	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.ax5Zdi00lj9n"
+1568784325494	Marionette	INFO	Listening on port 59238
+1568784325576	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Task cancelled"
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568785371149	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.KHRqkBHzwZj6"
+1568785373192	Marionette	INFO	Listening on port 61094
+1568785373205	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568785405534	Marionette	INFO	Stopped listening on port 61094
+1568785415417	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.SCuIGhuC3jyv"
+1568785417007	Marionette	INFO	Listening on port 61432
+1568785417063	Marionette	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568785465095	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.misR7Li1W0sx"
+1568785466567	Marionette	INFO	Listening on port 61771
+1568785466637	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568785490616	Marionette	INFO	Stopped listening on port 61771
+1568785500685	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.a01kPkE0S4HV"
+1568785502191	Marionette	INFO	Listening on port 62323
+1568785502230	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: , line 0: uncaught exception: Object
+JavaScript error: https://www.youtube.com/yts/jsbin/player_ias-vfl8E5RS_/en_US/base.js, line 1038: NS_ERROR_FAILURE: 
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: file:///Users/yz48/JSCleaner/analysisTool/after.html, line 1132: ReferenceError: addLinkerEvents is not defined
+1568785690225	Marionette	INFO	Stopped listening on port 62323
+1568785701627	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.h2ijCrcpDiRr"
+1568785703145	Marionette	INFO	Listening on port 63859
+1568785703167	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+1568786077282	Marionette	INFO	Stopped listening on port 63859
+1568786092599	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.8EyF2FFVbTuX"
+1568786095467	Marionette	INFO	Listening on port 64750
+1568786095557	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+JavaScript error: , line 0: uncaught exception: Object
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+[Child 30601, Chrome_ChildThread] WARNING: pipe error: Broken pipe: file /builds/worker/workspace/build/src/ipc/chromium/src/chrome/common/ipc_channel_posix.cc, line 728
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568796109834	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.zww9ffvg1Cl6"
+1568796111837	Marionette	INFO	Listening on port 49695
+1568796111878	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+console.error: "TypeError: this.doc is null: deleteNodeOrAttribute@resource://devtools/client/inspector/markup/markup.js:1160:30\n_onShortcut@resource://devtools/client/inspector/markup/markup.js:1039:14\n_initShortcuts/</<@resource://devtools/client/inspector/markup/markup.js:1002:39\nemit@resource://devtools/shared/event-emitter.js:190:24\nemit@resource://devtools/shared/event-emitter.js:271:18\nhandleEvent@resource://devtools/client/shared/key-shortcuts.js:268:27\n"
+TypeError: this.doc is null: deleteNodeOrAttribute@resource://devtools/client/inspector/markup/markup.js:1160:30
+_onShortcut@resource://devtools/client/inspector/markup/markup.js:1039:14
+_initShortcuts/</<@resource://devtools/client/inspector/markup/markup.js:1002:39
+emit@resource://devtools/shared/event-emitter.js:190:24
+emit@resource://devtools/shared/event-emitter.js:271:18
+handleEvent@resource://devtools/client/shared/key-shortcuts.js:268:27
+
+console.error: "TypeError: this.doc is null: deleteNodeOrAttribute@resource://devtools/client/inspector/markup/markup.js:1160:30\n_onShortcut@resource://devtools/client/inspector/markup/markup.js:1039:14\n_initShortcuts/</<@resource://devtools/client/inspector/markup/markup.js:1002:39\nemit@resource://devtools/shared/event-emitter.js:190:24\nemit@resource://devtools/shared/event-emitter.js:271:18\nhandleEvent@resource://devtools/client/shared/key-shortcuts.js:268:27\n"
+TypeError: this.doc is null: deleteNodeOrAttribute@resource://devtools/client/inspector/markup/markup.js:1160:30
+_onShortcut@resource://devtools/client/inspector/markup/markup.js:1039:14
+_initShortcuts/</<@resource://devtools/client/inspector/markup/markup.js:1002:39
+emit@resource://devtools/shared/event-emitter.js:190:24
+emit@resource://devtools/shared/event-emitter.js:271:18
+handleEvent@resource://devtools/client/shared/key-shortcuts.js:268:27
+
+console.error: "TypeError: this.doc is null: deleteNodeOrAttribute@resource://devtools/client/inspector/markup/markup.js:1160:30\n_onShortcut@resource://devtools/client/inspector/markup/markup.js:1039:14\n_initShortcuts/</<@resource://devtools/client/inspector/markup/markup.js:1002:39\nemit@resource://devtools/shared/event-emitter.js:190:24\nemit@resource://devtools/shared/event-emitter.js:271:18\nhandleEvent@resource://devtools/client/shared/key-shortcuts.js:268:27\n"
+TypeError: this.doc is null: deleteNodeOrAttribute@resource://devtools/client/inspector/markup/markup.js:1160:30
+_onShortcut@resource://devtools/client/inspector/markup/markup.js:1039:14
+_initShortcuts/</<@resource://devtools/client/inspector/markup/markup.js:1002:39
+emit@resource://devtools/shared/event-emitter.js:190:24
+emit@resource://devtools/shared/event-emitter.js:271:18
+handleEvent@resource://devtools/client/shared/key-shortcuts.js:268:27
+
+console.error: "TypeError: this.doc is null: deleteNodeOrAttribute@resource://devtools/client/inspector/markup/markup.js:1160:30\n_onShortcut@resource://devtools/client/inspector/markup/markup.js:1039:14\n_initShortcuts/</<@resource://devtools/client/inspector/markup/markup.js:1002:39\nemit@resource://devtools/shared/event-emitter.js:190:24\nemit@resource://devtools/shared/event-emitter.js:271:18\nhandleEvent@resource://devtools/client/shared/key-shortcuts.js:268:27\n"
+TypeError: this.doc is null: deleteNodeOrAttribute@resource://devtools/client/inspector/markup/markup.js:1160:30
+_onShortcut@resource://devtools/client/inspector/markup/markup.js:1039:14
+_initShortcuts/</<@resource://devtools/client/inspector/markup/markup.js:1002:39
+emit@resource://devtools/shared/event-emitter.js:190:24
+emit@resource://devtools/shared/event-emitter.js:271:18
+handleEvent@resource://devtools/client/shared/key-shortcuts.js:268:27
+
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+1568796351421	Marionette	INFO	Stopped listening on port 49695
+1568796363490	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.XLJzyezi5MNr"
+1568796364968	Marionette	INFO	Listening on port 51140
+1568796365029	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: chrome://browser/content/utilityOverlay.js, line 39: TypeError: can't redefine non-configurable property "BROWSER_NEW_TAB_URL"
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+Exiting due to channel error.
+1568796685265	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.j1tDaGpBZPOJ"
+1568796686951	Marionette	INFO	Listening on port 52650
+1568796687012	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568796741658	Marionette	INFO	Stopped listening on port 52650
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x36011E,name=PContent::Msg_DetachBrowsingContext) Closed channel: cannot send/recv
+
+1568800422044	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.oKxauR2ZO8ry"
+1568800423809	Marionette	INFO	Listening on port 53926
+1568800423887	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568800572150	Marionette	INFO	Stopped listening on port 53926
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x210001,name=PCacheOp::Msg___delete__) Channel closing: too late to send/recv, messages will be lost
+
+1568800585805	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.McjEoxm05XcY"
+1568800587306	Marionette	INFO	Listening on port 54520
+1568800587349	Marionette	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568800806309	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.70wLIlV0WLos"
+1568800807812	Marionette	INFO	Listening on port 55149
+1568800807842	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+Exiting due to channel error.
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568800840676	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.bDj4KP8DgcIA"
+1568800842173	Marionette	INFO	Listening on port 55679
+1568800842217	Marionette	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+Exiting due to channel error.
+1568801989635	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.0rQdA6ognL31"
+1568801991161	Marionette	INFO	Listening on port 56262
+1568801991173	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Task cancelled"
+console.error: "TypeError: currentNode is null: canMutationImpactCurrentStyles@resource://devtools/client/inspector/shared/style-change-tracker.js:64:20\nonMutations@resource://devtools/client/inspector/shared/style-change-tracker.js:82:11\nemit@resource://devtools/shared/event-emitter.js:190:24\nemit@resource://devtools/shared/event-emitter.js:271:18\ngetMutations/<@resource://devtools/shared/fronts/inspector.js:429:12\n"
+TypeError: currentNode is null: canMutationImpactCurrentStyles@resource://devtools/client/inspector/shared/style-change-tracker.js:64:20
+onMutations@resource://devtools/client/inspector/shared/style-change-tracker.js:82:11
+emit@resource://devtools/shared/event-emitter.js:190:24
+emit@resource://devtools/shared/event-emitter.js:271:18
+getMutations/<@resource://devtools/shared/fronts/inspector.js:429:12
+
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+1568803254993	Marionette	INFO	Stopped listening on port 56262
+1568803314422	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.MNtytKxjNoVs"
+1568803315989	Marionette	INFO	Listening on port 59076
+1568803316063	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568803632920	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.3X6X5GPwMLye"
+1568803634435	Marionette	INFO	Listening on port 59637
+1568803634469	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+1568803678293	Marionette	INFO	Stopped listening on port 59637
+1568803686416	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.XSBeDkHGnvGi"
+1568803687958	Marionette	INFO	Listening on port 60174
+1568803688054	Marionette	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568803744375	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.0aKtWeixBbtD"
+1568803745895	Marionette	INFO	Listening on port 60710
+1568803745915	Marionette	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568803816028	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.gqsDYdQJQo4h"
+1568803817542	Marionette	INFO	Listening on port 61451
+1568803817573	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568804337826	Marionette	INFO	Stopped listening on port 61451
+1568804508256	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.PQ5crBGuOkSY"
+1568804509835	Marionette	INFO	Listening on port 62088
+1568804509910	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568804794085	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.9WzYWaG2I0Ic"
+1568804795620	Marionette	INFO	Listening on port 63590
+1568804795726	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+JavaScript error: https://www.irs.gov/js.html, line 1181: ReferenceError: addLinkerEvents is not defined
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+JavaScript error: https://www.irs.gov/js.html, line 1181: ReferenceError: addLinkerEvents is not defined
+JavaScript error: https://www.irs.gov/js.html, line 1181: ReferenceError: addLinkerEvents is not defined
+JavaScript error: https://www.irs.gov/js.html, line 1181: ReferenceError: addLinkerEvents is not defined
+JavaScript error: https://www.irs.gov/js.html, line 1181: ReferenceError: addLinkerEvents is not defined
+JavaScript error: https://www.irs.gov/js.html, line 1181: ReferenceError: addLinkerEvents is not defined
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+JavaScript error: https://www.irs.gov/js.html, line 1181: ReferenceError: addLinkerEvents is not defined
+JavaScript error: https://www.irs.gov/js.html, line 1181: ReferenceError: addLinkerEvents is not defined
+JavaScript error: https://www.irs.gov/js.html, line 1181: ReferenceError: addLinkerEvents is not defined
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+JavaScript error: https://www.irs.gov/js.html, line 1181: ReferenceError: addLinkerEvents is not defined
+JavaScript error: https://www.irs.gov/js.html, line 1181: ReferenceError: addLinkerEvents is not defined
+JavaScript error: https://www.irs.gov/js.html, line 1181: ReferenceError: addLinkerEvents is not defined
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://www.irs.gov/js.html, line 1181: ReferenceError: addLinkerEvents is not defined
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://www.irs.gov/js.html, line 1181: ReferenceError: addLinkerEvents is not defined
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+1568804976206	Marionette	INFO	Stopped listening on port 63590
+1568805128500	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.jaET3BRiyqu0"
+1568805130027	Marionette	INFO	Listening on port 50667
+1568805130050	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+1568805219998	Marionette	INFO	Stopped listening on port 50667
+1568805308676	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.VWPodOb3i0TB"
+1568805310265	Marionette	INFO	Listening on port 51702
+1568805310326	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://www.irs.gov/pub/js/js_2-5N7bibuHd526nWts1udSPBKwwsymcBcxtElPV00Xg.js, line 5: TypeError: Drupal is undefined
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+JavaScript error: https://www.irs.gov/js.html, line 1181: ReferenceError: addLinkerEvents is not defined
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+JavaScript error: https://www.irs.gov/static_assets/js/reporting/autotracker.js, line 253: ReferenceError: jQuery is not defined
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+[Child 42247, Chrome_ChildThread] WARNING: pipe error: Broken pipe: file /builds/worker/workspace/build/src/ipc/chromium/src/chrome/common/ipc_channel_posix.cc, line 728
+Exiting due to channel error.
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568806084836	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.pP8kvdiL5Mz3"
+1568806086384	Marionette	INFO	Listening on port 59311
+1568806086401	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+JavaScript error: , line 0: uncaught exception: Object
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568806447508	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.PDuBBLTMqBLP"
+1568806449043	Marionette	INFO	Listening on port 60027
+1568806449064	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+JavaScript error: https://www.youtube.com/yts/jsbin/player_ias-vfl8E5RS_/en_US/base.js, line 1038: NS_ERROR_FAILURE: 
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+1568806789323	Marionette	INFO	Stopped listening on port 60027
+1568806798486	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.CzfIrsh2vtgn"
+1568806800064	Marionette	INFO	Listening on port 61678
+1568806800155	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+[Child 44260, Chrome_ChildThread] WARNING: pipe error: Broken pipe: file /builds/worker/workspace/build/src/ipc/chromium/src/chrome/common/ipc_channel_posix.cc, line 728
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568807300005	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.pgCHZiPMfjDq"
+1568807301549	Marionette	INFO	Listening on port 62936
+1568807301639	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568807336501	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.pHTLOya3ty2F"
+1568807338022	Marionette	INFO	Listening on port 63500
+1568807338051	Marionette	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568807441329	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.EpTTKoiwk9gT"
+1568807442814	Marionette	INFO	Listening on port 64059
+1568807442875	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.irs.gov/js.html, line 1181: ReferenceError: addLinkerEvents is not defined
+JavaScript error: https://www.irs.gov/js.html, line 1181: ReferenceError: addLinkerEvents is not defined
+1568812909134	Marionette	INFO	Stopped listening on port 64059
+1568873071168	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.nh0UVm2Ctcjz"
+1568873074775	Marionette	INFO	Listening on port 51350
+1568873074883	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568873096910	Marionette	INFO	Stopped listening on port 51350
+1568873128179	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.dNhk7Z2OvTpr"
+1568873129842	Marionette	INFO	Listening on port 51761
+1568873129932	Marionette	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+[Child 64651, Chrome_ChildThread] WARNING: pipe error: Broken pipe: file /builds/worker/workspace/build/src/ipc/chromium/src/chrome/common/ipc_channel_posix.cc, line 728
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568873188596	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.r2QOrkPqv80o"
+1568873190801	Marionette	INFO	Listening on port 52127
+1568873190856	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568873345645	Marionette	INFO	Stopped listening on port 52127
+1568873607138	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.qIpqOy3Op767"
+1568873609587	Marionette	INFO	Listening on port 52909
+1568873609610	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: "Error while calling actor 'layout's method 'getGrids'" "node is null"
+console.error: "getGrids@resource://devtools/server/actors/layout.js:501:26\ngetGrids@resource://devtools/server/actors/layout.js:506:43\nhandler@resource://devtools/shared/protocol/Actor.js:154:37\nonPacket@resource://devtools/server/main.js:1402:58\nreceiveMessage@resource://devtools/shared/transport/child-transport.js:66:16\n"
+1568873645201	Marionette	INFO	Stopped listening on port 52909
+1568873732405	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.t5TLiUu16Q7z"
+1568873734327	Marionette	INFO	Listening on port 53482
+1568873734370	Marionette	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+[Child 65104, Chrome_ChildThread] WARNING: pipe error: Broken pipe: file /builds/worker/workspace/build/src/ipc/chromium/src/chrome/common/ipc_channel_posix.cc, line 728
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568873911796	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.jOjYHTrqR13D"
+1568873913841	Marionette	INFO	Listening on port 54069
+1568873913858	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568874023850	Marionette	INFO	Stopped listening on port 54069
+1568874090879	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.8vYG1bA4Afhy"
+1568874092372	Marionette	INFO	Listening on port 55159
+1568874092423	Marionette	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+[Child 65457, Chrome_ChildThread] WARNING: pipe error: Broken pipe: file /builds/worker/workspace/build/src/ipc/chromium/src/chrome/common/ipc_channel_posix.cc, line 728
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1568874116627	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.CsVhc5JCmo6N"
+1568874118200	Marionette	INFO	Listening on port 55210
+1568874118267	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+1568874178498	Marionette	INFO	Stopped listening on port 55210
+1568874231237	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.dZ7iZgta3Lgn"
+1568874232735	Marionette	INFO	Listening on port 55811
+1568874232776	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+1568874283268	Marionette	INFO	Stopped listening on port 55811
+1568874346918	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.MaXu4jlKlC1e"
+1568874348369	Marionette	INFO	Listening on port 56511
+1568874348454	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568874373712	Marionette	INFO	Stopped listening on port 56511
+1568874402378	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.uvDIUsAp0Tm5"
+1568874403866	Marionette	INFO	Listening on port 57096
+1568874403930	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568874455227	Marionette	INFO	Stopped listening on port 57096
+1568874542064	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.wcloSMBSzWpC"
+1568874543632	Marionette	INFO	Listening on port 57716
+1568874543714	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://js-agent.newrelic.com/nr-1130.min.js, line 1: Error: Cannot find module 'loader'
+JavaScript error: https://www.irs.gov/static_assets/js/https.js, line 2: ReferenceError: jQuery is not defined
+1568874662100	Marionette	INFO	Stopped listening on port 57716
+1568874729711	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.sDnhd4jdtezO"
+1568874731423	Marionette	INFO	Listening on port 59748
+1568874731457	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568874799902	Marionette	INFO	Stopped listening on port 59748
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x36011E,name=PContent::Msg_DetachBrowsingContext) Closed channel: cannot send/recv
+
+1568874881324	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/nr/5xq5ss893yvcydp9cgrsg2xw0000gp/T/rust_mozprofile.GHOs4fRMWtcq"
+1568874882905	Marionette	INFO	Listening on port 61030
+1568874882962	Marionette	WARN	TLS certificate errors will be ignored for this session
+1568874892496	Marionette	INFO	Stopped listening on port 61030
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x36011E,name=PContent::Msg_DetachBrowsingContext) Closed channel: cannot send/recv
+
