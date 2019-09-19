@@ -9,11 +9,12 @@ from collections import OrderedDict
 import gzip, shutil, pymysql, zlib, brotli, os
 from io import StringIO
 import io
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
 
 # read DB user name and password
 db_name = "JSCleaner"
 db_user = "root"
-db_password = input("please enter DB password ")
+db_password = "bremen2013" #input("please enter DB password ")
 
 # proxy variables
 http_proxy  = "http://127.0.0.1:9999"
@@ -74,6 +75,17 @@ class MyPanel(wx.Panel):
         analyze_btn.Bind(wx.EVT_BUTTON, self.on_analyze_press)
         self.mainSizer.Add(analyze_btn, 0, wx.ALL | wx.CENTER, 25)
 
+        self.scripts_panel = wx.lib.scrolledpanel.ScrolledPanel(self,-1, size=(750,400))
+        self.scripts_panel.SetupScrolling()
+        # self.scripts_panel.Hide()
+        # self.scripts_panel.SetBackgroundColour('#FFFFFF')
+        self.mainSizer.Add(self.scripts_panel, 0, wx.CENTER | wx.BOTTOM, 25)
+
+        self.select_all_btn = wx.ToggleButton(self, label='Select All')
+        self.select_all_btn.Bind(wx.EVT_TOGGLEBUTTON, self.on_all_press)
+        self.select_all_btn.Hide()
+        self.mainSizer.Add(self.select_all_btn, 0, wx.LEFT | wx.BOTTOM | wx.CENTER, 25)
+
         vbox = wx.BoxSizer(wx.HORIZONTAL)
         self.features_panel = wx.lib.scrolledpanel.ScrolledPanel(self,-1, size=(375,300), style=wx.SIMPLE_BORDER)
         self.features_panel.SetupScrolling()
@@ -86,28 +98,13 @@ class MyPanel(wx.Panel):
         vbox.Add(self.content_panel, 0, wx.CENTER, 5)
         self.mainSizer.Add(vbox, 0, wx.CENTER, 5)
 
-        self.select_all_btn = wx.ToggleButton(self, label='Select All')
-        self.select_all_btn.Bind(wx.EVT_TOGGLEBUTTON, self.on_all_press)
-        self.mainSizer.Add(self.select_all_btn, 0, wx.ALL | wx.TE_LEFT, 25)
-
-        self.scripts_panel = wx.lib.scrolledpanel.ScrolledPanel(self,-1, size=(750,400), style=wx.SIMPLE_BORDER)
-        self.scripts_panel.SetupScrolling()
-        self.scripts_panel.SetBackgroundColour('#FFFFFF')
-        self.mainSizer.Add(self.scripts_panel, 0, wx.CENTER, 5)
-
         self.SetSizer(self.mainSizer)
         self.gs = None
 
-    def on_analyze_press(self, event):
-        self.url = self.url_input.GetValue()
-        if not self.url:
-            return
+        self.features_panel.Hide()
+        self.content_panel.Hide()
 
-        self.JavaScripts = {}
-        self.scriptButtons = []
-        self.choiceBoxes = []
-
-        self.features_text = ExpandoTextCtrl(self.features_panel, size=(360,290))
+        self.features_text = ExpandoTextCtrl(self.features_panel, size=(360,290), style=wx.TE_READONLY)
         self.features_text.SetValue("Features listing")
         self.Bind(EVT_ETC_LAYOUT_NEEDED, None, self.features_text)
 
@@ -115,13 +112,28 @@ class MyPanel(wx.Panel):
         self.features_sizer.Add(self.features_text, 0, wx.CENTER, 5)
         self.features_panel.SetSizer(self.features_sizer)
 
-        self.content_text = ExpandoTextCtrl(self.content_panel, size=(360,290))
+        self.content_text = ExpandoTextCtrl(self.content_panel, size=(360,290), style=wx.TE_READONLY)
         self.content_text.SetValue("Script code")
         self.Bind(EVT_ETC_LAYOUT_NEEDED, None, self.content_text)
 
         self.content_sizer = wx.BoxSizer(wx.VERTICAL)
         self.content_sizer.Add(self.content_text, 0, wx.CENTER, 5)
         self.content_panel.SetSizer(self.content_sizer)
+
+    def on_analyze_press(self, event):
+        self.url = self.url_input.GetValue()
+        if not self.url:
+            return
+
+        self.select_all_btn.Show()
+        self.features_panel.Show()
+        self.content_panel.Show()
+        self.features_text.SetValue("")
+        self.content_text.SetValue("")
+
+        self.JavaScripts = {}
+        self.scriptButtons = []
+        self.choiceBoxes = []
 
         while self.gs != None and len(self.gs.GetChildren()) > 0:
             self.gs.Hide(self.number_of_buttons-1)
@@ -130,13 +142,18 @@ class MyPanel(wx.Panel):
             self.frame.fSizer.Layout()
 
         driver.get(self.url)
+
         html_source = driver.page_source
         self.html = str(BeautifulSoup(html_source, 'html.parser'))
 
         #Here is the part which extracts Scripts
         scripts = driver.find_elements_by_tag_name("script")
         numScripts = self.html.count("<script")
-        self.gs = wx.GridSizer(numScripts//2+1,4,5,5)
+
+        if numScripts%2 != 0:
+            self.gs = wx.GridSizer(numScripts//2+1,4,5,5)
+        else:
+            self.gs = wx.GridSizer(numScripts//2,4,5,5)
 
         cnt = 0
         while "<script" in self.html:
@@ -357,10 +374,18 @@ if __name__ == "__main__":
     frame.SetMaxSize(wx.Size(800, 950))
     frame.SetMinSize(wx.Size(800, 950))
 
+    options = FirefoxOptions()
+    options.log.level = "trace"
+    options.add_argument("-devtools")
+
     # start selenium firefox web driver 
-    # fp = webdriver.FirefoxProfile ("/Users/yzaki/Library/Application Support/Firefox/Profiles/i05q27hz.default")
     fp = webdriver.FirefoxProfile("/Users/yz48/Library/Application Support/Firefox/Profiles/rcda2lkh.default-release")
-    driver = webdriver.Firefox(firefox_profile=fp)
+    fp.set_preference("devtools.toolbox.selectedTool", "netmonitor")
+    fp.set_preference("browser.cache.disk.enable", False)
+    fp.set_preference("browser.cache.memory.enable", False)
+    fp.set_preference("browser.cache.offline.enable", False)
+    fp.set_preference("network.http.use-cache", False)
+    driver = webdriver.Firefox(options=options, firefox_profile=fp)
     # driver = webdriver.Firefox(executable_path="./geckodriver", firefox_profile=fp)
 
     app.MainLoop()
