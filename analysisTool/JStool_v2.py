@@ -10,6 +10,7 @@ import gzip, shutil, pymysql, zlib, brotli, os
 from io import StringIO
 import io
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
+import binascii
 
 # read DB user name and password
 db_name = "JSCleaner"
@@ -20,6 +21,9 @@ db_password = "bremen2013" #input("please enter DB password ")
 http_proxy  = "http://127.0.0.1:9999"
 https_proxy = "https://127.0.0.1:9999"
 proxyDict = {"http":http_proxy, "https":https_proxy}
+
+# proxy data path 
+PROXY_DATA_PATH = os.getcwd() + "/../proxy/data/"
 
 # feature store (60 features)
 features = [".lookupPrefix",".prefix",".childNodes",".open",".isEqualNode",".documentURI",".lastChild",".nodeName",".title",".implementation",".normalizeDocument",".forms",".input",".anchors",".createCDATASection",".URL",".getElementsByTagName",".createEntityReference",".domConfig",".createElement",".xmlStandalone",".referrer",".textContent",".doctype",".namespaceURI",".strictErrorChecking",".xmlEncoding",".appendChild",".domain",".createAttribute",".links",".adoptNode",".Type",".nextSibling",".firstChild",".images",".close",".xmlVersion",".event",".form",".createComment",".removeChild",".nodeValue",".localName",".ownerDocument",".previousSibling",".body",".isDefaultNamespace",".nodeType",".track",".isSameNode",".cookie",".createDocumentFragment",".getElementsByName",".baseURI",".lookupNamespaceURI",".parentNode",".getElementById",".attributes",".createTextNode"]
@@ -37,7 +41,7 @@ def getScriptText(filename):
     encoding = None
     contentText = ""
 
-    with open(os.getcwd() + "/../proxy/data/"+filename + ".h") as f:
+    with open(PROXY_DATA_PATH+filename + ".h") as f:
         for line in f:
             if "Content-Encoding:" in line:
                 encoding = line.split(' ',1)[1]
@@ -45,13 +49,13 @@ def getScriptText(filename):
     if encoding != None:
         #Decode gzip
         if "gzip" in encoding:
-            contentText = decode_gzip(os.getcwd() + "/../proxy/data/"+filename).decode("utf-8")
+            contentText = decode_gzip(PROXY_DATA_PATH+filename).decode("utf-8")
 
         #Decode br
         if "br" in encoding:
-            contentText = decode_br_content(os.getcwd() + "/../proxy/data/"+filename).decode("utf-8")
+            contentText = decode_br_content(PROXY_DATA_PATH+filename).decode("utf-8")
     else:
-        f = open(os.getcwd() + "/../proxy/data/"+filename+".c", "r")
+        f = open(PROXY_DATA_PATH+filename+".c", "r")
         contentText = f.read()
         f.close()
 
@@ -64,6 +68,7 @@ class MyPanel(wx.Panel):
         self.number_of_buttons = 0
         self.colors = {"":wx.Colour(255, 255, 255, 100), "critical":wx.Colour(255, 0, 0, 100), "non-critical":wx.Colour(0, 255, 0, 100),"translatable":wx.Colour(0, 0, 255, 100)}
         self.frame = parent
+        self.fileName = ""
  
         self.mainSizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -231,9 +236,41 @@ class MyPanel(wx.Panel):
         self.scripts_panel.SetSizer(self.gs)
         self.frame.fSizer.Layout()
 
-        self.encode_save_index (self.html, "irs.gov", os.getcwd() + "/../proxy/data/")
+        # check if we have already seen and saved the simplified page before in the DB
+        conn = pymysql.connect(db=db_name,user=db_user,passwd=db_password,host='localhost',autocommit=True)
+        d = conn.cursor()
 
-        driver.get(self.url + "/js.html")
+        mainName = driver.current_url
+        if "https://" in mainName:
+            mainName = mainName[:len(mainName)-1] + ":443/"
+
+        sql = "SELECT filename FROM caching WHERE url='{0}'".format(mainName+"JScleaner.html")
+        d.execute(sql)
+
+        if d.rowcount > 0:
+            self.fileName = d.fetchone()[0]
+        else:
+            self.fileName = binascii.b2a_hex(os.urandom(15)).decode("utf-8")
+            while os.path.exists(PROXY_DATA_PATH+self.fileName):
+                self.fileName = binascii.b2a_hex(os.urandom(15)).decode("utf-8")
+
+            sql = "INSERT INTO caching (url, filename) VALUES (%s,%s)"
+            d.execute(sql, (mainName + "JScleaner.html", self.fileName))
+
+            sql = "SELECT filename FROM caching WHERE url='{0}'".format(mainName)
+            d.execute(sql)
+
+            oldName = d.fetchone()[0]
+
+            shutil.copy(PROXY_DATA_PATH + oldName + ".h", PROXY_DATA_PATH + self.fileName + ".h")
+
+
+        self.encode_save_index (self.html, self.fileName, PROXY_DATA_PATH)
+
+        d.close()
+        conn.close()
+
+        driver.get(self.url + "/JScleaner.html")
 
     def on_all_press(self, event):
         try:
@@ -247,8 +284,8 @@ class MyPanel(wx.Panel):
                 if "<!--"+name+"-->" in self.html:
                     self.html = self.html.replace("<!--"+name+"-->", self.JavaScripts[name][2])
             
-            self.encode_save_index (self.html, "irs.gov", os.getcwd() + "/../proxy/data/")
-            driver.get(self.url + "/js.html")
+            self.encode_save_index (self.html, self.fileName, PROXY_DATA_PATH)
+            driver.get(self.url + "/JScleaner.html")
             
             # Toggle all script buttons
             for btn in self.scriptButtons:
@@ -260,8 +297,8 @@ class MyPanel(wx.Panel):
                 if self.JavaScripts[name][2] in self.html:
                     self.html = self.html.replace(self.JavaScripts[name][2], "<!--"+name+"-->")
 
-            self.encode_save_index (self.html, "irs.gov", os.getcwd() + "/../proxy/data/")
-            driver.get(self.url + "/js.html")
+            self.encode_save_index (self.html, self.fileName, PROXY_DATA_PATH)
+            driver.get(self.url + "/JScleaner.html")
 
             # Untoggle all script buttons
             for btn in self.scriptButtons:
@@ -281,8 +318,8 @@ class MyPanel(wx.Panel):
             self.content_text.SetValue(JSContent)
 
             self.html = self.html.replace("<!--"+name+"-->",self.JavaScripts[name][2])
-            self.encode_save_index (self.html, "irs.gov", os.getcwd() + "/../proxy/data/")
-            driver.get(self.url + "/js.html")
+            self.encode_save_index (self.html, self.fileName, PROXY_DATA_PATH)
+            driver.get(self.url + "/JScleaner.html")
 
             # print ("------- DIVS --------")
             # divs = []
@@ -309,8 +346,8 @@ class MyPanel(wx.Panel):
             self.content_text.SetValue("")
             
             self.html = self.html.replace(self.JavaScripts[name][2], "<!--"+name+"-->")
-            self.encode_save_index (self.html, "irs.gov", os.getcwd() + "/../proxy/data/")
-            driver.get(self.url + "/js.html")
+            self.encode_save_index (self.html, self.fileName, PROXY_DATA_PATH)
+            driver.get(self.url + "/JScleaner.html")
 
     def encode_save_index(self, content, name, path):
         with gzip.open(path + name + ".c", "wb") as f:
