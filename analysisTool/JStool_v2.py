@@ -16,7 +16,7 @@ import binascii
 # read DB user name and password
 db_name = "JSCleaner"
 db_user = "root"
-db_password = "bremen2013" #input("please enter DB password ")
+db_password = "Bremen2013" #input("please enter DB password ")
 
 # proxy variables
 http_proxy  = "http://127.0.0.1:9999"
@@ -75,6 +75,7 @@ class MyPanel(wx.Panel):
 
         self.url_input = wx.TextCtrl(self, style=wx.TE_LEFT)
         self.url_input.SetValue("http://www.irs.gov")
+        self.url_input.Bind(wx.EVT_KEY_DOWN, self.on_key_press)
         self.mainSizer.Add(self.url_input, flag=wx.EXPAND|wx.TOP|wx.LEFT|wx.RIGHT, border=25)
 
         analyze_btn = wx.Button(self, label='Analyze page')
@@ -127,6 +128,16 @@ class MyPanel(wx.Panel):
         self.content_panel.SetSizer(self.content_sizer)
 
     def on_analyze_press(self, event):
+        self.analyze()
+
+    def on_key_press(self, event):
+        keycode = event.GetKeyCode()
+        if keycode == wx.WXK_RETURN or keycode == wx.WXK_NUMPAD_ENTER:
+            self.analyze()
+        else:
+            event.Skip()
+
+    def analyze(self):
         self.url = self.url_input.GetValue()
         if not self.url:
             return
@@ -261,7 +272,7 @@ class MyPanel(wx.Panel):
             shutil.copy(PROXY_DATA_PATH + oldName + ".h", PROXY_DATA_PATH + self.fileName + ".h")
 
 
-        print("Econding the JSCleaner version")
+        print("Encoding the JSCleaner version")
         self.encode_save_index (self.html, self.fileName, PROXY_DATA_PATH)
 
         d.close()
@@ -318,25 +329,6 @@ class MyPanel(wx.Panel):
             self.html = self.html.replace("<!--"+name+"-->",self.JavaScripts[name][2])
             self.encode_save_index (self.html, self.fileName, PROXY_DATA_PATH)
             driver.get(self.url + "JScleaner.html")
-
-            # print ("------- DIVS --------")
-            # divs = []
-            # JSContent = JSContent.replace("'",'"')
-            # while ".getElementsByTagName(" in JSContent:
-            #     sIndex = JSContent.find('.getElementsByTagName("')+23
-            #     JSContent = JSContent[sIndex:]
-            #     eIndex = JSContent.find('"')
-                
-            #     print ("Div:", JSContent[:eIndex])
-            #     if JSContent[:eIndex] not in ['a']:
-            #         divs.append(JSContent[:eIndex])
-
-            #     JSContent = JSContent[eIndex+1:]
-
-            # for div in divs:
-            #     links = driver.find_elements_by_tag_name(div)
-            #     for l in links:
-            #         self.highlight(l, "red", 5)
 
         else:
             self.select_all_btn.SetValue(False)
