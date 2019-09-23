@@ -50,13 +50,13 @@ def getScriptText(filename):
     if encoding != None:
         #Decode gzip
         if "gzip" in encoding:
-            contentText = decode_gzip(PROXY_DATA_PATH+filename).decode("utf-8")
+            contentText = decode_gzip(PROXY_DATA_PATH+filename).decode(encoding='utf-8', errors='ignore')
 
         #Decode br
         if "br" in encoding:
-            contentText = decode_br_content(PROXY_DATA_PATH+filename).decode("utf-8")
+            contentText = decode_br_content(PROXY_DATA_PATH+filename).decode(encoding='utf-8', errors='ignore')
     else:
-        f = open(PROXY_DATA_PATH+filename+".c", "r")
+        f = open(PROXY_DATA_PATH+filename+".c", "r", encoding='utf-8', errors='ignore')
         contentText = f.read()
         f.close()
 
@@ -176,29 +176,19 @@ class MyPanel(wx.Panel):
                 conn = pymysql.connect(db=db_name,user=db_user,passwd=db_password,host='localhost',autocommit=True)
                 d = conn.cursor()
 
-                sql = "SELECT filename FROM caching WHERE url LIKE '%{0}%'".format(src)
-                d.execute(sql)
-
-                if d.rowcount > 0:
-                    filename = d.fetchone()[0]
-                    contentText = getScriptText(filename)
-                else:
-                    # src = src.strip("/").split("/")
-                    # src[0] = src[0]+":443"
-                    # src = "/".join(src)
-
+                try:
                     sql = "SELECT filename FROM caching WHERE url LIKE '%{0}%'".format(src)
                     d.execute(sql)
 
                     if d.rowcount > 0:
                         filename = d.fetchone()[0]
                         contentText = getScriptText(filename)
-                    else:
-                        print (d.rowcount, src)
+                except:
+                        contentText = ""
 
-                print (text)
-                print (contentText[:500])
-                print ("---"*20)
+                #print (text)
+                #print (contentText[:500])
+                #print ("---"*20)
 
                 d.close()
                 conn.close()
@@ -242,6 +232,8 @@ class MyPanel(wx.Panel):
         d = conn.cursor()
 
         mainName = driver.current_url
+        self.url = mainName
+
         # if "https://" in mainName:
         #     mainName = "https://" + mainName[8:len(mainName)-1] + ":443/"
 
@@ -268,12 +260,14 @@ class MyPanel(wx.Panel):
             shutil.copy(PROXY_DATA_PATH + oldName + ".h", PROXY_DATA_PATH + self.fileName + ".h")
 
 
+        print("Econding the JSCleaner version")
         self.encode_save_index (self.html, self.fileName, PROXY_DATA_PATH)
 
         d.close()
         conn.close()
 
-        driver.get(self.url + "/JScleaner.html")
+        print ("Loading the JScleaner version", self.url + "JScleaner.html")
+        driver.get(self.url + "JScleaner.html")
 
     def on_all_press(self, event):
         try:
@@ -288,7 +282,7 @@ class MyPanel(wx.Panel):
                     self.html = self.html.replace("<!--"+name+"-->", self.JavaScripts[name][2])
             
             self.encode_save_index (self.html, self.fileName, PROXY_DATA_PATH)
-            driver.get(self.url + "/JScleaner.html")
+            driver.get(self.url + "JScleaner.html")
             
             # Toggle all script buttons
             for btn in self.scriptButtons:
@@ -301,7 +295,7 @@ class MyPanel(wx.Panel):
                     self.html = self.html.replace(self.JavaScripts[name][2], "<!--"+name+"-->")
 
             self.encode_save_index (self.html, self.fileName, PROXY_DATA_PATH)
-            driver.get(self.url + "/JScleaner.html")
+            driver.get(self.url + "JScleaner.html")
 
             # Untoggle all script buttons
             for btn in self.scriptButtons:
@@ -322,7 +316,7 @@ class MyPanel(wx.Panel):
 
             self.html = self.html.replace("<!--"+name+"-->",self.JavaScripts[name][2])
             self.encode_save_index (self.html, self.fileName, PROXY_DATA_PATH)
-            driver.get(self.url + "/JScleaner.html")
+            driver.get(self.url + "JScleaner.html")
 
             # print ("------- DIVS --------")
             # divs = []
@@ -350,7 +344,7 @@ class MyPanel(wx.Panel):
             
             self.html = self.html.replace(self.JavaScripts[name][2], "<!--"+name+"-->")
             self.encode_save_index (self.html, self.fileName, PROXY_DATA_PATH)
-            driver.get(self.url + "/JScleaner.html")
+            driver.get(self.url + "JScleaner.html")
 
     def encode_save_index(self, content, name, path):
         with gzip.open(path + name + ".c", "wb") as f:
