@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 import wx
 from wx.lib.expando import ExpandoTextCtrl, EVT_ETC_LAYOUT_NEEDED
 import wx.lib.scrolledpanel
