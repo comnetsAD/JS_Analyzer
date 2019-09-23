@@ -182,9 +182,9 @@ class MyPanel(wx.Panel):
                     filename = d.fetchone()[0]
                     contentText = getScriptText(filename)
                 else:
-                    src = src.strip("/").split("/")
-                    src[0] = src[0]+":443"
-                    src = "/".join(src)
+                    # src = src.strip("/").split("/")
+                    # src[0] = src[0]+":443"
+                    # src = "/".join(src)
 
                     sql = "SELECT filename FROM caching WHERE url LIKE '%{0}%'".format(src)
                     d.execute(sql)
@@ -241,8 +241,8 @@ class MyPanel(wx.Panel):
         d = conn.cursor()
 
         mainName = driver.current_url
-        if "https://" in mainName:
-            mainName = mainName[:len(mainName)-1] + ":443/"
+        # if "https://" in mainName:
+        #     mainName = "https://" + mainName[8:len(mainName)-1] + ":443/"
 
         sql = "SELECT filename FROM caching WHERE url='{0}'".format(mainName+"JScleaner.html")
         d.execute(sql)
@@ -259,6 +259,8 @@ class MyPanel(wx.Panel):
 
             sql = "SELECT filename FROM caching WHERE url='{0}'".format(mainName)
             d.execute(sql)
+
+            print (mainName)
 
             oldName = d.fetchone()[0]
 

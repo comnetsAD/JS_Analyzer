@@ -302,9 +302,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
 		conn = pymysql.connect(db=db_name,user=db_user,passwd=db_password,host='localhost',autocommit=True)
 		d = conn.cursor()
 
-		print '--req-- '+ url_requested[:50]
-
-		sql = "SELECT filename FROM caching WHERE url='{0}'".format(url_requested)
+		sql = "SELECT filename FROM caching WHERE url='{0}'".format(url_requested.replace(":443",""))
 		d.execute(sql)
 
 		num = d.rowcount
@@ -335,14 +333,16 @@ class ProxyHandler(BaseHTTPRequestHandler):
 
 		#Comment the following else if you would like to clone new pages
 		#Uncomment the following else if you would like to retrieve existing pages
-		else:
-			f = open ("empty.h", "r")
-			res = f.read()
-			f.close()
+		# else:
+		# 	print '--- Empty: '+ url_requested[:50]
 
-			self.request.sendall(self.mitm_response(res))
-			self._proxy_sock.close()
-			return
+		# 	f = open ("empty.h", "r")
+		# 	res = f.read()
+		# 	f.close()
+
+		# 	self.request.sendall(self.mitm_response(res))
+		# 	self._proxy_sock.close()
+		# 	return
 
 		if not self.is_connect:
 			try:
@@ -384,14 +384,14 @@ class ProxyHandler(BaseHTTPRequestHandler):
 				print '**response** '+ url_requested[:50]
 
 				name = binascii.b2a_hex(os.urandom(15))
-				while os.path.exists(name):
+				while os.path.exists("./data/"+name):
 					name = binascii.b2a_hex(os.urandom(15))
 
 				# Connect to the database.
 				conn = pymysql.connect(db=db_name,user=db_user,passwd=db_password,host='localhost',autocommit=True)
 				c = conn.cursor()
 				sql = "INSERT INTO caching (url, filename) VALUES (%s,%s)"
-				c.execute(sql, (url_requested, name))
+				c.execute(sql, (url_requested.replace(":443",""), name))
 				c.close()
 				conn.close()
 
