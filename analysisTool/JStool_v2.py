@@ -134,8 +134,8 @@ class MyPanel(wx.Panel):
         self.select_all_btn.Show()
         self.features_panel.Show()
         self.content_panel.Show()
-        self.features_text.SetValue("")
-        self.content_text.SetValue("")
+        self.features_text.SetValue("Features listing")
+        self.content_text.SetValue("Script code")
 
         self.JavaScripts = {}
         self.scriptButtons = []
@@ -196,6 +196,7 @@ class MyPanel(wx.Panel):
                     else:
                         print (d.rowcount, src)
 
+                print ("SCRIPT #", cnt)
                 print (text)
                 print (contentText[:500])
                 print ("---"*20)
@@ -317,7 +318,7 @@ class MyPanel(wx.Panel):
 
         if toggle:
             JSContent = jsbeautifier.beautify(self.JavaScripts[name][1])
-            self.features_text.SetValue(self.JavaScripts[name][0])
+            self.features_text.SetValue(name + "\n\n" + self.JavaScripts[name][0])
             self.content_text.SetValue(JSContent)
 
             self.html = self.html.replace("<!--"+name+"-->",self.JavaScripts[name][2])
@@ -418,7 +419,8 @@ if __name__ == "__main__":
     options.log.level = "trace"
     options.add_argument("-devtools")
 
-    # start selenium firefox web driver 
+    # start selenium firefox web driver
+    #fp = webdriver.FirefoxProfile("/Users/Jacinta/Library/Application Support/Firefox/Profiles/kciui8dl.default")
     fp = webdriver.FirefoxProfile("/Users/yz48/Library/Application Support/Firefox/Profiles/rcda2lkh.default-release")
     fp.set_preference("devtools.toolbox.selectedTool", "netmonitor")
     fp.set_preference("browser.cache.disk.enable", False)
