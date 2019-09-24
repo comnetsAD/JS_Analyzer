@@ -16,7 +16,7 @@ import binascii
 # read DB user name and password
 db_name = "JSCleaner"
 db_user = "root"
-db_password = "Bremen2013" #input("please enter DB password ")
+db_password = "bremen2013" #input("please enter DB password ")
 
 # proxy variables
 http_proxy  = "http://127.0.0.1:9999"
@@ -77,6 +77,11 @@ class MyPanel(wx.Panel):
         self.url_input.SetValue("http://www.irs.gov")
         self.url_input.Bind(wx.EVT_KEY_DOWN, self.on_key_press)
         self.mainSizer.Add(self.url_input, flag=wx.EXPAND|wx.TOP|wx.LEFT|wx.RIGHT, border=25)
+
+        # StaticText field for error messages
+        self.err_msg = wx.StaticText(self, label="")
+        self.err_msg.SetForegroundColour((255,0,0)) # make text red
+        self.mainSizer.Add(self.err_msg, 0, flag=wx.LEFT, border=25)
 
         analyze_btn = wx.Button(self, label='Analyze page')
         analyze_btn.Bind(wx.EVT_BUTTON, self.on_analyze_press)
@@ -142,6 +147,14 @@ class MyPanel(wx.Panel):
         if not self.url:
             return
 
+        try:
+            driver.get(self.url)
+            self.err_msg.SetLabel("")
+        except Exception as e:
+            self.err_msg.SetLabel(str(e))
+            print(e)
+            return
+
         self.select_all_btn.Show()
         self.features_panel.Show()
         self.content_panel.Show()
@@ -157,8 +170,6 @@ class MyPanel(wx.Panel):
             self.gs.Remove(self.number_of_buttons-1)
             self.number_of_buttons -= 1
             self.frame.fSizer.Layout()
-
-        driver.get(self.url)
 
         html_source = driver.page_source
         self.html = str(BeautifulSoup(html_source, 'html.parser'))
