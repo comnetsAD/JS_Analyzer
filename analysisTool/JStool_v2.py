@@ -156,6 +156,7 @@ class MyPanel(wx.Panel):
             return
 
         self.select_all_btn.Show()
+        self.select_all_btn.SetValue(False)
         self.features_panel.Show()
         self.content_panel.Show()
         self.features_text.SetValue("Features listing")
