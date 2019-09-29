@@ -39,6 +39,7 @@ Your Firefox browser must be set up to use the proxy.
 6. Under Privacy & Security > Certificates, click on the "View Certificates..." button.
 7. Navigate to the "Authorities" tab and click "Import...".
 8. Select proxy/ca-local.pem located in this repository.
+9. In the dialog box that opens, check the box that says "This certificate can identify websites", then click OK.
 
 Your Firefox browser should now be configured to use the local proxy.
 
@@ -47,6 +48,12 @@ In analysisTool/JStool_v2.py, search for the line with the following text:
 > fp = webdriver.FirefoxProfile
 
 Replace the string in the parentheses with the path to the Firefox profile on your machine. The profile is typically located in /Users/Username/Library/Application Support/Firefox/Profiles/.
+
+## Edit Config File
+
+In analysisTool/config.py, create a new user and add your database password and firefox profile path. The firefox profile is typically located in /Users/Username/Library/Application Support/Firefox/Profiles/.
+
+In analysisTool/JSTool_v2.py, change the name variable at the beginning of the code to be the name of the new user that you just created.
 
 ## Start JS Cleaner
 
