@@ -6,17 +6,21 @@ import lorem
 from selenium import webdriver
 from bs4 import BeautifulSoup, Tag
 import jsbeautifier
-from collections import OrderedDict
+from collections import OrderedDict, namedtuple
 import gzip, shutil, pymysql, zlib, brotli, os
 from io import StringIO
 import io
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 import binascii
+from time import sleep
+import config
+
+name = "jacinta"
 
 # read DB user name and password
 db_name = "JSCleaner"
 db_user = "root"
-db_password = "bremen2013" #input("please enter DB password ")
+db_password = config.users[name].password
 
 # proxy variables
 http_proxy  = "http://127.0.0.1:9999"
@@ -291,6 +295,11 @@ class MyPanel(wx.Panel):
 
         print ("Loading the JScleaner version", self.url + "JScleaner.html")
         driver.get(self.url + "JScleaner.html")
+        sleep(10)
+        final_html = driver.execute_script("return document.getElementsByTagName('html')[0].innerHTML")
+        f = open("before.html", "w")
+        f.write(final_html)
+        f.close()
 
     def on_all_press(self, event):
         try:
@@ -340,6 +349,11 @@ class MyPanel(wx.Panel):
             self.html = self.html.replace("<!--"+name+"-->",self.JavaScripts[name][2])
             self.encode_save_index (self.html, self.fileName, PROXY_DATA_PATH)
             driver.get(self.url + "JScleaner.html")
+            sleep(10)
+            final_html = driver.execute_script("return document.getElementsByTagName('html')[0].innerHTML")
+            f = open("after.html", "w")
+            f.write(final_html)
+            f.close()
 
         else:
             self.select_all_btn.SetValue(False)
@@ -417,8 +431,7 @@ if __name__ == "__main__":
     options.add_argument("-devtools")
 
     # start selenium firefox web driver
-    #fp = webdriver.FirefoxProfile("/Users/Jacinta/Library/Application Support/Firefox/Profiles/kciui8dl.default")
-    fp = webdriver.FirefoxProfile("/Users/yz48/Library/Application Support/Firefox/Profiles/rcda2lkh.default-release")
+    fp = webdriver.FirefoxProfile(config.users[name].profile)
     fp.set_preference("devtools.toolbox.selectedTool", "netmonitor")
     fp.set_preference("browser.cache.disk.enable", False)
     fp.set_preference("browser.cache.memory.enable", False)
