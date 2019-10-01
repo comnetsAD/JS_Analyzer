@@ -2,17 +2,14 @@
 import wx
 from wx.lib.expando import ExpandoTextCtrl, EVT_ETC_LAYOUT_NEEDED
 import wx.lib.scrolledpanel
-import lorem
 from selenium import webdriver
-from bs4 import BeautifulSoup, Tag
+from bs4 import BeautifulSoup
 import jsbeautifier
-from collections import OrderedDict, namedtuple
-import gzip, shutil, pymysql, zlib, brotli, os
-from io import StringIO
+from collections import OrderedDict
+import gzip, shutil, pymysql, brotli, os
 import io
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 import binascii
-from time import sleep
 import config
 
 name = "jacinta"
