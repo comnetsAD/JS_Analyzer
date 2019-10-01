@@ -167,6 +167,7 @@ class MyPanel(wx.Panel):
         self.select_all_btn.Show()
         # Uncomment to show diff button
         # self.diff_btn.Show()
+        self.select_all_btn.SetValue(False)
         self.features_panel.Show()
         self.content_panel.Show()
         self.features_text.SetValue("Features listing")
