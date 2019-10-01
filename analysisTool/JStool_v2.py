@@ -78,7 +78,7 @@ class MyPanel(wx.Panel):
         self.mainSizer = wx.BoxSizer(wx.VERTICAL)
 
         self.url_input = wx.TextCtrl(self, style=wx.TE_LEFT)
-        self.url_input.SetValue("http://www.irs.gov")
+        self.url_input.SetValue("http://www.yasirzaki.net")
         self.url_input.Bind(wx.EVT_KEY_DOWN, self.on_key_press)
         self.mainSizer.Add(self.url_input, flag=wx.EXPAND|wx.TOP|wx.LEFT|wx.RIGHT, border=25)
 
@@ -100,7 +100,12 @@ class MyPanel(wx.Panel):
         self.select_all_btn = wx.ToggleButton(self, label='Select All')
         self.select_all_btn.Bind(wx.EVT_TOGGLEBUTTON, self.on_all_press)
         self.select_all_btn.Hide()
-        self.mainSizer.Add(self.select_all_btn, 0, wx.LEFT | wx.BOTTOM | wx.CENTER, 25)
+        self.mainSizer.Add(self.select_all_btn, 0, wx.BOTTOM | wx.CENTER, 25)
+
+        self.diff_btn = wx.Button(self, label='Get diff')
+        self.diff_btn.Bind(wx.EVT_BUTTON, self.on_diff_press)
+        self.diff_btn.Hide()
+        self.mainSizer.Add(self.diff_btn, 0, wx.BOTTOM | wx.CENTER, 25)
 
         vbox = wx.BoxSizer(wx.HORIZONTAL)
         self.features_panel = wx.lib.scrolledpanel.ScrolledPanel(self,-1, size=(375,300), style=wx.SIMPLE_BORDER)
@@ -160,6 +165,8 @@ class MyPanel(wx.Panel):
             return
 
         self.select_all_btn.Show()
+        # Uncomment to show diff button
+        # self.diff_btn.Show()
         self.features_panel.Show()
         self.content_panel.Show()
         self.features_text.SetValue("Features listing")
@@ -295,7 +302,7 @@ class MyPanel(wx.Panel):
 
         print ("Loading the JScleaner version", self.url + "JScleaner.html")
         driver.get(self.url + "JScleaner.html")
-        sleep(10)
+
         final_html = driver.execute_script("return document.getElementsByTagName('html')[0].innerHTML")
         f = open("before.html", "w")
         f.write(final_html)
@@ -313,9 +320,6 @@ class MyPanel(wx.Panel):
                 if "<!--"+name+"-->" in self.html:
                     self.html = self.html.replace("<!--"+name+"-->", self.JavaScripts[name][2])
             
-            self.encode_save_index (self.html, self.fileName, PROXY_DATA_PATH)
-            driver.get(self.url + "JScleaner.html")
-            
             # Toggle all script buttons
             for btn in self.scriptButtons:
                 btn.SetValue(True)
@@ -326,12 +330,12 @@ class MyPanel(wx.Panel):
                 if self.JavaScripts[name][2] in self.html:
                     self.html = self.html.replace(self.JavaScripts[name][2], "<!--"+name+"-->")
 
-            self.encode_save_index (self.html, self.fileName, PROXY_DATA_PATH)
-            driver.get(self.url + "JScleaner.html")
-
             # Untoggle all script buttons
             for btn in self.scriptButtons:
                 btn.SetValue(False)
+
+        self.encode_save_index(self.html, self.fileName, PROXY_DATA_PATH)
+        driver.get(self.url + "JScleaner.html")
 
     def on_script_press(self, event):
         try:
@@ -347,13 +351,6 @@ class MyPanel(wx.Panel):
             self.content_text.SetValue(JSContent)
 
             self.html = self.html.replace("<!--"+name+"-->",self.JavaScripts[name][2])
-            self.encode_save_index (self.html, self.fileName, PROXY_DATA_PATH)
-            driver.get(self.url + "JScleaner.html")
-            sleep(10)
-            final_html = driver.execute_script("return document.getElementsByTagName('html')[0].innerHTML")
-            f = open("after.html", "w")
-            f.write(final_html)
-            f.close()
 
         else:
             self.select_all_btn.SetValue(False)
@@ -361,8 +358,26 @@ class MyPanel(wx.Panel):
             self.content_text.SetValue("")
             
             self.html = self.html.replace(self.JavaScripts[name][2], "<!--"+name+"-->")
-            self.encode_save_index (self.html, self.fileName, PROXY_DATA_PATH)
-            driver.get(self.url + "JScleaner.html")
+
+        self.encode_save_index (self.html, self.fileName, PROXY_DATA_PATH)
+        driver.get(self.url + "JScleaner.html")
+
+    def on_diff_press(self, event):
+        final_html = driver.execute_script("return document.getElementsByTagName('html')[0].innerHTML")
+        try:
+            f = open("after.html", "r")
+            before = f.read()
+            f.close()
+            f = open("before.html", "w")
+            f.write(before)
+            f.close()
+        except IOError:
+            pass
+        f = open("after.html", "w")
+        f.write(final_html)
+        f.close()
+        os.system("diff before.html after.html | sed '/<!--script/,/<\/script>/d'")
+        print("hello")
 
     def encode_save_index(self, content, name, path):
         with gzip.open(path + name + ".c", "wb") as f:
@@ -442,3 +457,5 @@ if __name__ == "__main__":
 
     app.MainLoop()
     driver.quit()
+    if os.path.isfile("after.html"):
+        os.remove("after.html")
