@@ -25,7 +25,7 @@ Create a new database with the name JSCleaner.
     
 Import the script located in proxy/caching.mysql.
 
-    > source proxy/caching.mysql;
+    > source proxy/caching.sql;
 
 ## Browser Setup
 
