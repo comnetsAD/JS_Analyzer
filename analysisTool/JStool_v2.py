@@ -14,21 +14,23 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 import binascii
 from time import sleep
 import config
+import requests
+import time
 
 name = "jacinta"
 
 # read DB user name and password
-db_name = "JSCleaner"
-db_user = "root"
+db_name = "mydb_mitmjscleaner"
+db_user = "jscleaner"
 db_password = config.users[name].password
 
-# proxy variables
-http_proxy  = "http://127.0.0.1:9999"
-https_proxy = "https://127.0.0.1:9999"
-proxyDict = {"http":http_proxy, "https":https_proxy}
+proxy_IP = "10.224.41.171"
+proxy_port = 8080
 
-# proxy data path 
-PROXY_DATA_PATH = os.getcwd() + "/../proxy/data/"
+# proxy variables
+http_proxy = "http://" + proxy_IP + ":" + str(proxy_port)
+https_proxy = "https://" + proxy_IP + ":" + str(proxy_port)
+proxyDict = {"http":http_proxy, "https":https_proxy}
 
 # feature store (60 features)
 features = [".lookupPrefix",".prefix",".childNodes",".open",".isEqualNode",".documentURI",".lastChild",".nodeName",".title",".implementation",".normalizeDocument",".forms",".input",".anchors",".createCDATASection",".URL",".getElementsByTagName",".createEntityReference",".domConfig",".createElement",".xmlStandalone",".referrer",".textContent",".doctype",".namespaceURI",".strictErrorChecking",".xmlEncoding",".appendChild",".domain",".createAttribute",".links",".adoptNode",".Type",".nextSibling",".firstChild",".images",".close",".xmlVersion",".event",".form",".createComment",".removeChild",".nodeValue",".localName",".ownerDocument",".previousSibling",".body",".isDefaultNamespace",".nodeType",".track",".isSameNode",".cookie",".createDocumentFragment",".getElementsByName",".baseURI",".lookupNamespaceURI",".parentNode",".getElementById",".attributes",".createTextNode"]
@@ -78,7 +80,7 @@ class MyPanel(wx.Panel):
         self.mainSizer = wx.BoxSizer(wx.VERTICAL)
 
         self.url_input = wx.TextCtrl(self, style=wx.TE_LEFT)
-        self.url_input.SetValue("http://www.yasirzaki.net")
+        self.url_input.SetValue("https://www.netflix.com/ae-en/")
         self.url_input.Bind(wx.EVT_KEY_DOWN, self.on_key_press)
         self.mainSizer.Add(self.url_input, flag=wx.EXPAND|wx.TOP|wx.LEFT|wx.RIGHT, border=25)
 
@@ -153,11 +155,13 @@ class MyPanel(wx.Panel):
 
     def analyze(self):
         self.url = self.url_input.GetValue()
+        self.suffix = "?JSTool=none"
+
         if not self.url:
             return
 
         try:
-            driver.get(self.url)
+            driver.get(self.url + self.suffix)
             self.err_msg.SetLabel("")
         except Exception as e:
             self.err_msg.SetLabel(str(e))
@@ -165,8 +169,11 @@ class MyPanel(wx.Panel):
             return
 
         self.select_all_btn.Show()
+
         # Uncomment to show diff button
         # self.diff_btn.Show()
+
+        self.select_all_btn.SetValue(False)
         self.features_panel.Show()
         self.content_panel.Show()
         self.features_text.SetValue("Features listing")
@@ -182,55 +189,54 @@ class MyPanel(wx.Panel):
             self.number_of_buttons -= 1
             self.frame.fSizer.Layout()
 
-        html_source = driver.page_source
-        self.html = str(BeautifulSoup(html_source, 'html.parser'))
+        # Get index.html from proxy
+        req = requests.get(self.url, proxies=proxyDict, verify=False)
+        if req.status_code != requests.codes.ok:
+            print("Could not get request")
 
-        #Here is the part which extracts Scripts
+        html = req.text
+
+        # Here is the part which extracts Scripts
         scripts = driver.find_elements_by_tag_name("script")
-        numScripts = self.html.count("<script")
+        numScripts = html.count("<script")
 
+        # Create display to house script buttons
         if numScripts%2 != 0:
             self.gs = wx.GridSizer(numScripts//2+1,4,5,5)
         else:
             self.gs = wx.GridSizer(numScripts//2,4,5,5)
 
         cnt = 0
-        while "<script" in self.html:
-            sIndex = self.html.find("<script")
-            eIndex = self.html.find("</script>")
-            text = self.html[sIndex:eIndex+9]
-
+        while "<script" in html:
+            sIndex = html.find("<script")
+            eIndex = html.find("</script>")
+            text = html[sIndex:eIndex+9]
+            print("SCRIPT #", cnt)
+            print(text[:200])
+            contentText = text
             if ' src="' in text:
-                src = text.split(' src=')[1].split('"')[1].replace("http://","").replace("https://","")
+                src = text.split(' src=')[1].split('"')[1]
                 src = src.split("?")[0]
+                if src[:4] != "http":
+                	if src[0] == "/":
+                		src = self.url + src
+                	else:
+                		src = self.url + "/" + src
+                html = html.replace(text, "\n<!--script from " + src + "-->\n")
                 contentText = ""
 
-                # Connect to the database.
-                conn = pymysql.connect(db=db_name,user=db_user,passwd=db_password,host='localhost',autocommit=True)
-                d = conn.cursor()
+                print("getting " + src)
+                req = requests.get(src, proxies=proxyDict, verify=False)
+                contentText = req.text
 
-                try:
-                    sql = "SELECT filename FROM caching WHERE url LIKE '%{0}%'".format(src)
-                    d.execute(sql)
-
-                    if d.rowcount > 0:
-                        filename = d.fetchone()[0]
-                        contentText = getScriptText(filename)
-                except:
-                        contentText = ""
-
-                print ("SCRIPT #", cnt)
-                print (text)
                 print (contentText[:500])
-                print ("---"*20)
-
-                d.close()
-                conn.close()
 
             else:
                 contentText = text
+            
+            print ("---"*20)
 
-            self.html = self.html.replace(text,"\n<!--script"+str(cnt)+"-->\n")
+            html = html.replace(text,"\n<!--script"+str(cnt)+"-->\n")
             self.scriptButtons.append(wx.ToggleButton(self.scripts_panel, label="script"+str(cnt), size=(100,25)))
             self.scriptButtons[cnt].Bind(wx.EVT_TOGGLEBUTTON, self.on_script_press)
             self.scriptButtons[cnt].myname = "script"+str(cnt)
@@ -257,55 +263,12 @@ class MyPanel(wx.Panel):
             self.JavaScripts["script"+str(cnt)] = [tmp, contentText, text]
             cnt += 1
 
-
         self.scripts_panel.SetSizer(self.gs)
         self.frame.fSizer.Layout()
 
-        # check if we have already seen and saved the simplified page before in the DB
-        conn = pymysql.connect(db=db_name,user=db_user,passwd=db_password,host='localhost',autocommit=True)
-        d = conn.cursor()
-
-        mainName = driver.current_url
-        self.url = mainName
-
-        # if "https://" in mainName:
-        #     mainName = "https://" + mainName[8:len(mainName)-1] + ":443/"
-
-        sql = "SELECT filename FROM caching WHERE url='{0}'".format(mainName+"JScleaner.html")
-        d.execute(sql)
-
-        if d.rowcount > 0:
-            self.fileName = d.fetchone()[0]
-        else:
-            self.fileName = binascii.b2a_hex(os.urandom(15)).decode("utf-8")
-            while os.path.exists(PROXY_DATA_PATH+self.fileName):
-                self.fileName = binascii.b2a_hex(os.urandom(15)).decode("utf-8")
-
-            sql = "INSERT INTO caching (url, filename) VALUES (%s,%s)"
-            d.execute(sql, (mainName + "JScleaner.html", self.fileName))
-
-            sql = "SELECT filename FROM caching WHERE url='{0}'".format(mainName)
-            d.execute(sql)
-
-            print (mainName)
-
-            oldName = d.fetchone()[0]
-
-            shutil.copy(PROXY_DATA_PATH + oldName + ".h", PROXY_DATA_PATH + self.fileName + ".h")
-
-
-        print("Encoding the JSCleaner version")
-        self.encode_save_index (self.html, self.fileName, PROXY_DATA_PATH)
-
-        d.close()
-        conn.close()
-
-        print ("Loading the JScleaner version", self.url + "JScleaner.html")
-        driver.get(self.url + "JScleaner.html")
-
-        final_html = driver.execute_script("return document.getElementsByTagName('html')[0].innerHTML")
+        final_html = BeautifulSoup(driver.execute_script("return document.getElementsByTagName('html')[0].innerHTML"), 'html.parser')
         f = open("before.html", "w")
-        f.write(final_html)
+        f.write(final_html.prettify())
         f.close()
 
     def on_all_press(self, event):
@@ -314,28 +277,22 @@ class MyPanel(wx.Panel):
         except:
             toggle = True
 
+        self.suffix = "?JSTool="
+
         if toggle:
-            # Insert all scripts
-            for name in self.JavaScripts:
-                if "<!--"+name+"-->" in self.html:
-                    self.html = self.html.replace("<!--"+name+"-->", self.JavaScripts[name][2])
-            
             # Toggle all script buttons
-            for btn in self.scriptButtons:
+            for i, btn in enumerate(self.scriptButtons):
                 btn.SetValue(True)
+                self.suffix += "_" + str(i)
 
         else:
-            # Remove all scripts
-            for name in self.JavaScripts:
-                if self.JavaScripts[name][2] in self.html:
-                    self.html = self.html.replace(self.JavaScripts[name][2], "<!--"+name+"-->")
-
             # Untoggle all script buttons
             for btn in self.scriptButtons:
                 btn.SetValue(False)
 
-        self.encode_save_index(self.html, self.fileName, PROXY_DATA_PATH)
-        driver.get(self.url + "JScleaner.html")
+            self.suffix += "none"
+
+        driver.get(self.url + self.suffix)
 
     def on_script_press(self, event):
         try:
@@ -350,20 +307,21 @@ class MyPanel(wx.Panel):
             self.features_text.SetValue(name + "\n\n" + self.JavaScripts[name][0])
             self.content_text.SetValue(JSContent)
 
-            self.html = self.html.replace("<!--"+name+"-->",self.JavaScripts[name][2])
-
         else:
             self.select_all_btn.SetValue(False)
             self.features_text.SetValue("")
             self.content_text.SetValue("")
-            
-            self.html = self.html.replace(self.JavaScripts[name][2], "<!--"+name+"-->")
 
-        self.encode_save_index (self.html, self.fileName, PROXY_DATA_PATH)
-        driver.get(self.url + "JScleaner.html")
+        self.suffix = "?JSTool="
+        for i, btn in enumerate(self.scriptButtons):
+        	if btn.GetValue() == True:
+        		self.suffix += "_" + str(i)
+        if len(self.suffix) == 8:
+        	self.suffix += "none"
+        driver.get(self.url + self.suffix)
 
     def on_diff_press(self, event):
-        final_html = driver.execute_script("return document.getElementsByTagName('html')[0].innerHTML")
+        final_html = BeautifulSoup(driver.execute_script("return document.getElementsByTagName('html')[0].innerHTML"), 'html.parser')
         try:
             f = open("after.html", "r")
             before = f.read()
@@ -374,32 +332,9 @@ class MyPanel(wx.Panel):
         except IOError:
             pass
         f = open("after.html", "w")
-        f.write(final_html)
+        f.write(final_html.prettify())
         f.close()
         os.system("diff before.html after.html | sed '/<!--script/,/<\/script>/d'")
-        print("hello")
-
-    def encode_save_index(self, content, name, path):
-        with gzip.open(path + name + ".c", "wb") as f:
-            f.write(content.encode())
-            f.close
-            # print ("HTML is encoded and saved!")
-
-        content_size = os.path.getsize(path + name + ".c")
-
-        with open(path + name + ".h") as f:
-            new_text = ""
-            existing_size = ""
-            for line in f:
-                if "Content-Length:" in line:
-                    existing_size = line.split(' ',1)[1]
-        
-        if(existing_size != ""):
-            with open(path + name + ".h") as f:
-                atext = f.read().replace(existing_size, str(content_size)+ "\n")
-
-            with open(path + name + ".h", "w") as f:
-                f.write(atext)
 
     def OnChoice(self,event): 
         choiceBox = self.choiceBoxes[event.GetEventObject().index]
@@ -436,10 +371,12 @@ class MyFrame(wx.Frame):
 
 if __name__ == "__main__":
     app = wx.App(False)
+    width, height = wx.GetDisplaySize()
+
     frame = MyFrame()
-    frame.SetSize(800, 950)
-    frame.SetMaxSize(wx.Size(800, 950))
-    frame.SetMinSize(wx.Size(800, 950))
+    frame.SetSize(800, 800)
+    frame.SetMaxSize(wx.Size(800, 800))
+    frame.SetMinSize(wx.Size(800, 800))
 
     options = FirefoxOptions()
     options.log.level = "trace"
