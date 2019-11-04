@@ -172,7 +172,7 @@ class MyPanel(wx.Panel):
 
         # Uncomment to show diff button
         # self.diff_btn.Show()
-
+        
         self.select_all_btn.SetValue(False)
         self.features_panel.Show()
         self.content_panel.Show()
