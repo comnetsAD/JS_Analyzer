@@ -54,11 +54,11 @@ def getScriptText(filename):
                 encoding = line.split(' ',1)[1]
 
     if encoding != None:
-        #Decode gzip
+        # Decode gzip
         if "gzip" in encoding:
             contentText = decode_gzip(PROXY_DATA_PATH+filename).decode(encoding='utf-8', errors='ignore')
 
-        #Decode br
+        # Decode br
         if "br" in encoding:
             contentText = decode_br_content(PROXY_DATA_PATH+filename).decode(encoding='utf-8', errors='ignore')
     else:
@@ -80,7 +80,7 @@ class MyPanel(wx.Panel):
         self.mainSizer = wx.BoxSizer(wx.VERTICAL)
 
         self.url_input = wx.TextCtrl(self, style=wx.TE_LEFT)
-        self.url_input.SetValue("https://www.netflix.com/ae-en/")
+        self.url_input.SetValue("https://www.google.com")
         self.url_input.Bind(wx.EVT_KEY_DOWN, self.on_key_press)
         self.mainSizer.Add(self.url_input, flag=wx.EXPAND|wx.TOP|wx.LEFT|wx.RIGHT, border=25)
 
@@ -193,12 +193,17 @@ class MyPanel(wx.Panel):
         req = requests.get(self.url, proxies=proxyDict, verify=False)
         if req.status_code != requests.codes.ok:
             print("Could not get request")
-
+        
         html = req.text
+
+        if req.headers['content-encoding'] == 'br':
+            html = str(brotli.decompress(req.content))
 
         # Here is the part which extracts Scripts
         scripts = driver.find_elements_by_tag_name("script")
         numScripts = html.count("<script")
+        if numScripts == 0:
+            print(html)
 
         # Create display to house script buttons
         if numScripts%2 != 0:
@@ -214,14 +219,17 @@ class MyPanel(wx.Panel):
             print("SCRIPT #", cnt)
             print(text[:200])
             contentText = text
-            if ' src="' in text:
-                src = text.split(' src=')[1].split('"')[1]
+            if ' src="' in text or " src='" in text:
+                if ' src="' in text:
+                    src = text.split(' src=')[1].split('"')[1]
+                else:
+                    src = text.split(' src=')[1].split("'")[1]
                 src = src.split("?")[0]
                 if src[:4] != "http":
-                	if src[0] == "/":
-                		src = self.url + src
-                	else:
-                		src = self.url + "/" + src
+                    if src[0] == "/":
+                        src = self.url + src
+                    else:
+                        src = self.url + "/" + src
                 html = html.replace(text, "\n<!--script from " + src + "-->\n")
                 contentText = ""
 
@@ -313,12 +321,20 @@ class MyPanel(wx.Panel):
             self.content_text.SetValue("")
 
         self.suffix = "?JSTool="
+        numActive = 0
         for i, btn in enumerate(self.scriptButtons):
-        	if btn.GetValue() == True:
-        		self.suffix += "_" + str(i)
+            if btn.GetValue() == True:
+                self.suffix += "_" + str(i)
+                numActive += 1
         if len(self.suffix) == 8:
-        	self.suffix += "none"
+            self.suffix += "none"
         driver.get(self.url + self.suffix)
+        # req = requests.get(self.url + self.suffix, proxies=proxyDict, verify=False)
+        # print(req.text)
+        # print("Number of active scripts:", req.text.count("<script"))
+        # print("Number of buttons pressed:", numActive)
+        # print(driver.page_source)
+        # print("Number of scripts after rendering:", driver.page_source.count("<script"))
 
     def on_diff_press(self, event):
         final_html = BeautifulSoup(driver.execute_script("return document.getElementsByTagName('html')[0].innerHTML"), 'html.parser')
