@@ -32,7 +32,7 @@ class MyPanel(wx.Panel):
         self.mainSizer = wx.BoxSizer(wx.VERTICAL)
 
         self.url_input = wx.TextCtrl(self, style=wx.TE_LEFT)
-        self.url_input.SetValue("http://yasirzaki.net")
+        self.url_input.SetValue("https://www.unicef.org")
         self.url_input.Bind(wx.EVT_KEY_DOWN, self.on_key_press)
         self.mainSizer.Add(self.url_input, flag=wx.EXPAND|wx.TOP|wx.LEFT|wx.RIGHT, border=25)
 
@@ -171,7 +171,7 @@ class MyPanel(wx.Panel):
             src = ""
 
             if ' src="' in text: # BeautifulSoup turns all single quotes into double quotes
-                src = text.split(' src="')[1].split('"')[0].split("?")[0]
+                src = text.split(' src="')[1].split('"')[0]
                 if src[:4] != "http":
                     if src[0] == "/":
                         if src[1] == "/":
@@ -234,7 +234,7 @@ class MyPanel(wx.Panel):
             text = html[sIndex:eIndex+9]
             contentText = text
             if ' src="' in text: # BeautifulSoup turns all single quotes into double quotes
-                src = text.split(' src="')[1].split("?")[0]
+                src = text.split(' src="')[1].split('"')[0]
                 if src[:4] != "http":
                     if src[0] == "/":
                         src = self.url + src
@@ -364,26 +364,22 @@ class MyPanel(wx.Panel):
             toggle = True
             index = 0
 
+        JSContent = jsbeautifier.beautify(self.JavaScripts[name][1])
+        self.features_text.SetValue(name + "\n\n" + self.JavaScripts[name][0])
+        self.content_text.SetValue(JSContent)
+
         if toggle:
-            JSContent = jsbeautifier.beautify(self.JavaScripts[name][1])
-            self.features_text.SetValue(name + "\n\n" + self.JavaScripts[name][0])
-            self.content_text.SetValue(JSContent)
             if self.JavaScripts[name][3] != "":
                 self.scriptURLs.remove(self.JavaScripts[name][3])
-
         else:
             self.select_all_btn.SetValue(False)
-            self.features_text.SetValue("")
-            self.content_text.SetValue("")
             if self.JavaScripts[name][3] != "":
                 self.scriptURLs.append(self.JavaScripts[name][3])
 
         self.suffix = "?JSTool="
-        numActive = 0
-        for i, btn in enumerate(self.scriptButtons):
-            if btn.GetValue() == True:
-                self.suffix += "_" + str(i)
-                numActive += 1
+        for btn in self.scriptButtons:
+            if btn.GetValue() == True and btn.myname[:6] == "script":
+                self.suffix += "_" + btn.myname[6:]
         if len(self.suffix) == 8:
             self.suffix += "none"
 
@@ -434,31 +430,32 @@ class MyPanel(wx.Panel):
                 url = response['url']
                 if 'javascript' in content_type:
                     print(url)
+                    url = url.replace('&', '&amp;')
                     if url in self.seleniumScripts[1]:
                         i = self.seleniumScripts[1].index(url)
                         indices.append(i)
                     else:
                         print("no matching url in seleniumScripts")
-                    # requestId = message['params']['requestId']
-                    # try:
-                    #     responseBody = driver.execute_cdp_cmd('Network.getResponseBody', {'requestId': str(requestId)})
-                    #     try:
-                    #         body = responseBody['body']
-                    #         if responseBody['base64Encoded'] == True:
-                    #             print('decoding body')
-                    #             # not yet tested
-                    #             body = base64.b64decode(body)
-                    #         content = jsbeautifier.beautify(body)
-                    #         f = open(url.split("/")[-1], 'w')
-                    #         f.write(content)
-                    #         f.close()
-                    #         if content in self.seleniumScripts[1]:
-                    #             i = self.seleniumScripts[1].index(content)
-                    #             self.seleniumScripts[1][i] = "from " + url + "\n" + self.seleniumScripts[i]
-                    #     except KeyError:
-                    #         print(responseBody)
-                    # except Exception as e:
-                    #     print(str(e))
+                        requestId = message['params']['requestId']
+                        try:
+                            responseBody = driver.execute_cdp_cmd('Network.getResponseBody', {'requestId': str(requestId)})
+                            try:
+                                body = responseBody['body']
+                                if responseBody['base64Encoded'] == True:
+                                    print('decoding body')
+                                    # not yet tested
+                                    body = base64.b64decode(body)
+                                content = jsbeautifier.beautify(body)
+                                f = open(url.split("/")[-1], 'w')
+                                f.write(content)
+                                f.close()
+                                if content in self.seleniumScripts[1]:
+                                    i = self.seleniumScripts[1].index(content)
+                                    self.seleniumScripts[1][i] = url
+                            except KeyError:
+                                print(responseBody)
+                        except Exception as e:
+                            print(str(e))
 
             #print(json.dumps(message, indent=2, sort_keys=True))
         # self.print_selenium_scripts()
