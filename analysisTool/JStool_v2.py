@@ -7,11 +7,8 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from bs4 import BeautifulSoup
 import jsbeautifier
 from collections import OrderedDict
-import gzip, shutil, brotli, os, json, time
-import io
-from time import sleep
-import requests
-# from browsermobproxy import Server
+import gzip, brotli, os, json, time, io
+import requests, base64
 
 proxy_IP = "10.224.41.171"
 proxy_port = 8080
@@ -42,41 +39,41 @@ class MyPanel(wx.Panel):
         # StaticText field for error messages
         self.err_msg = wx.StaticText(self, label="")
         self.err_msg.SetForegroundColour((255,0,0)) # make text red
-        self.mainSizer.Add(self.err_msg, 0, flag=wx.LEFT, border=25)
+        self.mainSizer.Add(self.err_msg, flag=wx.LEFT, border=25)
 
         analyze_btn = wx.Button(self, label='Analyze page')
         analyze_btn.Bind(wx.EVT_BUTTON, self.on_analyze_press)
-        self.mainSizer.Add(analyze_btn, 0, wx.ALL | wx.CENTER, 25)
+        self.mainSizer.Add(analyze_btn, flag=wx.ALL|wx.CENTER, border=25)
 
         hbox = wx.BoxSizer(wx.HORIZONTAL)
         self.scripts_panel = wx.lib.scrolledpanel.ScrolledPanel(self,-1, size=(375,550))
         self.scripts_panel.SetupScrolling()
         # self.scripts_panel.Hide()
         # self.scripts_panel.SetBackgroundColour('#FFFFFF')
-        hbox.Add(self.scripts_panel, 0)
+        hbox.Add(self.scripts_panel)
 
         vbox = wx.BoxSizer(wx.VERTICAL)
         self.features_panel = wx.lib.scrolledpanel.ScrolledPanel(self,-1, size=(375,275))
         self.features_panel.SetupScrolling()
         # self.features_panel.SetBackgroundColour('#FFFFFF')
-        vbox.Add(self.features_panel, 0, wx.CENTER, 5)
+        vbox.Add(self.features_panel, flag=wx.CENTER, border=5)
         
         self.content_panel = wx.lib.scrolledpanel.ScrolledPanel(self,-1, size=(375,275))
         self.content_panel.SetupScrolling()
         # self.content_panel.SetBackgroundColour('#FFFFFF')
-        vbox.Add(self.content_panel, 0, wx.CENTER, 5)
-        hbox.Add(vbox, 0)
-        self.mainSizer.Add(hbox, 0, wx.CENTER | wx.BOTTOM, 25)
+        vbox.Add(self.content_panel, flag=wx.CENTER, border=5)
+        hbox.Add(vbox)
+        self.mainSizer.Add(hbox, flag=wx.CENTER|wx.BOTTOM, border=25)
 
         self.select_all_btn = wx.ToggleButton(self, label='Select All')
         self.select_all_btn.Bind(wx.EVT_TOGGLEBUTTON, self.on_all_press)
         self.select_all_btn.Hide()
-        self.mainSizer.Add(self.select_all_btn, 0, wx.BOTTOM | wx.CENTER, 25)
+        self.mainSizer.Add(self.select_all_btn, flag=wx.BOTTOM|wx.CENTER, border=25)
 
         self.diff_btn = wx.Button(self, label='Get diff')
         self.diff_btn.Bind(wx.EVT_BUTTON, self.on_diff_press)
         self.diff_btn.Hide()
-        self.mainSizer.Add(self.diff_btn, 0, wx.BOTTOM | wx.CENTER, 25)
+        self.mainSizer.Add(self.diff_btn, flag=wx.BOTTOM|wx.CENTER, border=25)
 
         self.SetSizer(self.mainSizer)
         self.gs = None
@@ -89,7 +86,7 @@ class MyPanel(wx.Panel):
         self.Bind(EVT_ETC_LAYOUT_NEEDED, None, self.features_text)
 
         self.features_sizer = wx.BoxSizer(wx.VERTICAL)
-        self.features_sizer.Add(self.features_text, 0, wx.CENTER, 0)
+        self.features_sizer.Add(self.features_text, flag=wx.CENTER)
         self.features_panel.SetSizer(self.features_sizer)
 
         self.content_text = ExpandoTextCtrl(self.content_panel, size=(375,275), style=wx.TE_READONLY)
@@ -97,7 +94,7 @@ class MyPanel(wx.Panel):
         self.Bind(EVT_ETC_LAYOUT_NEEDED, None, self.content_text)
 
         self.content_sizer = wx.BoxSizer(wx.VERTICAL)
-        self.content_sizer.Add(self.content_text, 0, wx.CENTER, 0)
+        self.content_sizer.Add(self.content_text, flag=wx.CENTER)
         self.content_panel.SetSizer(self.content_sizer)
 
     def on_analyze_press(self, event):
@@ -109,6 +106,41 @@ class MyPanel(wx.Panel):
             self.analyze()
         else:
             event.Skip()
+
+    def add_button(self, script, index):
+        hbox = wx.BoxSizer(wx.HORIZONTAL)
+        hbox.AddSpacer(50)
+        # create button
+        self.scriptButtons.insert(index, wx.ToggleButton(self.scripts_panel, label=script.split("/")[-1][:8]))
+        self.scriptButtons[index].Bind(wx.EVT_TOGGLEBUTTON, self.on_script_press)
+        self.scriptButtons[index].myname = script
+        hbox.Add(self.scriptButtons[index], flag=wx.ALL, border=5)
+        self.number_of_buttons += 1
+
+        # create combobox
+        choiceBox = wx.ComboBox(self.scripts_panel, value="", style=wx.CB_READONLY, choices=("","critical","non-critical","translatable"))
+        choiceBox.Bind(wx.EVT_COMBOBOX, self.OnChoice)
+        choiceBox.index = len(self.choiceBoxes)
+        self.choiceBoxes.insert(index, choiceBox)
+
+        hbox.Add(choiceBox, flag=wx.ALL, border=5)
+        self.number_of_buttons += 1
+
+        self.gs.Insert(index, hbox)
+        self.frame.fSizer.Layout()
+        self.scriptURLs.append(script)
+
+    def extract_features(self, contentText):
+        # extract features
+        tmp = {}
+        for feature in features:
+            if feature in contentText:
+                tmp[feature] = contentText.count(feature)
+        tmp_sorted = OrderedDict(sorted(tmp.items(), key=lambda x: x[1], reverse=True))
+        tmp = ""
+        for k, v in tmp_sorted.items():
+            tmp += "{0}: {1}\n".format(k,v) 
+        return tmp
 
     def analyze(self):
         self.url = self.url_input.GetValue()
@@ -127,24 +159,32 @@ class MyPanel(wx.Panel):
             print(e)
             return
 
-        self.seleniumScripts = []
+        self.seleniumScripts = [[],[]]
         html = BeautifulSoup(driver.page_source, 'html.parser').prettify()
         cnt = 0
-        print('number of selenium scripts:')
-        numScripts = html.count("<script")
-        print(numScripts)
-        if numScripts == 0:
-            print(html)
 
         while "<script" in html:
             src = ""
             sIndex = html.find("<script")
             eIndex = html.find("</script>")
             text = html[sIndex:eIndex+9]
+            src = ""
+
+            if ' src="' in text: # BeautifulSoup turns all single quotes into double quotes
+                src = text.split(' src="')[1].split('"')[0].split("?")[0]
+                if src[:4] != "http":
+                    if src[0] == "/":
+                        if src[1] == "/":
+                            src = "https:" + src
+                        else:
+                            src = self.url + src
+                    else:
+                        src = self.url + "/" + src
 
             html = html.replace(text,"\n<!--script"+str(cnt)+"-->\n")
 
-            self.seleniumScripts.append(jsbeautifier.beautify(text))
+            self.seleniumScripts[0].append(jsbeautifier.beautify(text))
+            self.seleniumScripts[1].append(src)
 
             cnt += 1
 
@@ -165,7 +205,6 @@ class MyPanel(wx.Panel):
         self.JavaScripts = {}
         self.scriptButtons = []
         self.choiceBoxes = []
-
         self.number_of_buttons = 0
 
         while self.gs != None and len(self.gs.GetChildren()) > 0:
@@ -182,11 +221,6 @@ class MyPanel(wx.Panel):
 
         if req.headers['content-encoding'] == 'br':
             html = BeautifulSoup(brotli.decompress(req.content), 'html.parser').prettify()
-
-        # Here is the part which extracts Scripts
-        numScripts = html.count("<script")
-        if numScripts == 0:
-            print(html)
 
         # Create display to house script buttons
         self.gs = wx.BoxSizer(wx.VERTICAL)
@@ -208,26 +242,22 @@ class MyPanel(wx.Panel):
                         src = self.url + "/" + src
                 contentText = ""
 
-                print("getting " + src)
                 req = requests.get(src, proxies=proxyDict, verify=False)
                 contentText = req.text
-
-                print (contentText[:500])
-            # contentText = jsbeautifier.beautify(contentText)
             
-            print ("---"*20)
+            #print ("---"*20)
 
             html = html.replace(text,"\n<!--script"+str(cnt)+"-->\n")
             text = jsbeautifier.beautify(text)
-            print("SCRIPT #", cnt)
-            print(text[:200])
+            # print("SCRIPT #", cnt)
+            # print(text[:200])
 
             hbox = wx.BoxSizer(wx.HORIZONTAL)
             # create button
             self.scriptButtons.append(wx.ToggleButton(self.scripts_panel, label="script"+str(cnt)))
             self.scriptButtons[cnt].Bind(wx.EVT_TOGGLEBUTTON, self.on_script_press)
             self.scriptButtons[cnt].myname = "script"+str(cnt)
-            hbox.Add(self.scriptButtons[cnt], 0, wx.ALL, 5)
+            hbox.Add(self.scriptButtons[cnt], flag=wx.ALL, border=5)
             self.number_of_buttons += 1
 
             # create combobox
@@ -236,20 +266,11 @@ class MyPanel(wx.Panel):
             choiceBox.index = len(self.choiceBoxes)
             self.choiceBoxes.append(choiceBox)
 
-            hbox.Add(choiceBox, 0, wx.ALL, 5)
+            hbox.Add(choiceBox, flag=wx.ALL, border=5)
             self.number_of_buttons += 1
+            self.gs.Add(hbox)
 
-            self.gs.Add(hbox, 0)
-
-            # extract features
-            tmp = {}
-            for feature in features:
-                if feature in contentText:
-                    tmp[feature] = contentText.count(feature)
-            tmp_sorted = OrderedDict(sorted(tmp.items(), key=lambda x: x[1], reverse=True))
-            tmp = ""
-            for k, v in tmp_sorted.items():
-                tmp += "{0}: {1}\n".format(k,v) 
+            tmp = self.extract_features(contentText)
 
             self.JavaScripts["script"+str(cnt)] = [tmp, contentText, text, src]
 
@@ -282,10 +303,18 @@ class MyPanel(wx.Panel):
 
         # map selenium script number to that in index.html
         for script in self.JavaScripts:
-            if self.JavaScripts[script][2] in self.seleniumScripts:
-                i = self.seleniumScripts.index(self.JavaScripts[script][2])
-                self.seleniumScripts[i] = script
+            if self.JavaScripts[script][2] in self.seleniumScripts[0]:
+                i = self.seleniumScripts[0].index(self.JavaScripts[script][2])
+                self.seleniumScripts[1][i] = script
 
+        # add other selenium scripts to self.JavaScripts
+        for i in range(len(self.seleniumScripts[0])):
+            if self.seleniumScripts[1][i][:6] != "script":
+                contentText = self.seleniumScripts[0][i]
+                text = contentText
+                tmp = self.extract_features(contentText)
+                src = self.seleniumScripts[1][i]
+                self.JavaScripts[src] = [tmp, contentText, text, src]
         self.print_selenium_scripts()
 
         print('scripts blocked:')
@@ -329,9 +358,11 @@ class MyPanel(wx.Panel):
         try:
             name = event.GetEventObject().myname
             toggle = event.GetEventObject().GetValue()
+            index = self.scriptButtons.index(event.GetEventObject())
         except:
             name = "script0"
             toggle = True
+            index = 0
 
         if toggle:
             JSContent = jsbeautifier.beautify(self.JavaScripts[name][1])
@@ -359,7 +390,13 @@ class MyPanel(wx.Panel):
         driver.execute_cdp_cmd('Network.setBlockedURLs', {'urls': self.scriptURLs})
         t = time.time()*1000
         driver.get(self.url + self.suffix)
-        self.parse_log(t)
+        indices = self.parse_log(t)
+        for i in indices:
+            # check that not already inserted
+            scriptname = self.seleniumScripts[1][i]
+            if scriptname not in [s.myname for s in self.scriptButtons]:
+                print('inserting', scriptname, 'under', index)
+                self.add_button(scriptname, index+1)
 
     def on_diff_press(self, event):
         final_html = BeautifulSoup(driver.execute_script("return document.getElementsByTagName('html')[0].innerHTML"), 'html.parser')
@@ -382,6 +419,7 @@ class MyPanel(wx.Panel):
         choiceBox.SetBackgroundColour(self.colors[choiceBox.GetValue()])
 
     def parse_log(self, time):
+        indices = []
         log = driver.get_log('performance')
         for entry in reversed(log):
             # only look at logs since time
@@ -396,33 +434,43 @@ class MyPanel(wx.Panel):
                 url = response['url']
                 if 'javascript' in content_type:
                     print(url)
-                    requestId = message['params']['requestId']
-                    try:
-                        responseBody = driver.execute_cdp_cmd('Network.getResponseBody', {'requestId': str(requestId)})
-                        try:
-                            # if responseBody['base64Encoded'] == True: decode first
-                            if responseBody['base64Encoded'] == False:
-                                content = jsbeautifier.beautify(responseBody['body'])
-                                if content in self.seleniumScripts:
-                                    i = self.seleniumScripts.index(content)
-                                    self.seleniumScripts[i] = "from " + url + "\n" + self.seleniumScripts[i]
-                            else:
-                                print('need to decode body first')
-                        except KeyError:
-                            print(responseBody)
-                    except Exception as e:
-                        print(str(e))
-                        print(requestId)
-                        print(json.dumps(message['params'], indent=4, sort_keys=True))
+                    if url in self.seleniumScripts[1]:
+                        i = self.seleniumScripts[1].index(url)
+                        indices.append(i)
+                    else:
+                        print("no matching url in seleniumScripts")
+                    # requestId = message['params']['requestId']
+                    # try:
+                    #     responseBody = driver.execute_cdp_cmd('Network.getResponseBody', {'requestId': str(requestId)})
+                    #     try:
+                    #         body = responseBody['body']
+                    #         if responseBody['base64Encoded'] == True:
+                    #             print('decoding body')
+                    #             # not yet tested
+                    #             body = base64.b64decode(body)
+                    #         content = jsbeautifier.beautify(body)
+                    #         f = open(url.split("/")[-1], 'w')
+                    #         f.write(content)
+                    #         f.close()
+                    #         if content in self.seleniumScripts[1]:
+                    #             i = self.seleniumScripts[1].index(content)
+                    #             self.seleniumScripts[1][i] = "from " + url + "\n" + self.seleniumScripts[i]
+                    #     except KeyError:
+                    #         print(responseBody)
+                    # except Exception as e:
+                    #     print(str(e))
 
             #print(json.dumps(message, indent=2, sort_keys=True))
+        # self.print_selenium_scripts()
+        return indices
 
     def print_selenium_scripts(self):
         # print mappings
-        for i in range(len(self.seleniumScripts)):
+        for i in range(len(self.seleniumScripts[0])):
             print("Selenium script #", i)
-            print(self.seleniumScripts[i][:200])
-            print("----------------------------")
+            print(self.seleniumScripts[1][i][:200])
+            print(self.seleniumScripts[0][i][:200])
+            print("---" * 20)
 
 
 class MyFrame(wx.Frame):
