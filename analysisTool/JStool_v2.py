@@ -21,6 +21,8 @@ proxyDict = {"http":http_proxy, "https":https_proxy}
 # feature store (60 features)
 features = [".lookupPrefix",".prefix",".childNodes",".open",".isEqualNode",".documentURI",".lastChild",".nodeName",".title",".implementation",".normalizeDocument",".forms",".input",".anchors",".createCDATASection",".URL",".getElementsByTagName",".createEntityReference",".domConfig",".createElement",".xmlStandalone",".referrer",".textContent",".doctype",".namespaceURI",".strictErrorChecking",".xmlEncoding",".appendChild",".domain",".createAttribute",".links",".adoptNode",".Type",".nextSibling",".firstChild",".images",".close",".xmlVersion",".event",".form",".createComment",".removeChild",".nodeValue",".localName",".ownerDocument",".previousSibling",".body",".isDefaultNamespace",".nodeType",".track",".isSameNode",".cookie",".createDocumentFragment",".getElementsByName",".baseURI",".lookupNamespaceURI",".parentNode",".getElementById",".attributes",".createTextNode"]
 
+encoding = "utf-8"
+
 class MyPanel(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)
@@ -129,6 +131,27 @@ class MyPanel(wx.Panel):
         self.frame.fSizer.Layout()
         self.scriptURLs.append(script)
 
+    def get_content_from_src(self, src):
+        if src[:4] != "http":
+            if src[0] == "/":
+                if src[1] == "/":
+                    src = "https:" + src
+                else:
+                    src = self.url + src
+            else:
+                src = self.url + "/" + src
+        req = requests.get(src, proxies=proxyDict, verify=False)
+        contentText = req.text
+        try:
+            if req.headers['content-encoding'] == 'br':
+                # TO-DO: should update encoding based on req.headers['content-type'] (if specified)
+                contentText = brotli.decompress(req.content).decode(encoding)
+        except KeyError:
+            # no encoding
+            pass
+        contentText = jsbeautifier.beautify(contentText)
+        return src, contentText
+
     def extract_features(self, contentText):
         # extract features
         tmp = {}
@@ -140,6 +163,13 @@ class MyPanel(wx.Panel):
         for k, v in tmp_sorted.items():
             tmp += "{0}: {1}\n".format(k,v) 
         return tmp
+
+    def wait_for_load(self):
+        html = driver.page_source
+        time.sleep(0.5) # is this a reasonable amount of time?
+        while html != driver.page_source:
+            html = driver.page_source
+            time.sleep(0.5)
 
     def analyze(self):
         self.url = self.url_input.GetValue()
@@ -153,13 +183,13 @@ class MyPanel(wx.Panel):
             driver.execute_cdp_cmd('Network.setBlockedURLs', {'urls': []})
             driver.get(self.url)
             self.err_msg.SetLabel("")
+            self.wait_for_load()
         except Exception as e:
             self.err_msg.SetLabel(str(e))
             print(e)
             return
 
         self.unknownScripts = []
-        # TO-DO: implement a wait to ensure page has been fully loaded before getting source in next line
         html = BeautifulSoup(driver.page_source, 'html.parser').prettify()
 
         # Populate list of unknown (source) scripts
@@ -173,37 +203,37 @@ class MyPanel(wx.Panel):
             cnt += 1
         print("number of selenium scripts:")
         print(len(self.unknownScripts))
-        html = ""
         # End selenium-rendered parsing
 
         # Uncomment to show diff button
         # self.diff_btn.Show()
-        
+
+        # Reset display and values
         self.select_all_btn.SetValue(False)
         self.select_all_btn.Show()
         self.features_panel.Show()
         self.content_panel.Show()
         self.features_text.SetValue("Features listing")
         self.content_text.SetValue("Script code")
-
         self.scriptButtons.clear()
         self.choiceBoxes.clear()
         self.JavaScripts.clear()
         self.number_of_buttons = 0
-
         while self.gs != None and len(self.gs.GetChildren()) > 0:
             self.gs.Remove(0)
         self.frame.fSizer.Layout()
+
+        # TO-DO: make request asynchronously? Might save some time
 
         # Get index.html from proxy
         req = requests.get(self.url, proxies=proxyDict, verify=False)
         if req.status_code != requests.codes.ok:
             print("Could not get request")
-        
-        html = BeautifulSoup(req.text, 'html.parser').prettify()
-
+        html = ""
         if req.headers['content-encoding'] == 'br':
-            html = BeautifulSoup(brotli.decompress(req.content), 'html.parser').prettify()
+            html = BeautifulSoup(brotli.decompress(req.content).decode(encoding), 'html.parser').prettify()
+        else:
+            html = BeautifulSoup(req.text, 'html.parser').prettify()
 
         # Create display to house script buttons
         self.gs = wx.BoxSizer(wx.VERTICAL)
@@ -218,19 +248,7 @@ class MyPanel(wx.Panel):
             contentText = text[text.find(">")+1:text.find("</script>")]
             if ' src="' in text: # BeautifulSoup turns all single quotes into double quotes
                 src = text.split(' src="')[1].split('"')[0]
-                if src[:4] != "http":
-                    if src[0] == "/":
-                        src = self.url + src
-                    else:
-                        src = self.url + "/" + src
-
-                req = requests.get(src, proxies=proxyDict, verify=False)
-                try:
-                    if req.headers['content-encoding'] == 'br':
-                        contentText = brotli.decompress(req.content)
-                except KeyError:
-                    pass
-                contentText = req.text
+                src, contentText = self.get_content_from_src(src)
 
             html = html.replace(text,"\n<!--script"+str(cnt)+"-->\n")
             hbox = wx.BoxSizer(wx.HORIZONTAL)
@@ -252,7 +270,6 @@ class MyPanel(wx.Panel):
             self.number_of_buttons += 1
             self.gs.Add(hbox)
 
-            contentText = jsbeautifier.beautify(contentText)
             tmp = self.extract_features(contentText)
             self.JavaScripts["script"+str(cnt)] = {'features':tmp, 'content':contentText, 'text':text, 'src':src}
             if text in self.unknownScripts:
@@ -274,23 +291,7 @@ class MyPanel(wx.Panel):
             text = self.unknownScripts[i]
             if ' src="' in text: # BeautifulSoup turns all single quotes into double quotes
                 src = text.split(' src="')[1].split('"')[0]
-                if src[:4] != "http":
-                    if src[0] == "/":
-                        if src[1] == "/":
-                            src = "https:" + src
-                        else:
-                            src = self.url + src
-                    else:
-                        src = self.url + "/" + src
-                req = requests.get(src, proxies=proxyDict, verify=False)
-                contentText = req.text
-                try:
-                    if req.headers['content-encoding'] == 'br':
-                        contentText = str(brotli.decompress(req.content))
-                except KeyError:
-                    # no encoding
-                    pass
-                contentText = jsbeautifier.beautify(contentText)
+                src, contentText = self.get_content_from_src(src)
                 tmp = self.extract_features(contentText)
                 self.JavaScripts[src] = {'features':tmp, 'content':contentText, 'text':text, 'src':src}
                 self.unknownScripts.pop(i)
@@ -347,6 +348,7 @@ class MyPanel(wx.Panel):
         driver.execute_cdp_cmd('Network.setBlockedURLs', {'urls': self.scriptURLs})
         t = time.time()*1000
         driver.get(self.url + self.suffix)
+        self.wait_for_load()
         self.parse_log(t)
 
     def on_script_press(self, event):
@@ -358,29 +360,33 @@ class MyPanel(wx.Panel):
             name = "script0"
             toggle = True
             index = 0
+        url = self.JavaScripts[name]['src']
+        print("name:", name, "index:", index, "src:", url)
 
-        JSContent = jsbeautifier.beautify(self.JavaScripts[name]['content'])
+        JSContent = self.JavaScripts[name]['content']
         self.features_text.SetValue(name + "\n\n" + self.JavaScripts[name]['features'])
         self.content_text.SetValue(JSContent)
 
         if toggle:
             if self.JavaScripts[name]['src'] != "":
-                self.scriptURLs.remove(self.JavaScripts[name]['src'])
+                self.scriptURLs.remove(url)
         else:
             self.select_all_btn.SetValue(False)
             if self.JavaScripts[name]['src'] != "":
-                self.scriptURLs.append(self.JavaScripts[name]['src'])
+                self.scriptURLs.append(url)
 
         self.suffix = "?JSTool="
         for btn in self.scriptButtons:
             if btn.GetValue() == True and btn.myname[:6] == "script":
                 self.suffix += "_" + btn.myname[6:]
-        if len(self.suffix) == 8:
+        if self.suffix == "?JSTool=":
             self.suffix += "none"
 
+        #if name[:6] == "script":
         driver.execute_cdp_cmd('Network.setBlockedURLs', {'urls': self.scriptURLs})
         t = time.time()*1000
         driver.get(self.url + self.suffix)
+        self.wait_for_load()
         scripts = self.parse_log(t)
         for scriptname in scripts:
             if scriptname not in [s.myname for s in self.scriptButtons]:
