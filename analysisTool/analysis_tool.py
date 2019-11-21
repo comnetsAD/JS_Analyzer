@@ -9,18 +9,30 @@ About:
     on the overall functionality of a webpage.
 
 Todo:
+    * Make sure clicking "Analyze" again doesn't break the page
     * Trace nested scripts fully and show recursive calls through indentation of buttons
+        * How to figure out initiating script when initiated from parser?
+        * Is it possible to enable a nested script without enabling the script that called it?
+            * May need to pair with selenium page_source script
+    * Update encoding based on req.headers['content-type'] (if specified) in brotli decompression
     * Optimize for speed, especially upon initial page load
+        * Check out anytree.cachedsearch instead of anytree.search
+        * Any way to avoid making Network.getResponseBody requests?
+            * Look for script in proxy instead?
     * Build a script dependency tree (in collaboration with Jahnae)
     * Update the proxy to handle files with long URLs (in collaboration with Gabriel)
 
 """
 
+import logging
 import os
 import time
 from collections import OrderedDict
 import json
 import base64
+import bisect
+from anytree import AnyNode, RenderTree, PreOrderIter
+import anytree.cachedsearch
 import requests
 import brotli
 import wx
@@ -28,8 +40,18 @@ from wx.lib.scrolledpanel import ScrolledPanel
 from wx.lib.expando import ExpandoTextCtrl, EVT_ETC_LAYOUT_NEEDED
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.common.exceptions import InvalidArgumentException
 from bs4 import BeautifulSoup
 import jsbeautifier
+
+
+def get_attribute(node, attribute):
+    """Return the node.attribute or None if it doesn't exist."""
+    try:
+        return getattr(node, attribute)
+    except AttributeError:
+        return None
+
 
 PROXY_IP = "10.224.41.171"
 PROXY_PORT = 8080
@@ -82,7 +104,7 @@ class MyPanel(wx.Panel):
 
         # TextCtrl for user to input URL of site to analyze
         self.url_input = wx.TextCtrl(self, style=wx.TE_LEFT)
-        self.url_input.SetValue("https://www.unicef.org")
+        self.url_input.SetValue("https://www.unicef.org/")
         self.url_input.Bind(wx.EVT_KEY_DOWN, self.on_key_press)
         self.main_sizer.Add(self.url_input, flag=wx.EXPAND |
                             wx.TOP | wx.LEFT | wx.RIGHT, border=25)
@@ -93,7 +115,7 @@ class MyPanel(wx.Panel):
         self.main_sizer.Add(self.err_msg, flag=wx.LEFT, border=25)
 
         analyze_btn = wx.Button(self, label='Analyze page')
-        analyze_btn.Bind(wx.EVT_BUTTON, self.on_analyze_press)
+        analyze_btn.Bind(wx.EVT_BUTTON, self.on_button_press)
         self.main_sizer.Add(analyze_btn, flag=wx.ALL | wx.CENTER, border=25)
 
         hbox = wx.BoxSizer(wx.HORIZONTAL)
@@ -122,7 +144,7 @@ class MyPanel(wx.Panel):
                             flag=wx.BOTTOM | wx.CENTER, border=25)
 
         self.diff_btn = wx.Button(self, label='Get diff')
-        self.diff_btn.Bind(wx.EVT_BUTTON, self.on_diff_press)
+        self.diff_btn.Bind(wx.EVT_BUTTON, self.on_button_press)
         self.diff_btn.Hide()
         self.main_sizer.Add(self.diff_btn, flag=wx.BOTTOM |
                             wx.CENTER, border=25)
@@ -130,12 +152,10 @@ class MyPanel(wx.Panel):
         self.SetSizer(self.main_sizer)
         self.url = self.url_input.GetValue()
         self.suffix = "?JSTool=none"
-        self.script_sizer = None
+        self.script_sizer = wx.BoxSizer(wx.VERTICAL)
         self.script_buttons = []
         self.choice_boxes = []
         self.number_of_buttons = 0
-        self.unknown_scripts = []
-        self.javascripts = {}
         self.script_urls = []
 
         self.features_panel.Hide()
@@ -159,9 +179,15 @@ class MyPanel(wx.Panel):
         self.content_sizer.Add(self.content_text, flag=wx.CENTER)
         self.content_panel.SetSizer(self.content_sizer)
 
-    def on_analyze_press(self, event):
-        """Handle 'Analyze' button press."""
-        self.analyze()
+        self.script_tree = AnyNode(id='root')
+
+    def on_button_press(self, event):
+        """Handle wx.Button press."""
+        btn = event.GetEventObject()
+        if btn.GetLabel() == 'Analyze page':
+            self.analyze()
+        elif btn == self.diff_btn:
+            self.on_diff_press()
 
     def on_key_press(self, event):
         """Handle keyboard input."""
@@ -171,10 +197,10 @@ class MyPanel(wx.Panel):
         else:
             event.Skip()
 
-    def add_button(self, script, index):
+    def add_button(self, script, index, depth):
         """Add script to self.script_buttons at index and update display."""
         hbox = wx.BoxSizer(wx.HORIZONTAL)
-        hbox.AddSpacer(25)
+        hbox.AddSpacer(depth*25)
         # create button
         self.script_buttons.insert(index, wx.ToggleButton(
             self.scripts_panel, label=script.split("/")[-1][:8]))
@@ -196,43 +222,44 @@ class MyPanel(wx.Panel):
 
         self.script_sizer.Insert(index, hbox)
         self.frame.frame_sizer.Layout()
-        self.script_urls.append(script)
 
-    def get_content_from_src(self, src):
-        """Get content from src as a string."""
+    def format_src(self, src):
+        """Return formatted src string to be requested."""
         if src[:4] != "http":
             if src[0] == "/":
                 if src[1] == "/":
                     src = "https:" + src
                 else:
-                    src = self.url + src
+                    src = self.url + src[1:]
             else:
-                src = self.url + "/" + src
-        req = requests.get(src, proxies=PROXYDICT, verify=False)
-        content_text = req.text
-        try:
-            if req.headers['content-encoding'] == 'br':
-                # TO-DO: should update encoding based on
-                # req.headers['content-type'] (if specified)
-                content_text = brotli.decompress(req.content).decode(ENCODING)
-        except KeyError:
-            # no encoding
-            pass
-        content_text = jsbeautifier.beautify(content_text)
-        return src, content_text
+                src = self.url + src
+        return src
 
-    def extract_features(self, content_text):
-        """Count features in content_text and return a string."""
-        tmp = {}
-        for feature in FEATURES:
-            if feature in content_text:
-                tmp[feature] = content_text.count(feature)
-        tmp_sorted = OrderedDict(
-            sorted(tmp.items(), key=lambda x: x[1], reverse=True))
-        tmp = ""
-        for key, value in tmp_sorted.items():
-            tmp += "{0}: {1}\n".format(key, value)
-        return tmp
+    def get_response_body(self, request_id):
+        """Return body of response with request_id."""
+        response_body = self.driver.execute_cdp_cmd(
+            'Network.getResponseBody',
+            {'requestId': str(request_id)}
+        )
+        body = response_body['body']
+        try:
+            if response_body['base64Encoded']:
+                logging.info('decoding body')
+                # not yet tested
+                body = base64.b64decode(body)
+        except KeyError as error:
+            logging.exception(str(error))
+        body = jsbeautifier.beautify(body)
+        return body
+
+    def block_all_scripts(self):
+        """Block scripts in self.script_tree."""
+        self.script_urls.clear()
+        for node in PreOrderIter(self.script_tree):
+            if node.id[:6] != "script" and not node.is_root:
+                self.script_urls.append(node.id)
+        self.driver.execute_cdp_cmd('Network.setBlockedURLs',
+                                    {'urls': self.script_urls})
 
     def wait_for_load(self):
         """Wait for page source to stop changing."""
@@ -244,161 +271,128 @@ class MyPanel(wx.Panel):
 
     def analyze(self):
         """Do everything."""
-        # Never got this part to work
-        self.err_msg.SetForegroundColour((0, 0, 0))
-        self.err_msg.SetLabel("Loading page... please wait")
-        self.err_msg.SetForegroundColour((255, 0, 0))
-        self.Update()
+        def reset_display():
+            # Reset display
+            self.suffix = "?JSTool=none"
+            self.script_buttons.clear()
+            self.choice_boxes.clear()
+            self.number_of_buttons = 0
+            self.select_all_btn.SetValue(False)
+            self.select_all_btn.Show()
+            self.features_panel.Show()
+            self.content_panel.Show()
+            self.features_text.SetValue("Features listing")
+            self.content_text.SetValue("Script code")
+            while self.script_sizer.GetChildren():
+                self.script_sizer.Remove(0)
+            self.frame.frame_sizer.Layout()
+
+        def get_index_html():
+            # Get index.html from proxy
+            req = requests.get(self.url, proxies=PROXYDICT, verify=False)
+            html = ""
+            try:
+                if req.headers['content-encoding'] == 'br':
+                    html = BeautifulSoup(brotli.decompress(req.content).decode(
+                        ENCODING), 'html.parser').prettify()
+                else:
+                    html = BeautifulSoup(req.text, 'html.parser').prettify()
+            except KeyError:
+                html = BeautifulSoup(req.text, 'html.parser').prettify()
+            return html
+
+        def parse_html(html):
+            # Add index.html scripts to self.script_tree
+            cnt = 0
+            while "<script" in html:
+                src = ""
+                script_name = "script" + str(cnt)
+                start_index = html.find("<script")
+                end_index = html.find("</script>")
+                text = html[start_index:end_index + 9]
+                new_node = AnyNode(
+                    id=script_name, parent=self.script_tree, content=text)
+                if ' src="' in text:  # BeautifulSoup turns all single quotes into double quotes
+                    src = text.split(' src="')[1].split('"')[0].split("?")[0]
+                    src = self.format_src(src)
+                    node = anytree.cachedsearch.find(
+                        self.script_tree, lambda node: node.id == src)
+                    if node:
+                        node.parent = new_node
+                html = html.replace(text, "\n<!--" + script_name + "-->\n")
+                cnt += 1
+
+        def create_buttons():
+            # Add buttons to display
+            index = 0
+            original_script = False
+            for node in PreOrderIter(self.script_tree):
+                if node.depth == 1:
+                    if node.id[:6] == "script":
+                        original_script = True
+                    else:
+                        original_script = False
+                if not original_script:
+                    # Skip to next node with depth 1
+                    continue
+                node.button = index
+                self.add_button(node.id, index, node.depth)
+                index += 1
+            self.scripts_panel.SetSizer(self.script_sizer)
+            self.frame.frame_sizer.Layout()
+
+        def display_loading_message():
+            # Never managed to get this part to display before spinning wheel of death
+            self.err_msg.SetForegroundColour((0, 0, 0))
+            self.err_msg.SetLabel("Loading page... please wait")
+            self.err_msg.SetForegroundColour((255, 0, 0))
+            self.Update()
+
+        display_loading_message()
 
         # Reset values
         self.url = self.url_input.GetValue()
-        self.suffix = "?JSTool=none"
-        self.unknown_scripts.clear()
-        self.script_buttons.clear()
-        self.choice_boxes.clear()
-        self.javascripts.clear()
-        self.number_of_buttons = 0
+        if self.url[-1] != "/":
+            self.url = self.url + "/"
         if not self.url:
             return
+        reset_display()
+        self.script_tree = AnyNode(id=self.url)
 
-        # Get all scripts from original page and parse selenium rendered
-        # version
+        # Get original page and parse external scripts
+        self.driver.execute_cdp_cmd('Network.setBlockedURLs', {'urls': []})
+        epoch_in_milliseconds = time.time() * 1000
         try:
-            self.driver.execute_cdp_cmd('Network.setBlockedURLs', {'urls': []})
-            epoch_in_milliseconds = time.time() * 1000
             self.driver.get(self.url)
-            self.parse_log(epoch_in_milliseconds)
             self.err_msg.SetLabel("")
-            self.wait_for_load()
-        except Exception as exception:
+        except InvalidArgumentException as exception:
             self.err_msg.SetLabel(str(exception))
-            print(exception)
             return
+        self.wait_for_load()
+        scripts = self.parse_log(epoch_in_milliseconds)
+        for script in scripts:
+            # pylint: disable=undefined-loop-variable
+            # pylint: disable=cell-var-from-loop
+            parent = anytree.cachedsearch.find(self.script_tree,
+                                               lambda node: node.id == script['parent'])
+            AnyNode(id=script['url'], parent=parent, content=script['content'])
+        self.print_scripts()
 
-        html = BeautifulSoup(self.driver.page_source, 'html.parser').prettify()
+        # Parse inline scripts
+        html = get_index_html()
+        parse_html(html)
+        self.print_scripts()
 
-        # Populate list of unknown (source) scripts
-        cnt = 0
-        while "<script" in html:
-            start_index = html.find("<script")
-            end_index = html.find("</script>")
-            text = html[start_index:end_index + 9]
-            self.unknown_scripts.append(text)
-            html = html.replace(text, "\n<!--script" + str(cnt) + "-->\n")
-            cnt += 1
-        print("number of selenium scripts:")
-        print(len(self.unknown_scripts))
-        # End selenium-rendered parsing
-
-        # Uncomment to show diff button
-        # self.diff_btn.Show()
-
-        # Reset display
-        self.select_all_btn.SetValue(False)
-        self.select_all_btn.Show()
-        self.features_panel.Show()
-        self.content_panel.Show()
-        self.features_text.SetValue("Features listing")
-        self.content_text.SetValue("Script code")
-
-        while self.script_sizer is not None and self.script_sizer.GetChildren():
-            self.script_sizer.Remove(0)
-        self.frame.frame_sizer.Layout()
-
-        # TO-DO: make request asynchronously? Might save some time
-
-        # Get index.html from proxy
-        req = requests.get(self.url, proxies=PROXYDICT, verify=False)
-        html = ""
-        if req.headers['content-encoding'] == 'br':
-            html = BeautifulSoup(brotli.decompress(req.content).decode(
-                ENCODING), 'html.parser').prettify()
-        else:
-            html = BeautifulSoup(req.text, 'html.parser').prettify()
-
-        # Create display to house script buttons
-        self.script_sizer = wx.BoxSizer(wx.VERTICAL)
-
-        # Add scripts to self.JavaScripts and create buttons
-        cnt = 0
-        while "<script" in html:
-            src = ""
-            start_index = html.find("<script")
-            end_index = html.find("</script>")
-            text = html[start_index:end_index + 9]
-            content_text = text[text.find(">") + 1:text.find("</script>")]
-            if ' src="' in text:  # BeautifulSoup turns all single quotes into double quotes
-                src = text.split(' src="')[1].split('"')[0]
-                src, content_text = self.get_content_from_src(src)
-
-            html = html.replace(text, "\n<!--script" + str(cnt) + "-->\n")
-            hbox = wx.BoxSizer(wx.HORIZONTAL)
-
-            # create script button
-            self.script_buttons.append(wx.ToggleButton(
-                self.scripts_panel, label="script" + str(cnt)))
-            self.script_buttons[cnt].Bind(
-                wx.EVT_TOGGLEBUTTON, self.on_script_press)
-            self.script_buttons[cnt].myname = "script" + str(cnt)
-            hbox.Add(self.script_buttons[cnt], flag=wx.ALL, border=5)
-            self.number_of_buttons += 1
-
-            # create combobox
-            choice_box = wx.ComboBox(self.scripts_panel, value="", style=wx.CB_READONLY, choices=(
-                "", "critical", "non-critical", "translatable"))
-            choice_box.Bind(wx.EVT_COMBOBOX, self.on_choice)
-            choice_box.index = len(self.choice_boxes)
-            self.choice_boxes.append(choice_box)
-
-            hbox.Add(choice_box, flag=wx.ALL, border=5)
-            self.number_of_buttons += 1
-            self.script_sizer.Add(hbox)
-
-            tmp = self.extract_features(content_text)
-            self.javascripts["script" + str(cnt)] = {
-                'features': tmp,
-                'content': content_text,
-                'text': text,
-                'src': src
-            }
-            if text in self.unknown_scripts:
-                self.unknown_scripts.remove(text)
-
-            cnt += 1
-
-        self.scripts_panel.SetSizer(self.script_sizer)
-        self.frame.frame_sizer.Layout()
-
-        self.script_urls.clear()
-        for script in self.javascripts:
-            src = self.javascripts[script]['src']
-            if src != "":
-                self.script_urls.append(src)
-
-        i = 0
-        while i < len(self.unknown_scripts):
-            text = self.unknown_scripts[i]
-            if ' src="' in text:  # BeautifulSoup turns all single quotes into double quotes
-                src = text.split(' src="')[1].split('"')[0]
-                src, content_text = self.get_content_from_src(src)
-                tmp = self.extract_features(content_text)
-                self.javascripts[src] = {
-                    'features': tmp, 'content': content_text, 'text': text, 'src': src}
-                self.unknown_scripts.pop(i)
-            else:
-                self.unknown_scripts[i] = jsbeautifier.beautify(
-                    text[text.find(">") + 1:text.find("</script>")])
-                i += 1
+        # Create buttons
+        create_buttons()
 
         # Get page with all scripts removed
+        self.block_all_scripts()
         try:
-            self.driver.execute_cdp_cmd(
-                'Network.setBlockedURLs', {'urls': ['*.js']})
             self.driver.get(self.url + self.suffix)
             self.err_msg.SetLabel("")
-        except Exception as exception:
+        except InvalidArgumentException as exception:
             self.err_msg.SetLabel(str(exception))
-            print(exception)
             return
 
         # for diff
@@ -408,76 +402,85 @@ class MyPanel(wx.Panel):
         # file_stream.write(final_html.prettify())
         # file_stream.close()
 
-        self.print_scripts()
-
     def on_all_press(self, event):
         """Handle 'Select All' button press."""
-        try:
-            toggle = event.GetEventObject().GetValue()
-        except BaseException:
-            toggle = True
+        toggle = event.GetEventObject().GetValue()
 
         self.suffix = "?JSTool="
-        self.script_urls.clear()
 
         if toggle:
             # Toggle all script buttons
             for i, btn in enumerate(self.script_buttons):
                 btn.SetValue(True)
                 self.suffix += "_" + str(i)
-
+            self.driver.execute_cdp_cmd('Network.setBlockedURLs', {'urls': []})
         else:
             # Untoggle all script buttons
             for btn in self.script_buttons:
                 btn.SetValue(False)
-
-            # Block all external scripts
-            for script in self.javascripts:
-                src = self.javascripts[script]['src']
-                if src != "":
-                    self.script_urls.append(src)
-
+            self.block_all_scripts()
             self.suffix += "none"
 
-        self.driver.execute_cdp_cmd('Network.setBlockedURLs',
-                                    {'urls': self.script_urls})
-        epoch_in_milliseconds = time.time() * 1000
         self.driver.get(self.url + self.suffix)
-        self.wait_for_load()
-        self.parse_log(epoch_in_milliseconds)
 
     def on_script_press(self, event):
         """Handle script button press."""
-        try:
-            name = event.GetEventObject().myname
-            toggle = event.GetEventObject().GetValue()
-            index = self.script_buttons.index(event.GetEventObject())
-        except BaseException:
-            name = "script0"
-            toggle = True
-            index = 0
-        url = self.javascripts[name]['src']
+        def get_content_from_src(src):
+            """Get content from src as a string."""
+            logging.debug("getting %s", src)
+            req = requests.get(src, proxies=PROXYDICT, verify=False)
+            content_text = req.text
+            try:
+                if req.headers['content-encoding'] == 'br':
+                    content_text = brotli.decompress(
+                        req.content).decode(ENCODING)
+            except KeyError:
+                # no encoding
+                pass
+            content_text = jsbeautifier.beautify(content_text)
+            return content_text
 
-        js_content = self.javascripts[name]['content']
-        features_text = self.javascripts[name]['features']
-        if name[:6] == "script":
-            if url == "":
-                features_text = name + ' inline\n\n' + features_text
-            else:
-                features_text = name + ' from ' + url + '\n\n' + features_text
-        else:
-            features_text = name + '\n\n' + features_text
+        def extract_features(content_text):
+            """Count features in content_text and return a string."""
+            tmp = {}
+            for feature in FEATURES:
+                if feature in content_text:
+                    tmp[feature] = content_text.count(feature)
+            tmp_sorted = OrderedDict(
+                sorted(tmp.items(), key=lambda x: x[1], reverse=True))
+            tmp = ""
+            for key, value in tmp_sorted.items():
+                tmp += "{0}: {1}\n".format(key, value)
+            return tmp
 
-        self.features_text.SetValue(features_text)
-        self.content_text.SetValue(js_content)
+        name = event.GetEventObject().myname
+        toggle = event.GetEventObject().GetValue()
+        node = anytree.cachedsearch.find(
+            self.script_tree, lambda node: node.id == name)
+
+        if not get_attribute(node, 'content'):
+            node.content = get_content_from_src(node.id)
+        if not get_attribute(node, 'features'):
+            node.features = extract_features(node.content)
+
+        self.features_text.SetValue(name + "\n\n" + node.features)
+        self.content_text.SetValue(node.content)
 
         if toggle:
-            if self.javascripts[name]['src'] != "":
-                self.script_urls.remove(url)
+            while node.depth > 1:
+                self.script_buttons[node.button].SetValue(True)
+                try:
+                    self.script_urls.remove(node.id)
+                except ValueError:
+                    pass
+                node = node.parent
+            self.script_buttons[node.button].SetValue(True)
         else:
             self.select_all_btn.SetValue(False)
-            if self.javascripts[name]['src'] != "":
-                self.script_urls.append(url)
+            for descendant in node.descendants:
+                self.script_buttons[descendant.button].SetValue(False)
+                self.script_urls.append(descendant.id)
+            self.script_urls.append(node.id)
 
         self.suffix = "?JSTool="
         for btn in self.script_buttons:
@@ -488,25 +491,12 @@ class MyPanel(wx.Panel):
 
         self.driver.execute_cdp_cmd('Network.setBlockedURLs',
                                     {'urls': self.script_urls})
-        epoch_in_milliseconds = time.time() * 1000
-        self.driver.get(self.url + self.suffix)
-        self.wait_for_load()
-        scripts = self.parse_log(epoch_in_milliseconds)
-        for scriptname in scripts:
-            if scriptname not in [s.myname for s in self.script_buttons]:
-                print('inserting', scriptname, 'under', name)
-                self.add_button(scriptname, index + 1)
-                if self.javascripts[scriptname]['src'] not in self.script_urls:
-                    self.script_urls.append(
-                        self.javascripts[scriptname]['src'])
-
-        self.driver.execute_cdp_cmd('Network.setBlockedURLs',
-                                    {'urls': self.script_urls})
         self.print_blocked_scripts()
         self.driver.get(self.url + self.suffix)
 
-    def on_diff_press(self, event):
-        """Handle 'Get Diff' button press."""
+    def on_diff_press(self):
+        """Print diff to terminal."""
+
         final_html = BeautifulSoup(self.driver.execute_script(
             "return document.getElementsByTagName('html')[0].innerHTML"), 'html.parser')
         try:
@@ -538,100 +528,66 @@ class MyPanel(wx.Panel):
         """Return list of scripts requested since epoch_in_milliseconds."""
         scripts = []
         log = self.driver.get_log('performance')
-        for entry in reversed(log):
-            # only look at logs since time
-            if entry['timestamp'] < epoch_in_milliseconds:
-                break
-            message = json.loads(entry['message'])['message']
-            if message['method'] == 'Network.responseReceived':
-                response = message['params']['response']
-                content_type = response['mimeType']
-                # content_type can also be found in
-                # response['headers']['content-type'] or
-                # response['headers']['Content-Type']
-                url = response['url']
-                if 'javascript' in content_type:
-                    url = url.replace('&amp;', '&').replace('&', '&amp;')
-                    found = False
-                    for key, val in self.javascripts.items():
-                        if url == val['src']:
-                            scripts.append(key)
-                            found = True
-                            break
-                    if not found:
-                        print("script from", url, "not seen before")
-                        request_id = message['params']['requestId']
-                        try:
-                            response_body = self.driver.execute_cdp_cmd('Network.getResponseBody', {
-                                'requestId': str(request_id)})
-                            try:
-                                body = response_body['body']
-                                if response_body['base64Encoded']:
-                                    print('decoding body')
-                                    # not yet tested
-                                    body = base64.b64decode(body)
-                                content = jsbeautifier.beautify(body)
-                                if content in self.unknown_scripts:
-                                    print("found script in unknownScripts")
-                                    tmp = self.extract_features(content)
-                                    self.javascripts[url] = {
-                                        'features': tmp,
-                                        'content': content,
-                                        'text': content,
-                                        'src': url
-                                    }
-                                    scripts.append(url)
-                                    self.unknown_scripts.remove(content)
-                                else:
-                                    print("script not found:")
-                                    # print(content[:200])
-                                    # print("---" * 20)
-                                    # self.print_known_scripts()
-                            except KeyError as k:
-                                print(k)
-                        except Exception as exception:
-                            print(str(exception))
+        log = log[bisect.bisect_left(
+            [entry['timestamp'] for entry in log], epoch_in_milliseconds):]
+        log = [json.loads(entry['message'])['message'] for entry in log]
+
+        def is_script_request(message):
             if message['method'] == 'Network.requestWillBeSent':
                 if message['params']['type'] == 'Script':
-                    try:
-                        # initiator
-                        initiator = message['params']['initiator']
-                        if initiator['type'] == 'script':
-                            initiator = initiator['stack']['callFrames'][0]['url']
-                        else:
-                            initiator = initiator['url']
-                        # request
-                        request_url = message['params']['request']['url']
-                        print("requesting", request_url, "from", initiator)
-                    except KeyError as exception:
-                        print(exception)
+                    return True
+            return False
 
-            #print(json.dumps(message, indent=2, sort_keys=True))
+        # def is_script_response(message):
+        #     if message['method'] == 'Network.responseReceived':
+        #         if 'javascript' in message['params']['response']['mimeType']:
+        #             return True
+        #     return False
+
+        def is_data_received(message):
+            if message['method'] == 'Network.dataReceived':
+                return True
+            return False
+
+        def get_request_info(message):
+            request_id = message['params']['requestId']
+            request_url = message['params']['request']['url']
+            initiator = message['params']['initiator']
+            if initiator['type'] == 'parser':
+                # from index.html as src, need to identify script number somehow...
+                # there are line numbers but are those usable?
+                initiator = initiator['url']
+            elif initiator['type'] == 'script':
+                # pick last thing in callFrames because first thing doesn't always have URL?
+                # need better understanding
+                # each script has its own ID... if only I could figure out how to use it
+                initiator = initiator['stack']['callFrames'][-1]['url']
+            return [request_id, request_url, initiator]
+
+        script_requests = []
+        # script_responses = []
+        data_received = []
+        for message in log:
+            if is_script_request(message):
+                script_requests.append(message)
+            # elif is_script_response(message):
+            #     script_responses.append(message['params']['requestId'])
+            elif is_data_received(message):
+                data_received.append(message['params']['requestId'])
+
+        for request in script_requests:
+            request_id, url, initiator = get_request_info(request)
+            if request_id in data_received:
+                content = self.get_response_body(request_id)
+                scripts.append(
+                    {'url': url, 'parent': initiator, 'content': content})
+
         return scripts
 
     def print_scripts(self):
-        """Print all stored scripts."""
-        self.print_known_scripts()
-        self.print_unknown_scripts()
-        self.print_blocked_scripts()
+        """Print script tree."""
+        print(RenderTree(self.script_tree).by_attr('id'))
         print("---" * 20)
-
-    def print_known_scripts(self):
-        """Print scripts with known sources."""
-        print("KNOWN SCRIPTS")
-        print("---" * 20)
-        for key, val in self.javascripts.items():
-            print(key)
-            print(val['content'][:200])
-            print("---" * 20)
-
-    def print_unknown_scripts(self):
-        """Print scripts with no known source."""
-        print("UNKNOWN SCRIPTS")
-        print("---" * 20)
-        for content in self.unknown_scripts:
-            print(content[:200])
-            print("***" * 20)
 
     def print_blocked_scripts(self):
         """Print blocked URLs."""
@@ -658,17 +614,19 @@ class MyFrame(wx.Frame):
 
         self.frame_sizer = wx.BoxSizer(wx.VERTICAL)
         self.panel = MyPanel(self)
-        self.frame_sizer.Add(panel, 1, wx.EXPAND)
+        self.frame_sizer.Add(self.panel, 1, wx.EXPAND)
         self.SetSizer(self.frame_sizer)
         self.Fit()
         self.Show()
 
     def on_exit(self, event):
         """Handle exit."""
+        # pylint: disable=unused-argument
         self.Close()
 
     def on_about(self, event):
         """Handle about."""
+        # pylint: disable=unused-argument
         msg = wx.MessageDialog(
             self,
             "This tool was built for JS analyses by the ComNets AD lab @ NYUAD. September 2019.",
@@ -679,6 +637,7 @@ class MyFrame(wx.Frame):
 
 def main():
     """Main function."""
+    logging.basicConfig(level=logging.DEBUG)
     app = wx.App(False)
     # width, height = wx.GetDisplaySize()
     frame = MyFrame()
@@ -693,6 +652,7 @@ def main():
     if os.path.isfile("before.html"):
         os.remove("before.html")
     frame.panel.driver.quit()
+
 
 if __name__ == "__main__":
     main()
