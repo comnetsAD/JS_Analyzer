@@ -9,9 +9,7 @@ About:
     on the overall functionality of a webpage.
 
 Todo:
-    * Make sure clicking "Analyze" again doesn't break the page
     * Trace nested scripts fully and show recursive calls through indentation of buttons
-        * How to figure out initiating script when initiated from parser?
         * Is it possible to enable a nested script without enabling the script that called it?
             * May need to pair with selenium page_source script
     * Update encoding based on req.headers['content-type'] (if specified) in brotli decompression
@@ -284,8 +282,8 @@ class MyPanel(wx.Panel):
             self.features_text.SetValue("Features listing")
             self.content_text.SetValue("Script code")
             while self.script_sizer.GetChildren():
+                self.script_sizer.Hide(0)
                 self.script_sizer.Remove(0)
-            self.frame.frame_sizer.Layout()
 
         def get_index_html():
             # Get index.html from proxy
@@ -313,7 +311,7 @@ class MyPanel(wx.Panel):
                 new_node = AnyNode(
                     id=script_name, parent=self.script_tree, content=text)
                 if ' src="' in text:  # BeautifulSoup turns all single quotes into double quotes
-                    src = text.split(' src="')[1].split('"')[0].split("?")[0]
+                    src = text.split(' src="')[1].split('"')[0]
                     src = self.format_src(src)
                     node = anytree.cachedsearch.find(
                         self.script_tree, lambda node: node.id == src)
