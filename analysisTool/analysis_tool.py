@@ -13,12 +13,11 @@ Todo:
         * Is it possible to enable a nested script without enabling the script that called it?
             * May need to pair with selenium page_source script
     * Update encoding based on req.headers['content-type'] (if specified) in brotli decompression
-    * Optimize for speed, especially upon initial page load
-        * Check out anytree.cachedsearch instead of anytree.search
-        * Any way to avoid making Network.getResponseBody requests?
-            * Look for script in proxy instead?
     * Build a script dependency tree (in collaboration with Jahnae)
     * Update the proxy to handle files with long URLs (in collaboration with Gabriel)
+    * How to deal with preloaded <link as="script"> tags?
+    * Figure out how best to display duplicate scripts
+    * What happens if two scripts together bring a new script? UNICEF example (script 0 and 7)
 
 """
 
@@ -102,7 +101,7 @@ class MyPanel(wx.Panel):
 
         # TextCtrl for user to input URL of site to analyze
         self.url_input = wx.TextCtrl(self, style=wx.TE_LEFT)
-        self.url_input.SetValue("https://www.unicef.org/")
+        self.url_input.SetValue("https://twitter.com/")
         self.url_input.Bind(wx.EVT_KEY_DOWN, self.on_key_press)
         self.main_sizer.Add(self.url_input, flag=wx.EXPAND |
                             wx.TOP | wx.LEFT | wx.RIGHT, border=25)
@@ -309,7 +308,7 @@ class MyPanel(wx.Panel):
                 end_index = html.find("</script>")
                 text = html[start_index:end_index + 9]
                 new_node = AnyNode(
-                    id=script_name, parent=self.script_tree, content=text)
+                    id=script_name, parent=self.script_tree, content=text, count=1)
                 if ' src="' in text:  # BeautifulSoup turns all single quotes into double quotes
                     src = text.split(' src="')[1].split('"')[0]
                     src = self.format_src(src)
@@ -373,7 +372,15 @@ class MyPanel(wx.Panel):
             # pylint: disable=cell-var-from-loop
             parent = anytree.cachedsearch.find(self.script_tree,
                                                lambda node: node.id == script['parent'])
-            AnyNode(id=script['url'], parent=parent, content=script['content'])
+            # check if this node already exists
+            node = anytree.cachedsearch.find(self.script_tree,
+                                             lambda node: node.id == script['url'])
+            if node:
+                logging.warning('duplicate script! %s', script['url'])
+                node.count += 1
+            else:
+                AnyNode(id=script['url'], parent=parent,
+                        content=script['content'], count=1)
         self.print_scripts()
 
         # Parse inline scripts
@@ -478,7 +485,8 @@ class MyPanel(wx.Panel):
             for descendant in node.descendants:
                 self.script_buttons[descendant.button].SetValue(False)
                 self.script_urls.append(descendant.id)
-            self.script_urls.append(node.id)
+            if node.depth > 1:
+                self.script_urls.append(node.id)
 
         self.suffix = "?JSTool="
         for btn in self.script_buttons:
@@ -576,7 +584,9 @@ class MyPanel(wx.Panel):
         for request in script_requests:
             request_id, url, initiator = get_request_info(request)
             if request_id in data_received:
-                content = self.get_response_body(request_id)
+                # no longer needed! :D
+                # content = self.get_response_body(request_id)
+                content = ""
                 scripts.append(
                     {'url': url, 'parent': initiator, 'content': content})
 
