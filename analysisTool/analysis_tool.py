@@ -153,7 +153,7 @@ class MyPanel(wx.Panel):
         self.script_buttons = []
         self.choice_boxes = []
         self.number_of_buttons = 0
-        self.script_urls = []
+        self.blocked_urls = []
 
         self.features_panel.Hide()
         self.content_panel.Hide()
@@ -194,13 +194,15 @@ class MyPanel(wx.Panel):
         else:
             event.Skip()
 
-    def add_button(self, script, index, depth):
+    def add_button(self, script, index, depth, copies):
         """Add script to self.script_buttons at index and update display."""
         hbox = wx.BoxSizer(wx.HORIZONTAL)
         hbox.AddSpacer(depth*25)
         # create button
         self.script_buttons.insert(index, wx.ToggleButton(
             self.scripts_panel, label=script.split("/")[-1][:8]))
+        if copies > 1:
+            self.script_buttons[index].SetBackgroundColour((0, 153, 0))
         self.script_buttons[index].Bind(
             wx.EVT_TOGGLEBUTTON, self.on_script_press)
         self.script_buttons[index].myname = script
@@ -251,12 +253,12 @@ class MyPanel(wx.Panel):
 
     def block_all_scripts(self):
         """Block scripts in self.script_tree."""
-        self.script_urls.clear()
+        self.blocked_urls.clear()
         for node in PreOrderIter(self.script_tree):
             if node.id[:6] != "script" and not node.is_root:
-                self.script_urls.append(node.id)
+                self.blocked_urls.append(node.id)
         self.driver.execute_cdp_cmd('Network.setBlockedURLs',
-                                    {'urls': self.script_urls})
+                                    {'urls': self.blocked_urls})
 
     def wait_for_load(self):
         """Wait for page source to stop changing."""
@@ -322,18 +324,20 @@ class MyPanel(wx.Panel):
         def create_buttons():
             # Add buttons to display
             index = 0
-            original_script = False
+            # original_script = False
             for node in PreOrderIter(self.script_tree):
-                if node.depth == 1:
-                    if node.id[:6] == "script":
-                        original_script = True
-                    else:
-                        original_script = False
-                if not original_script:
-                    # Skip to next node with depth 1
+                if node.is_root:
                     continue
+                # if node.depth == 1:
+                #     if node.id[:6] == "script":
+                #         original_script = True
+                #     else:
+                #         original_script = False
+                # if not original_script:
+                #     # Skip to next node with depth 1
+                #     continue
                 node.button = index
-                self.add_button(node.id, index, node.depth)
+                self.add_button(node.id, index, node.depth, node.count)
                 index += 1
             self.scripts_panel.SetSizer(self.script_sizer)
             self.frame.frame_sizer.Layout()
@@ -375,7 +379,7 @@ class MyPanel(wx.Panel):
             # check if this node already exists
             node = anytree.cachedsearch.find(self.script_tree,
                                              lambda node: node.id == script['url'])
-            if node:
+            if node and node.parent == parent:
                 logging.warning('duplicate script! %s', script['url'])
                 node.count += 1
             else:
@@ -475,18 +479,20 @@ class MyPanel(wx.Panel):
             while node.depth > 1:
                 self.script_buttons[node.button].SetValue(True)
                 try:
-                    self.script_urls.remove(node.id)
+                    self.blocked_urls.remove(node.id)
                 except ValueError:
-                    pass
+                    logging.debug("Could not remove %s", node.id)
                 node = node.parent
             self.script_buttons[node.button].SetValue(True)
+            if node.id[:6] != "script":
+                self.blocked_urls.remove(node.id)
         else:
             self.select_all_btn.SetValue(False)
             for descendant in node.descendants:
                 self.script_buttons[descendant.button].SetValue(False)
-                self.script_urls.append(descendant.id)
-            if node.depth > 1:
-                self.script_urls.append(node.id)
+                self.blocked_urls.append(descendant.id)
+            if node.id[:6] != "script":
+                self.blocked_urls.append(node.id)
 
         self.suffix = "?JSTool="
         for btn in self.script_buttons:
@@ -496,7 +502,7 @@ class MyPanel(wx.Panel):
             self.suffix += "none"
 
         self.driver.execute_cdp_cmd('Network.setBlockedURLs',
-                                    {'urls': self.script_urls})
+                                    {'urls': self.blocked_urls})
         self.print_blocked_scripts()
         self.driver.get(self.url + self.suffix)
 
@@ -600,7 +606,7 @@ class MyPanel(wx.Panel):
     def print_blocked_scripts(self):
         """Print blocked URLs."""
         print('BLOCKED SCRIPTS:')
-        for url in self.script_urls:
+        for url in self.blocked_urls:
             print("\t", url)
 
 
@@ -645,7 +651,7 @@ class MyFrame(wx.Frame):
 
 def main():
     """Main function."""
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     app = wx.App(False)
     # width, height = wx.GetDisplaySize()
     frame = MyFrame()
