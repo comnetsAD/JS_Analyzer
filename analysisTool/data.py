@@ -12,7 +12,7 @@ class RegexDict(dict):
         try:
             return self[query]
         except KeyError:
-            return [self[key] for key in self.keys() if re.match(key, query)]
+            return [self[key] for key in self.keys() if re.search(key, query)]
 
 
 def get_domains():
