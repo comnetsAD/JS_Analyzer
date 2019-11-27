@@ -18,6 +18,9 @@ Todo:
     * How to deal with preloaded <link as="script"> tags?
     * Figure out how best to display duplicate scripts
     * What happens if two scripts together bring a new script? UNICEF example (script 0 and 7)
+    * How to highlight differences? Compare event listeners?
+    * Libraries?
+    * Image optimization
 
 """
 
@@ -42,10 +45,10 @@ from bs4 import BeautifulSoup
 import jsbeautifier
 
 
-def get_attribute(node, attribute):
-    """Return the node.attribute or None if it doesn't exist."""
+def get_attribute(obj, attribute):
+    """Return the obj.attribute or None if it doesn't exist."""
     try:
-        return getattr(node, attribute)
+        return getattr(obj, attribute)
     except AttributeError:
         return None
 
@@ -101,7 +104,7 @@ class MyPanel(wx.Panel):
 
         # TextCtrl for user to input URL of site to analyze
         self.url_input = wx.TextCtrl(self, style=wx.TE_LEFT)
-        self.url_input.SetValue("https://twitter.com/")
+        self.url_input.SetValue("https://www.reddit.com/")
         self.url_input.Bind(wx.EVT_KEY_DOWN, self.on_key_press)
         self.main_sizer.Add(self.url_input, flag=wx.EXPAND |
                             wx.TOP | wx.LEFT | wx.RIGHT, border=25)
@@ -277,6 +280,7 @@ class MyPanel(wx.Panel):
             self.choice_boxes.clear()
             self.number_of_buttons = 0
             self.select_all_btn.SetValue(False)
+            self.diff_btn.Show()
             self.select_all_btn.Show()
             self.features_panel.Show()
             self.content_panel.Show()
@@ -405,11 +409,11 @@ class MyPanel(wx.Panel):
             return
 
         # for diff
-        # final_html = BeautifulSoup(self.driver.execute_script(
-            # "return document.getElementsByTagName('html')[0].innerHTML"), 'html.parser')
-        # file_stream = open("before.html", "w")
-        # file_stream.write(final_html.prettify())
-        # file_stream.close()
+        final_html = BeautifulSoup(self.driver.execute_script(
+            "return document.getElementsByTagName('html')[0].innerHTML"), 'html.parser')
+        file_stream = open("before.html", "w")
+        file_stream.write(final_html.prettify())
+        file_stream.close()
 
     def on_all_press(self, event):
         """Handle 'Select All' button press."""
@@ -509,7 +513,7 @@ class MyPanel(wx.Panel):
     def on_diff_press(self):
         """Print diff to terminal."""
 
-        final_html = BeautifulSoup(self.driver.execute_script(
+        after = BeautifulSoup(self.driver.execute_script(
             "return document.getElementsByTagName('html')[0].innerHTML"), 'html.parser')
         try:
             file_stream = open("after.html", "r")
@@ -518,12 +522,14 @@ class MyPanel(wx.Panel):
             file_stream = open("before.html", "w")
             file_stream.write(before)
             file_stream.close()
+            before = BeautifulSoup(before, 'html.parser')
         except IOError:
             pass
         file_stream = open("after.html", "w")
-        file_stream.write(final_html.prettify())
+        file_stream.write(after.prettify())
         file_stream.close()
-        os.system(r"diff before.html after.html | sed '/<!--script/,/<\/script>/d'")
+        os.system(r"git diff --no-index before.html after.html")
+        # os.system(r"diff before.html after.html | sed '/<!--script/,/<\/script>/d'")
 
     def on_choice(self, event):
         """Handle choiceBox selection."""
@@ -655,9 +661,9 @@ def main():
     app = wx.App(False)
     # width, height = wx.GetDisplaySize()
     frame = MyFrame()
-    frame.SetSize(800, 800)
-    frame.SetMaxSize(wx.Size(800, 800))
-    frame.SetMinSize(wx.Size(800, 800))
+    frame.SetSize(800, 825)
+    frame.SetMaxSize(wx.Size(800, 825))
+    frame.SetMinSize(wx.Size(800, 825))
     frame.SetPosition((25, 25))
 
     app.MainLoop()
