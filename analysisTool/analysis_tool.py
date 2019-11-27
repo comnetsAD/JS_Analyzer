@@ -43,6 +43,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.common.exceptions import InvalidArgumentException
 from bs4 import BeautifulSoup
 import jsbeautifier
+from data import DOMAINS, CATEGORIES
 
 
 def get_attribute(obj, attribute):
@@ -119,19 +120,16 @@ class MyPanel(wx.Panel):
         self.main_sizer.Add(analyze_btn, flag=wx.ALL | wx.CENTER, border=25)
 
         hbox = wx.BoxSizer(wx.HORIZONTAL)
-        self.scripts_panel = ScrolledPanel(
-            self, -1, size=(375, 550))
+        self.scripts_panel = ScrolledPanel(self, size=(375, 550))
         self.scripts_panel.SetupScrolling()
         hbox.Add(self.scripts_panel)
 
         vbox = wx.BoxSizer(wx.VERTICAL)
-        self.features_panel = ScrolledPanel(
-            self, -1, size=(375, 275))
+        self.features_panel = ScrolledPanel(self, size=(375, 275))
         self.features_panel.SetupScrolling()
         vbox.Add(self.features_panel, flag=wx.CENTER, border=5)
 
-        self.content_panel = ScrolledPanel(
-            self, -1, size=(375, 275))
+        self.content_panel = ScrolledPanel(self, size=(375, 275))
         self.content_panel.SetupScrolling()
         vbox.Add(self.content_panel, flag=wx.CENTER, border=5)
         hbox.Add(vbox)
@@ -201,7 +199,7 @@ class MyPanel(wx.Panel):
         """Add script to self.script_buttons at index and update display."""
         hbox = wx.BoxSizer(wx.HORIZONTAL)
         hbox.AddSpacer(depth*25)
-        # create button
+        # Create button
         self.script_buttons.insert(index, wx.ToggleButton(
             self.scripts_panel, label=script.split("/")[-1][:8]))
         if copies > 1:
@@ -212,15 +210,29 @@ class MyPanel(wx.Panel):
         hbox.Add(self.script_buttons[index], flag=wx.ALL, border=5)
         self.number_of_buttons += 1
 
-        # create combobox
-        choice_box = wx.ComboBox(self.scripts_panel, value="", style=wx.CB_READONLY, choices=(
-            "", "critical", "non-critical", "translatable"))
-        choice_box.Bind(wx.EVT_COMBOBOX, self.on_choice)
-        choice_box.index = len(self.choice_boxes)
-        self.choice_boxes.insert(index, choice_box)
+        # # Create combobox
+        # choice_box = wx.ComboBox(self.scripts_panel, value="", style=wx.CB_READONLY, choices=(
+        #     "", "critical", "non-critical", "translatable"))
+        # choice_box.Bind(wx.EVT_COMBOBOX, self.on_choice)
+        # choice_box.index = len(self.choice_boxes)
+        # self.choice_boxes.insert(index, choice_box)
 
-        hbox.Add(choice_box, flag=wx.ALL, border=5)
-        self.number_of_buttons += 1
+        # hbox.Add(choice_box, flag=wx.ALL, border=5)
+        # self.number_of_buttons += 1
+
+        # Add labels
+        matches = DOMAINS.get(script)
+        if matches:
+            for domain in matches:
+                category = domain['categories'][0]
+                name = domain['name']
+                label = wx.StaticText(self.scripts_panel,
+                                      label=category, style=wx.BORDER_RAISED)
+                label.SetBackgroundColour(tuple(CATEGORIES[category]['color']))
+                tool_tip = "Domain name: " + name + "\n" + \
+                    CATEGORIES[category]['description']
+                label.SetToolTip(tool_tip)
+                hbox.Add(label, flag=wx.ALL, border=5)
 
         self.script_sizer.Insert(index, hbox)
         self.frame.frame_sizer.Layout()
@@ -328,18 +340,9 @@ class MyPanel(wx.Panel):
         def create_buttons():
             # Add buttons to display
             index = 0
-            # original_script = False
             for node in PreOrderIter(self.script_tree):
                 if node.is_root:
                     continue
-                # if node.depth == 1:
-                #     if node.id[:6] == "script":
-                #         original_script = True
-                #     else:
-                #         original_script = False
-                # if not original_script:
-                #     # Skip to next node with depth 1
-                #     continue
                 node.button = index
                 self.add_button(node.id, index, node.depth, node.count)
                 index += 1
@@ -380,7 +383,7 @@ class MyPanel(wx.Panel):
             # pylint: disable=cell-var-from-loop
             parent = anytree.cachedsearch.find(self.script_tree,
                                                lambda node: node.id == script['parent'])
-            # check if this node already exists
+            # Check if this node already exists
             node = anytree.cachedsearch.find(self.script_tree,
                                              lambda node: node.id == script['url'])
             if node and node.parent == parent:
@@ -408,7 +411,7 @@ class MyPanel(wx.Panel):
             self.err_msg.SetLabel(str(exception))
             return
 
-        # for diff
+        # Used for diff
         final_html = BeautifulSoup(self.driver.execute_script(
             "return document.getElementsByTagName('html')[0].innerHTML"), 'html.parser')
         file_stream = open("before.html", "w")
@@ -596,7 +599,6 @@ class MyPanel(wx.Panel):
         for request in script_requests:
             request_id, url, initiator = get_request_info(request)
             if request_id in data_received:
-                # no longer needed! :D
                 # content = self.get_response_body(request_id)
                 content = ""
                 scripts.append(
@@ -657,14 +659,14 @@ class MyFrame(wx.Frame):
 
 def main():
     """Main function."""
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
     app = wx.App(False)
     # width, height = wx.GetDisplaySize()
     frame = MyFrame()
     frame.SetSize(800, 825)
-    frame.SetMaxSize(wx.Size(800, 825))
-    frame.SetMinSize(wx.Size(800, 825))
-    frame.SetPosition((25, 25))
+    # frame.SetMaxSize(wx.Size(800, 825))
+    # frame.SetMinSize(wx.Size(800, 825))
+    # frame.SetPosition((25, 25))
 
     app.MainLoop()
     if os.path.isfile("after.html"):

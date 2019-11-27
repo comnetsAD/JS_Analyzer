@@ -1,0 +1,69 @@
+{
+  "ad": {
+    "color": [245, 61, 61],
+    "title": "Advertising",
+    "description": "These scripts are part of advertising networks, either serving or measuring."
+  },
+  "analytics": {
+    "color": [245, 153, 61],
+    "title": "Analytics",
+    "description":
+      "These scripts measure or track users and their actions. There's a wide range in impact here depending on what's being tracked."
+  },
+  "social": {
+    "color": [245, 245, 61],
+    "title": "Social",
+    "description": "These scripts enable social features."
+  },
+  "video": {
+    "color": [61, 245, 153],
+    "title": "Video",
+    "description": "These scripts enable video player and streaming functionality."
+  },
+  "utility": {
+    "color": [61, 245, 61],
+    "title": "Developer Utilities",
+    "description":
+      "These scripts are developer utilities (API clients, site monitoring, fraud detection, etc)."
+  },
+  "hosting": {
+    "color": [61, 245, 245],
+    "title": "Hosting Platforms",
+    "description":
+      "These scripts are from web hosting platforms (WordPress, Wix, Squarespace, etc). Note that in this category, this can sometimes be the entirety of script on the page, and so the \"impact\" rank might be misleading. In the case of WordPress, this just indicates the libraries hosted and served _by_ WordPress not all sites using self-hosted WordPress."
+  },
+  "marketing": {
+    "color": [61, 122, 245],
+    "title": "Marketing",
+    "description": "These scripts are from marketing tools that add popups/newsletters/etc."
+  },
+  "customer-success": {
+    "color": [153, 61, 245],
+    "title": "Customer Success",
+    "description":
+      "These scripts are from customer support/marketing providers that offer chat and contact solutions. These scripts are generally heavier in weight."
+  },
+  "content": {
+    "color": [145, 77, 8],
+    "title": "Content & Publishing",
+    "description":
+      "These scripts are from content providers or publishing-specific affiliate tracking."
+  },
+  "cdn": {
+    "color": [145, 8, 145],
+    "title": "CDNs",
+    "description":
+      "These are a mixture of publicly hosted open source libraries (e.g. jQuery) served over different public CDNs and private CDN usage. This category is unique in that the origin may have no responsibility for the performance of what's being served. Note that rank here does not imply one CDN is better than the other. It simply indicates that the scripts being served from that origin are lighter/heavier than the ones served by another."
+  },
+  "tag-manager": {
+    "color": [145, 8, 42],
+    "title": "Tag Management",
+    "description": "These scripts tend to load lots of other scripts and initiate many tasks."
+  },
+  "other": {
+    "color": [245, 61, 153],
+    "title": "Mixed / Other",
+    "description":
+      "These are miscellaneous scripts delivered via a shared origin with no precise category or attribution. Help us out by identifying more origins!"
+  }
+}
