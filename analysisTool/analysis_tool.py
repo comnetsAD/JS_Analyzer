@@ -9,11 +9,6 @@ About:
     on the overall functionality of a webpage.
 
 Todo:
-    * Trace nested scripts fully and show recursive calls through indentation of buttons
-        * Is it possible to enable a nested script without enabling the script that called it?
-            * May need to pair with selenium page_source script
-    * Update encoding based on req.headers['content-type'] (if specified) in brotli decompression
-    * Build a script dependency tree (in collaboration with Jahnae)
     * Update the proxy to handle files with long URLs (in collaboration with Gabriel)
     * How to deal with preloaded <link as="script"> tags?
     * Figure out how best to display duplicate scripts
@@ -21,6 +16,8 @@ Todo:
     * How to highlight differences? Compare event listeners?
     * Libraries?
     * Image optimization
+    * Save copy of site locally using proxy to allow for direct comparison of performance
+    * Generate report showing changes
 
 """
 
@@ -135,10 +132,10 @@ class MyPanel(wx.Panel):
         hbox.Add(vbox)
         self.main_sizer.Add(hbox, flag=wx.CENTER | wx.BOTTOM, border=25)
 
-        self.select_all_btn = wx.ToggleButton(self, label='Select All')
-        self.select_all_btn.Bind(wx.EVT_TOGGLEBUTTON, self.on_all_press)
-        self.select_all_btn.Hide()
-        self.main_sizer.Add(self.select_all_btn,
+        self.apply_btn = wx.Button(self, label='Apply Selection')
+        self.apply_btn.Bind(wx.EVT_BUTTON, self.on_button_press)
+        self.apply_btn.Hide()
+        self.main_sizer.Add(self.apply_btn,
                             flag=wx.BOTTOM | wx.CENTER, border=25)
 
         self.diff_btn = wx.Button(self, label='Get diff')
@@ -186,6 +183,8 @@ class MyPanel(wx.Panel):
             self.analyze()
         elif btn == self.diff_btn:
             self.on_diff_press()
+        elif btn == self.apply_btn:
+            self.on_apply_press()
 
     def on_key_press(self, event):
         """Handle keyboard input."""
@@ -200,17 +199,16 @@ class MyPanel(wx.Panel):
         hbox = wx.BoxSizer(wx.HORIZONTAL)
         hbox.AddSpacer(depth*25)
         # Create button
-        self.script_buttons.insert(index, wx.ToggleButton(
-            self.scripts_panel, label=script.split("/")[-1][:8]))
-        if copies > 1:
-            self.script_buttons[index].SetBackgroundColour((0, 153, 0))
-        self.script_buttons[index].Bind(
-            wx.EVT_TOGGLEBUTTON, self.on_script_press)
+        # if copies > 1: do something to differentiate it
+        self.script_buttons.insert(index, wx.CheckBox(
+            self.scripts_panel, label=script.split("/")[-1][:9]))
         self.script_buttons[index].myname = script
+        self.script_buttons[index].Bind(
+            wx.EVT_CHECKBOX, self.on_script_press)
         hbox.Add(self.script_buttons[index], flag=wx.ALL, border=5)
         self.number_of_buttons += 1
 
-        # # Create combobox
+        # Create combobox
         # choice_box = wx.ComboBox(self.scripts_panel, value="", style=wx.CB_READONLY, choices=(
         #     "", "critical", "non-critical", "translatable"))
         # choice_box.Bind(wx.EVT_COMBOBOX, self.on_choice)
@@ -267,13 +265,11 @@ class MyPanel(wx.Panel):
         return body
 
     def block_all_scripts(self):
-        """Block scripts in self.script_tree."""
+        """Adds all scripts in self.script_tree to self.blocked_urls."""
         self.blocked_urls.clear()
         for node in PreOrderIter(self.script_tree):
             if node.id[:6] != "script" and not node.is_root:
                 self.blocked_urls.append(node.id)
-        self.driver.execute_cdp_cmd('Network.setBlockedURLs',
-                                    {'urls': self.blocked_urls})
 
     def wait_for_load(self):
         """Wait for page source to stop changing."""
@@ -291,9 +287,8 @@ class MyPanel(wx.Panel):
             self.script_buttons.clear()
             self.choice_boxes.clear()
             self.number_of_buttons = 0
-            self.select_all_btn.SetValue(False)
             self.diff_btn.Show()
-            self.select_all_btn.Show()
+            self.apply_btn.Show()
             self.features_panel.Show()
             self.content_panel.Show()
             self.features_text.SetValue("Features listing")
@@ -318,7 +313,7 @@ class MyPanel(wx.Panel):
 
         def parse_html(html):
             # Add index.html scripts to self.script_tree
-            cnt = 0
+            cnt = 1
             while "<script" in html:
                 src = ""
                 script_name = "script" + str(cnt)
@@ -338,8 +333,12 @@ class MyPanel(wx.Panel):
                 cnt += 1
 
         def create_buttons():
-            # Add buttons to display
-            index = 0
+            # Add checkboxes to display
+            # Check all
+            self.add_button('Check all', 0, 1, 1)
+
+            index = 1
+            # All other script checkboxes
             for node in PreOrderIter(self.script_tree):
                 if node.is_root:
                     continue
@@ -404,6 +403,8 @@ class MyPanel(wx.Panel):
 
         # Get page with all scripts removed
         self.block_all_scripts()
+        self.driver.execute_cdp_cmd('Network.setBlockedURLs',
+                                    {'urls': self.blocked_urls})
         try:
             self.driver.get(self.url + self.suffix)
             self.err_msg.SetLabel("")
@@ -418,25 +419,31 @@ class MyPanel(wx.Panel):
         file_stream.write(final_html.prettify())
         file_stream.close()
 
-    def on_all_press(self, event):
-        """Handle 'Select All' button press."""
-        toggle = event.GetEventObject().GetValue()
-
+    def on_check_all(self, toggle):
+        """Handle 'Select All' checkbox toggle."""
         self.suffix = "?JSTool="
-
+        for btn in self.script_buttons:
+            btn.SetValue(toggle)
+            if toggle and btn.myname[:6] == "script":
+                self.suffix += "_" + btn.myname[6:]
+        
         if toggle:
             # Toggle all script buttons
-            for i, btn in enumerate(self.script_buttons):
-                btn.SetValue(True)
-                self.suffix += "_" + str(i)
-            self.driver.execute_cdp_cmd('Network.setBlockedURLs', {'urls': []})
+            self.blocked_urls.clear()
         else:
             # Untoggle all script buttons
-            for btn in self.script_buttons:
-                btn.SetValue(False)
             self.block_all_scripts()
             self.suffix += "none"
 
+    def on_apply_press(self):
+        """Send request for page with changes"""
+        self.driver.execute_cdp_cmd('Network.setBlockedURLs', {'urls': self.blocked_urls})
+        self.suffix = "?JSTool="
+        for btn in self.script_buttons:
+            if btn.GetValue() and btn.myname[:6] == "script":
+                self.suffix += "_" + btn.myname[6:]
+        if self.suffix == "?JSTool=":
+            self.suffix += "none"
         self.driver.get(self.url + self.suffix)
 
     def on_script_press(self, event):
@@ -471,6 +478,9 @@ class MyPanel(wx.Panel):
 
         name = event.GetEventObject().myname
         toggle = event.GetEventObject().GetValue()
+        if name == 'Check all':
+            self.on_check_all(toggle)
+            return
         node = anytree.cachedsearch.find(
             self.script_tree, lambda node: node.id == name)
 
@@ -494,24 +504,11 @@ class MyPanel(wx.Panel):
             if node.id[:6] != "script":
                 self.blocked_urls.remove(node.id)
         else:
-            self.select_all_btn.SetValue(False)
             for descendant in node.descendants:
                 self.script_buttons[descendant.button].SetValue(False)
                 self.blocked_urls.append(descendant.id)
             if node.id[:6] != "script":
                 self.blocked_urls.append(node.id)
-
-        self.suffix = "?JSTool="
-        for btn in self.script_buttons:
-            if btn.GetValue() and btn.myname[:6] == "script":
-                self.suffix += "_" + btn.myname[6:]
-        if self.suffix == "?JSTool=":
-            self.suffix += "none"
-
-        self.driver.execute_cdp_cmd('Network.setBlockedURLs',
-                                    {'urls': self.blocked_urls})
-        self.print_blocked_scripts()
-        self.driver.get(self.url + self.suffix)
 
     def on_diff_press(self):
         """Print diff to terminal."""
