@@ -125,10 +125,6 @@ class MyPanel(wx.Panel):
         hbox.Add(self.scripts_panel)
 
         vbox = wx.BoxSizer(wx.VERTICAL)
-        self.features_panel = ScrolledPanel(self, size=(375, 275))
-        self.features_panel.SetupScrolling()
-        vbox.Add(self.features_panel, flag=wx.CENTER, border=5)
-
         self.content_panel = ScrolledPanel(self, size=(375, 275))
         self.content_panel.SetupScrolling()
         vbox.Add(self.content_panel, flag=wx.CENTER, border=5)
@@ -156,17 +152,7 @@ class MyPanel(wx.Panel):
         self.number_of_buttons = 0
         self.blocked_urls = []
 
-        self.features_panel.Hide()
         self.content_panel.Hide()
-
-        self.features_text = ExpandoTextCtrl(
-            self.features_panel, size=(375, 275), style=wx.TE_READONLY)
-        self.features_text.SetValue("Features listing")
-        self.Bind(EVT_ETC_LAYOUT_NEEDED, None, self.features_text)
-
-        self.features_sizer = wx.BoxSizer(wx.VERTICAL)
-        self.features_sizer.Add(self.features_text, flag=wx.CENTER)
-        self.features_panel.SetSizer(self.features_sizer)
 
         self.content_text = ExpandoTextCtrl(
             self.content_panel, size=(375, 275), style=wx.TE_READONLY)
@@ -294,9 +280,7 @@ class MyPanel(wx.Panel):
             self.number_of_buttons = 0
             self.diff_btn.Show()
             self.apply_btn.Show()
-            self.features_panel.Show()
             self.content_panel.Show()
-            self.features_text.SetValue("Features listing")
             self.content_text.SetValue("Script code")
             while self.script_sizer.GetChildren():
                 self.script_sizer.Hide(0)
@@ -527,7 +511,6 @@ class MyPanel(wx.Panel):
         if not get_attribute(node, 'features'):
             node.features = extract_features(node.content)
 
-        # self.features_text.SetValue(node.features)
         self.content_text.SetValue(name + "\n\n" + node.content)
 
         if toggle:
