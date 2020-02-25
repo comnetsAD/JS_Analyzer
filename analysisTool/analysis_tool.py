@@ -184,7 +184,7 @@ class MyPanel(wx.Panel):
         else:
             event.Skip()
 
-    def add_button(self, script, index, depth, copies):
+    def add_button(self, script, index, depth): # copies
         """Add script to self.script_buttons at index and update display."""
         hbox = wx.BoxSizer(wx.HORIZONTAL)
         hbox.AddSpacer(depth*25)
@@ -237,7 +237,7 @@ class MyPanel(wx.Panel):
                 src = self.url + src
         return src
 
-    def get_response_body(self, request_id, type):
+    def get_response_body(self, request_id, content_type):
         """Return body of response with request_id."""
         response_body = self.driver.execute_cdp_cmd(
             'Network.getResponseBody',
@@ -251,7 +251,7 @@ class MyPanel(wx.Panel):
                 body = base64.b64decode(body)
         except KeyError as error:
             logging.exception(str(error))
-        if type == 'script':
+        if content_type == 'script':
             body = jsbeautifier.beautify(body)
         return body
 
@@ -327,7 +327,7 @@ class MyPanel(wx.Panel):
         def create_buttons():
             # Add checkboxes to display
             # Check all
-            self.add_button('Check all', 0, 1, 1)
+            self.add_button('Check all', 0, 1)
 
             index = 1
             # All other script checkboxes
@@ -335,7 +335,7 @@ class MyPanel(wx.Panel):
                 if node.is_root:
                     continue
                 node.button = index
-                self.add_button(node.id, index, node.depth, node.count)
+                self.add_button(node.id, index, node.depth) # node.count
                 index += 1
             self.scripts_panel.SetSizer(self.script_sizer)
             self.frame.frame_sizer.Layout()
@@ -384,7 +384,7 @@ class MyPanel(wx.Panel):
                 AnyNode(id=script['url'], parent=parent,
                         content=script['content'], count=1)
         # self.print_scripts()
-        
+
         # Get image sizes
         for request_id, url in images:
             body = self.get_response_body(request_id, 'image')
@@ -396,7 +396,6 @@ class MyPanel(wx.Panel):
                 self.images[url]['oh'] = height
             except UnknownImageFormat as error:
                 logging.exception(str(error))
-                pass
 
         for img in self.driver.find_elements_by_tag_name('img'):
             url = img.get_attribute('src')
@@ -404,7 +403,7 @@ class MyPanel(wx.Panel):
                 self.images[url] = {}
             self.images[url]['rw'] = img.size['width']
             self.images[url]['rh'] = img.size['height']
-        
+
         print("potential improvements:")
         for url, dimensions in self.images.items():
             if len(dimensions.keys()) == 4:
@@ -446,7 +445,7 @@ class MyPanel(wx.Panel):
             btn.SetValue(toggle)
             if toggle and btn.myname[:6] == "script":
                 self.suffix += "_" + btn.myname[6:]
-        
+
         if toggle:
             # Toggle all script buttons
             self.blocked_urls.clear()

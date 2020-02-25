@@ -63,6 +63,7 @@ def parse_log(driver, timestamp):
             data_received.append(message['params']['requestId'])
     return [r for r in requests if r['id'] in data_received]
 
+
 def main():
     """Main function."""
     logging.basicConfig(level=logging.DEBUG)
@@ -116,6 +117,7 @@ def main():
             else:
                 print(node.url[:100])
     driver.close()
+
 
 if __name__ == "__main__":
     main()
