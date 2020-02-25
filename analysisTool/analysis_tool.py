@@ -23,6 +23,7 @@ Todo:
 
 import logging
 import os
+from io import BytesIO, DEFAULT_BUFFER_SIZE
 import time
 from collections import OrderedDict
 import json
@@ -40,6 +41,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.common.exceptions import InvalidArgumentException
 from bs4 import BeautifulSoup
 import jsbeautifier
+from get_image_size import get_image_size_from_bytesio, UnknownImageFormat
 from data import DOMAINS, CATEGORIES
 
 
@@ -51,7 +53,8 @@ def get_attribute(obj, attribute):
         return None
 
 
-PROXY_IP = "10.224.41.171"
+# PROXY_IP = "10.224.41.171"
+PROXY_IP = "127.0.0.1"
 PROXY_PORT = 8080
 
 # proxy variables
@@ -102,7 +105,7 @@ class MyPanel(wx.Panel):
 
         # TextCtrl for user to input URL of site to analyze
         self.url_input = wx.TextCtrl(self, style=wx.TE_LEFT)
-        self.url_input.SetValue("https://www.reddit.com/")
+        self.url_input.SetValue("http://yasirzaki.net/")
         self.url_input.Bind(wx.EVT_KEY_DOWN, self.on_key_press)
         self.main_sizer.Add(self.url_input, flag=wx.EXPAND |
                             wx.TOP | wx.LEFT | wx.RIGHT, border=25)
@@ -175,6 +178,7 @@ class MyPanel(wx.Panel):
         self.content_panel.SetSizer(self.content_sizer)
 
         self.script_tree = AnyNode(id='root')
+        self.images = {}
 
     def on_button_press(self, event):
         """Handle wx.Button press."""
@@ -247,7 +251,7 @@ class MyPanel(wx.Panel):
                 src = self.url + src
         return src
 
-    def get_response_body(self, request_id):
+    def get_response_body(self, request_id, type):
         """Return body of response with request_id."""
         response_body = self.driver.execute_cdp_cmd(
             'Network.getResponseBody',
@@ -261,7 +265,8 @@ class MyPanel(wx.Panel):
                 body = base64.b64decode(body)
         except KeyError as error:
             logging.exception(str(error))
-        body = jsbeautifier.beautify(body)
+        if type == 'script':
+            body = jsbeautifier.beautify(body)
         return body
 
     def block_all_scripts(self):
@@ -296,6 +301,7 @@ class MyPanel(wx.Panel):
             while self.script_sizer.GetChildren():
                 self.script_sizer.Hide(0)
                 self.script_sizer.Remove(0)
+            self.images.clear()
 
         def get_index_html():
             # Get index.html from proxy
@@ -309,6 +315,8 @@ class MyPanel(wx.Panel):
                     html = BeautifulSoup(req.text, 'html.parser').prettify()
             except KeyError:
                 html = BeautifulSoup(req.text, 'html.parser').prettify()
+            except brotli.error as error:
+                logging.error(str(error))
             return html
 
         def parse_html(html):
@@ -376,7 +384,7 @@ class MyPanel(wx.Panel):
             self.err_msg.SetLabel(str(exception))
             return
         self.wait_for_load()
-        scripts = self.parse_log(epoch_in_milliseconds)
+        scripts, images = self.parse_log(epoch_in_milliseconds)
         for script in scripts:
             # pylint: disable=undefined-loop-variable
             # pylint: disable=cell-var-from-loop
@@ -391,12 +399,40 @@ class MyPanel(wx.Panel):
             else:
                 AnyNode(id=script['url'], parent=parent,
                         content=script['content'], count=1)
-        self.print_scripts()
+        # self.print_scripts()
+        
+        # Get image sizes
+        for request_id, url in images:
+            body = self.get_response_body(request_id, 'image')
+            stream = BytesIO(body)
+            try:
+                width, height = get_image_size_from_bytesio(stream, DEFAULT_BUFFER_SIZE)
+                self.images[url] = {}
+                self.images[url]['ow'] = width
+                self.images[url]['oh'] = height
+            except UnknownImageFormat as error:
+                logging.exception(str(error))
+                pass
+
+        for img in self.driver.find_elements_by_tag_name('img'):
+            url = img.get_attribute('src')
+            if url not in self.images.keys():
+                self.images[url] = {}
+            self.images[url]['rw'] = img.size['width']
+            self.images[url]['rh'] = img.size['height']
+        
+        print("potential improvements:")
+        for url, dimensions in self.images.items():
+            if len(dimensions.keys()) == 4:
+                # Successfully parsed original and rendered dimensions
+                print(url)
+                for key, val in dimensions.items():
+                    print(key, ":", val)
 
         # Parse inline scripts
         html = get_index_html()
         parse_html(html)
-        self.print_scripts()
+        # self.print_scripts()
 
         # Create buttons
         create_buttons()
@@ -436,7 +472,7 @@ class MyPanel(wx.Panel):
             self.suffix += "none"
 
     def on_apply_press(self):
-        """Send request for page with changes"""
+        """Send request for page with changes."""
         self.driver.execute_cdp_cmd('Network.setBlockedURLs', {'urls': self.blocked_urls})
         self.suffix = "?JSTool="
         for btn in self.script_buttons:
@@ -460,6 +496,8 @@ class MyPanel(wx.Panel):
             except KeyError:
                 # no encoding
                 pass
+            except brotli.error as error:
+                logging.error(str(error))
             content_text = jsbeautifier.beautify(content_text)
             return content_text
 
@@ -489,8 +527,8 @@ class MyPanel(wx.Panel):
         if not get_attribute(node, 'features'):
             node.features = extract_features(node.content)
 
-        self.features_text.SetValue(name + "\n\n" + node.features)
-        self.content_text.SetValue(node.content)
+        # self.features_text.SetValue(node.features)
+        self.content_text.SetValue(name + "\n\n" + node.content)
 
         if toggle:
             while node.depth > 1:
@@ -545,6 +583,7 @@ class MyPanel(wx.Panel):
     def parse_log(self, epoch_in_milliseconds):
         """Return list of scripts requested since epoch_in_milliseconds."""
         scripts = []
+        images = []
         log = self.driver.get_log('performance')
         log = log[bisect.bisect_left(
             [entry['timestamp'] for entry in log], epoch_in_milliseconds):]
@@ -553,6 +592,12 @@ class MyPanel(wx.Panel):
         def is_script_request(message):
             if message['method'] == 'Network.requestWillBeSent':
                 if message['params']['type'] == 'Script':
+                    return True
+            return False
+
+        def is_image_request(message):
+            if message['method'] == 'Network.requestWillBeSent':
+                if message['params']['type'] == 'Image':
                     return True
             return False
 
@@ -579,29 +624,38 @@ class MyPanel(wx.Panel):
                 # pick last thing in callFrames because first thing doesn't always have URL?
                 # need better understanding
                 # each script has its own ID... if only I could figure out how to use it
-                initiator = initiator['stack']['callFrames'][-1]['url']
+                if initiator['stack']['callFrames']:
+                    initiator = initiator['stack']['callFrames'][-1]['url']
             return [request_id, request_url, initiator]
 
         script_requests = []
         # script_responses = []
+        image_requests = []
         data_received = []
         for message in log:
             if is_script_request(message):
                 script_requests.append(message)
             # elif is_script_response(message):
             #     script_responses.append(message['params']['requestId'])
+            elif is_image_request(message):
+                image_requests.append(message)
             elif is_data_received(message):
                 data_received.append(message['params']['requestId'])
 
         for request in script_requests:
             request_id, url, initiator = get_request_info(request)
             if request_id in data_received:
-                # content = self.get_response_body(request_id)
+                # content = self.get_response_body(request_id, 'script')
                 content = ""
                 scripts.append(
                     {'url': url, 'parent': initiator, 'content': content})
 
-        return scripts
+        for request in image_requests:
+            request_id, url, initiator = get_request_info(request)
+            if request_id in data_received:
+                images.append((request_id, url))
+
+        return (scripts, images)
 
     def print_scripts(self):
         """Print script tree."""
