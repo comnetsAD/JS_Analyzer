@@ -25,10 +25,10 @@ import logging
 import os
 from io import BytesIO, DEFAULT_BUFFER_SIZE
 import time
-from collections import OrderedDict
 import json
 import base64
 import bisect
+import struct
 from anytree import AnyNode, RenderTree, PreOrderIter
 import anytree.cachedsearch
 import requests
@@ -38,11 +38,12 @@ from wx.lib.scrolledpanel import ScrolledPanel
 from wx.lib.expando import ExpandoTextCtrl, EVT_ETC_LAYOUT_NEEDED
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from selenium.common.exceptions import InvalidArgumentException
+from selenium.common.exceptions import InvalidArgumentException, WebDriverException
 from bs4 import BeautifulSoup
 import jsbeautifier
 from get_image_size import get_image_size_from_bytesio, UnknownImageFormat
 from data import DOMAINS, CATEGORIES
+from jaccard_sim import similarity_comparison
 
 
 def get_attribute(obj, attribute):
@@ -52,6 +53,26 @@ def get_attribute(obj, attribute):
     except AttributeError:
         return None
 
+def get_resource(url):
+    """Request resource from proxy and return response."""
+    req = requests.get(url, proxies=PROXYDICT, verify=False)
+    if 'html' in req.headers['content-type']:
+        html = ""
+        try:
+            if req.headers['content-encoding'] == 'br':
+                html = BeautifulSoup(brotli.decompress(req.content).decode(
+                    ENCODING), 'html.parser').prettify()
+            else:
+                html = BeautifulSoup(req.text, 'html.parser').prettify()
+        except KeyError:
+            html = BeautifulSoup(req.text, 'html.parser').prettify()
+        except brotli.error as error:
+            logging.error(str(error))
+        return html
+    if 'script' in req.headers['content-type']:
+        return req.text
+    elif 'image' in req.headers['content-type']:
+        return req.content
 
 # PROXY_IP = "10.224.41.171"
 PROXY_IP = "127.0.0.1"
@@ -63,19 +84,58 @@ HTTPS_PROXY = "https://" + PROXY_IP + ":" + str(PROXY_PORT)
 PROXYDICT = {"http": HTTP_PROXY, "https": HTTPS_PROXY}
 PROXY = PROXY_IP + ":" + str(PROXY_PORT)
 
-# feature store (60 features)
-FEATURES = [".lookupPrefix", ".prefix", ".childNodes", ".open", ".isEqualNode", ".documentURI",
-            ".lastChild", ".nodeName", ".title", ".implementation", ".normalizeDocument", ".forms",
-            ".input", ".anchors", ".createCDATASection", ".URL", ".getElementsByTagName",
-            ".createEntityReference", ".domConfig", ".createElement", ".xmlStandalone",
-            ".referrer", ".textContent", ".doctype", ".namespaceURI", ".strictErrorChecking",
-            ".xmlEncoding", ".appendChild", ".domain", ".createAttribute", ".links", ".adoptNode",
-            ".Type", ".nextSibling", ".firstChild", ".images", ".close", ".xmlVersion", ".event",
-            ".form", ".createComment", ".removeChild", ".nodeValue", ".localName",
-            ".ownerDocument", ".previousSibling", ".body", ".isDefaultNamespace", ".nodeType",
-            ".track", ".isSameNode", ".cookie", ".createDocumentFragment", ".getElementsByName",
-            ".baseURI", ".lookupNamespaceURI", ".parentNode", ".getElementById", ".attributes",
-                        ".createTextNode"]
+# feature store (50 features)
+FEATURES = ['replace',
+            'createElement',
+            'javaEnabled',
+            'get',
+            'getElementById',
+            'appendChild',
+            'toString',
+            'takeRecords',
+            'getElementsByTagName',
+            'addEventListener',
+            'getAttribute',
+            'append|replace',
+            'open',
+            'forEach',
+            'preventDefault',
+            'keys',
+            'setAttribute',
+            'setTimeout',
+            'querySelector',
+            'insertBefore',
+            'add',
+            'appendChild|createElement|open|setAttribute|write',
+            'addEventListener|postMessage',
+            'closest',
+            'focus',
+            'write',
+            'min',
+            'removeAttribute',
+            'error',
+            'animate',
+            'removeChild',
+            'postMessage',
+            'remove',
+            'contains',
+            'addEventListener|createElement|querySelectorAll|replace',
+            'sendBeacon',
+            'max',
+            'replaceState',
+            'defaultValue',
+            'attachEvent|createElement|getElementById|open',
+            'removeEventListener',
+            'search',
+            'filter',
+            'appendChild|querySelector',
+            'createTextNode',
+            'values',
+            'add|appendChild|remove',
+            # pylint: disable=line-too-long
+            'appendChild|createElement|getElementById|getElementsByTagName|open|removeChild|setAttribute',
+            'start',
+            'appendChild|getAttribute|removeEventListener|replace']
 
 ENCODING = "utf-8"
 
@@ -117,7 +177,7 @@ class MyPanel(wx.Panel):
 
         analyze_btn = wx.Button(self, label='Analyze page')
         analyze_btn.Bind(wx.EVT_BUTTON, self.on_button_press)
-        self.main_sizer.Add(analyze_btn, flag=wx.ALL | wx.CENTER, border=25)
+        self.main_sizer.Add(analyze_btn, flag=wx.ALL | wx.CENTER, border=5)
 
         hbox = wx.BoxSizer(wx.HORIZONTAL)
         self.scripts_panel = ScrolledPanel(self, size=(375, 550))
@@ -125,23 +185,32 @@ class MyPanel(wx.Panel):
         hbox.Add(self.scripts_panel)
 
         vbox = wx.BoxSizer(wx.VERTICAL)
-        self.content_panel = ScrolledPanel(self, size=(375, 275))
+        self.content_panel = ScrolledPanel(self, size=(375, 550))
         self.content_panel.SetupScrolling()
         vbox.Add(self.content_panel, flag=wx.CENTER, border=5)
         hbox.Add(vbox)
         self.main_sizer.Add(hbox, flag=wx.CENTER | wx.BOTTOM, border=25)
 
+        hbox = wx.BoxSizer(wx.HORIZONTAL)
         self.apply_btn = wx.Button(self, label='Apply Selection')
         self.apply_btn.Bind(wx.EVT_BUTTON, self.on_button_press)
+        self.apply_btn.SetToolTip('Preview changes in the browser window.')
         self.apply_btn.Hide()
-        self.main_sizer.Add(self.apply_btn,
-                            flag=wx.BOTTOM | wx.CENTER, border=25)
+        hbox.Add(self.apply_btn, border=5)
+
+        self.save_btn = wx.Button(self, label='Save Changes')
+        self.save_btn.Bind(wx.EVT_BUTTON, self.on_button_press)
+        self.save_btn.SetToolTip('Push changes to the remote proxy.')
+        self.save_btn.Hide()
+        hbox.Add(self.save_btn, border=5)
 
         self.diff_btn = wx.Button(self, label='Get diff')
         self.diff_btn.Bind(wx.EVT_BUTTON, self.on_button_press)
+        self.diff_btn.SetToolTip(
+            'Print diff before and after changes to terminal window.')
         self.diff_btn.Hide()
-        self.main_sizer.Add(self.diff_btn, flag=wx.BOTTOM |
-                            wx.CENTER, border=25)
+        hbox.Add(self.diff_btn, border=5)
+        self.main_sizer.Add(hbox, flag=wx.BOTTOM | wx.CENTER, border=25)
 
         self.SetSizer(self.main_sizer)
         self.url = self.url_input.GetValue()
@@ -175,6 +244,8 @@ class MyPanel(wx.Panel):
             self.on_diff_press()
         elif btn == self.apply_btn:
             self.on_apply_press()
+        elif btn == self.save_btn:
+            self.on_save()
 
     def on_key_press(self, event):
         """Handle keyboard input."""
@@ -184,7 +255,7 @@ class MyPanel(wx.Panel):
         else:
             event.Skip()
 
-    def add_button(self, script, index, depth): # copies
+    def add_button(self, script, index, depth):  # copies
         """Add script to self.script_buttons at index and update display."""
         hbox = wx.BoxSizer(wx.HORIZONTAL)
         hbox.AddSpacer(depth*25)
@@ -195,6 +266,7 @@ class MyPanel(wx.Panel):
         self.script_buttons[index].myname = script
         self.script_buttons[index].Bind(
             wx.EVT_CHECKBOX, self.on_script_press)
+        self.script_buttons[index].SetToolTip(script)
         hbox.Add(self.script_buttons[index], flag=wx.ALL, border=5)
         self.number_of_buttons += 1
 
@@ -239,10 +311,14 @@ class MyPanel(wx.Panel):
 
     def get_response_body(self, request_id, content_type):
         """Return body of response with request_id."""
-        response_body = self.driver.execute_cdp_cmd(
-            'Network.getResponseBody',
-            {'requestId': str(request_id)}
-        )
+        try:
+            response_body = self.driver.execute_cdp_cmd(
+                'Network.getResponseBody',
+                {'requestId': str(request_id)}
+            )
+        except WebDriverException as error:
+            logging.error(str(error))
+            return
         body = response_body['body']
         try:
             if response_body['base64Encoded']:
@@ -278,7 +354,7 @@ class MyPanel(wx.Panel):
             self.script_buttons.clear()
             self.choice_boxes.clear()
             self.number_of_buttons = 0
-            self.diff_btn.Show()
+            # self.diff_btn.Show()
             self.apply_btn.Show()
             self.content_panel.Show()
             self.content_text.SetValue("Script code")
@@ -289,19 +365,7 @@ class MyPanel(wx.Panel):
 
         def get_index_html():
             # Get index.html from proxy
-            req = requests.get(self.url, proxies=PROXYDICT, verify=False)
-            html = ""
-            try:
-                if req.headers['content-encoding'] == 'br':
-                    html = BeautifulSoup(brotli.decompress(req.content).decode(
-                        ENCODING), 'html.parser').prettify()
-                else:
-                    html = BeautifulSoup(req.text, 'html.parser').prettify()
-            except KeyError:
-                html = BeautifulSoup(req.text, 'html.parser').prettify()
-            except brotli.error as error:
-                logging.error(str(error))
-            return html
+            return get_resource(self.url)
 
         def parse_html(html):
             # Add index.html scripts to self.script_tree
@@ -335,7 +399,7 @@ class MyPanel(wx.Panel):
                 if node.is_root:
                     continue
                 node.button = index
-                self.add_button(node.id, index, node.depth) # node.count
+                self.add_button(node.id, index, node.depth)  # node.count
                 index += 1
             self.scripts_panel.SetSizer(self.script_sizer)
             self.frame.frame_sizer.Layout()
@@ -346,6 +410,59 @@ class MyPanel(wx.Panel):
             self.err_msg.SetLabel("Loading page... please wait")
             self.err_msg.SetForegroundColour((255, 0, 0))
             self.Update()
+
+        def similarity(similarity_threshold):
+            # Print script pairs in self.script_tree with Jaccard similarity > similarity_threshold
+            names = []
+            scripts = []
+            for node in PreOrderIter(self.script_tree):
+                if node.is_root:
+                    continue
+                names.append(node.id)
+                scripts.append(node.content)
+            results = similarity_comparison(scripts, similarity_threshold)
+            logging.info("---" * 20)
+            logging.info('scripts with similarity > %d', similarity_threshold)
+            for tup in results:
+                logging.info(names[tup[0]], names[tup[1]], tup[2])
+
+        def compare_image_sizes(images):
+            # Print difference in original and rendered image sizes for image URLs in images
+            for url in images:
+                body = get_resource(url)
+                try:
+                    stream = BytesIO(body)
+                except TypeError:
+                    logging.warning("body in %s, not in bytes", type(body))
+                    stream = BytesIO(body.encode(ENCODING))
+                try:
+                    width, height = get_image_size_from_bytesio(
+                        stream, DEFAULT_BUFFER_SIZE)
+                    self.images[url] = {}
+                    self.images[url]['ow'] = width
+                    self.images[url]['oh'] = height
+                except UnknownImageFormat as error:
+                    logging.exception(str(error))
+                except struct.error as error:
+                    logging.error(str(error))
+
+            for img in self.driver.find_elements_by_tag_name('img'):
+                url = img.get_attribute('src')
+                if url not in self.images.keys():
+                    self.images[url] = {}
+                self.images[url]['rw'] = img.size['width']
+                self.images[url]['rh'] = img.size['height']
+
+            logging.info("---" * 20)
+            logging.info("potential improvements:")
+            for url, dimensions in self.images.items():
+                if len(dimensions.keys()) == 4:
+                    # Successfully parsed original and rendered dimensions
+                    logging.info(url)
+                    logging.info("original: %d x %d",
+                                 dimensions['ow'], dimensions['oh'])
+                    logging.info("rendered: %d x %d",
+                                 dimensions['rw'], dimensions['rh'])
 
         display_loading_message()
 
@@ -385,37 +502,16 @@ class MyPanel(wx.Panel):
                         content=script['content'], count=1)
         # self.print_scripts()
 
-        # Get image sizes
-        for request_id, url in images:
-            body = self.get_response_body(request_id, 'image')
-            stream = BytesIO(body)
-            try:
-                width, height = get_image_size_from_bytesio(stream, DEFAULT_BUFFER_SIZE)
-                self.images[url] = {}
-                self.images[url]['ow'] = width
-                self.images[url]['oh'] = height
-            except UnknownImageFormat as error:
-                logging.exception(str(error))
-
-        for img in self.driver.find_elements_by_tag_name('img'):
-            url = img.get_attribute('src')
-            if url not in self.images.keys():
-                self.images[url] = {}
-            self.images[url]['rw'] = img.size['width']
-            self.images[url]['rh'] = img.size['height']
-
-        print("potential improvements:")
-        for url, dimensions in self.images.items():
-            if len(dimensions.keys()) == 4:
-                # Successfully parsed original and rendered dimensions
-                print(url)
-                for key, val in dimensions.items():
-                    print(key, ":", val)
+        # Check image differences
+        compare_image_sizes(images)
 
         # Parse inline scripts
         html = get_index_html()
         parse_html(html)
-        # self.print_scripts()
+        self.print_scripts()
+
+        # Check similarity
+        similarity(0.8)
 
         # Create buttons
         create_buttons()
@@ -485,17 +581,29 @@ class MyPanel(wx.Panel):
             return content_text
 
         def extract_features(content_text):
-            """Count features in content_text and return a string."""
+            """Return vectorization of features in content_text."""
             tmp = {}
             for feature in FEATURES:
-                if feature in content_text:
-                    tmp[feature] = content_text.count(feature)
-            tmp_sorted = OrderedDict(
-                sorted(tmp.items(), key=lambda x: x[1], reverse=True))
-            tmp = ""
-            for key, value in tmp_sorted.items():
-                tmp += "{0}: {1}\n".format(key, value)
-            return tmp
+                if '|' not in feature:
+                    tmp[feature] = content_text.count("."+feature+"(") + content_text.count("."+feature+" (")
+            for feature in FEATURES:
+                if '|' in feature:
+                    feats = feature.split('|')
+                    res = 1
+                    for feat in feats:
+                        try:
+                            if tmp[feat] == 0:
+                                res = 0
+                                break
+                        except KeyError:
+                            if content_text.count("."+feat+"(") + content_text.count("."+feat+" (") == 0:
+                                res = 0
+                                break
+                    tmp[feature] = res
+            vector = []
+            for feature in FEATURES:
+                vector.append(tmp[feature])
+            return vector
 
         name = event.GetEventObject().myname
         toggle = event.GetEventObject().GetValue()
@@ -511,6 +619,7 @@ class MyPanel(wx.Panel):
             node.features = extract_features(node.content)
 
         self.content_text.SetValue(name + "\n\n" + node.content)
+        logging.debug(node.features)
 
         if toggle:
             while node.depth > 1:
@@ -550,6 +659,9 @@ class MyPanel(wx.Panel):
         file_stream.close()
         os.system(r"git diff --no-index before.html after.html")
         # os.system(r"diff before.html after.html | sed '/<!--script/,/<\/script>/d'")
+
+    def on_save(self):
+        """Send report using Apache CGI Web Call."""
 
     def on_choice(self, event):
         """Handle choiceBox selection."""
@@ -635,7 +747,7 @@ class MyPanel(wx.Panel):
         for request in image_requests:
             request_id, url, initiator = get_request_info(request)
             if request_id in data_received:
-                images.append((request_id, url))
+                images.append(url)
 
         return (scripts, images)
 
@@ -692,7 +804,7 @@ class MyFrame(wx.Frame):
 
 def main():
     """Main function."""
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.DEBUG)  # logging.INFO
     app = wx.App(False)
     # width, height = wx.GetDisplaySize()
     frame = MyFrame()
