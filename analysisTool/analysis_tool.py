@@ -29,6 +29,8 @@ import json
 import base64
 import bisect
 import struct
+import pickle
+import pandas
 from anytree import AnyNode, RenderTree, PreOrderIter
 import anytree.cachedsearch
 import requests
@@ -42,37 +44,8 @@ from selenium.common.exceptions import InvalidArgumentException, WebDriverExcept
 from bs4 import BeautifulSoup
 import jsbeautifier
 from get_image_size import get_image_size_from_bytesio, UnknownImageFormat
-from data import DOMAINS, CATEGORIES
+from data import CATEGORIES
 from jaccard_sim import similarity_comparison
-
-
-def get_attribute(obj, attribute):
-    """Return the obj.attribute or None if it doesn't exist."""
-    try:
-        return getattr(obj, attribute)
-    except AttributeError:
-        return None
-
-def get_resource(url):
-    """Request resource from proxy and return response."""
-    req = requests.get(url, proxies=PROXYDICT, verify=False)
-    if 'html' in req.headers['content-type']:
-        html = ""
-        try:
-            if req.headers['content-encoding'] == 'br':
-                html = BeautifulSoup(brotli.decompress(req.content).decode(
-                    ENCODING), 'html.parser').prettify()
-            else:
-                html = BeautifulSoup(req.text, 'html.parser').prettify()
-        except KeyError:
-            html = BeautifulSoup(req.text, 'html.parser').prettify()
-        except brotli.error as error:
-            logging.error(str(error))
-        return html
-    if 'script' in req.headers['content-type']:
-        return req.text
-    elif 'image' in req.headers['content-type']:
-        return req.content
 
 # PROXY_IP = "10.224.41.171"
 PROXY_IP = "127.0.0.1"
@@ -83,7 +56,7 @@ HTTP_PROXY = "http://" + PROXY_IP + ":" + str(PROXY_PORT)
 HTTPS_PROXY = "https://" + PROXY_IP + ":" + str(PROXY_PORT)
 PROXYDICT = {"http": HTTP_PROXY, "https": HTTPS_PROXY}
 PROXY = PROXY_IP + ":" + str(PROXY_PORT)
-
+ENCODING = "utf-8"
 # feature store (50 features)
 FEATURES = ['replace',
             'createElement',
@@ -137,7 +110,64 @@ FEATURES = ['replace',
             'start',
             'appendChild|getAttribute|removeEventListener|replace']
 
-ENCODING = "utf-8"
+PATH = os.getcwd()
+ML_MODEL = pickle.load(
+    open(PATH + '/random_forest_clf_50_features.sav', 'rb'), encoding='latin-1')
+
+
+def get_attribute(obj, attribute):
+    """Return the obj.attribute or None if it doesn't exist."""
+    try:
+        return getattr(obj, attribute)
+    except AttributeError:
+        return None
+
+
+def get_resource(url):
+    """Request resource from proxy and return response."""
+    req = requests.get(url, proxies=PROXYDICT, verify=False)
+    if 'html' in req.headers['content-type']:
+        html = ""
+        try:
+            if req.headers['content-encoding'] == 'br':
+                html = BeautifulSoup(brotli.decompress(req.content).decode(
+                    ENCODING), 'html.parser').prettify()
+            else:
+                html = BeautifulSoup(req.text, 'html.parser').prettify()
+        except KeyError:
+            html = BeautifulSoup(req.text, 'html.parser').prettify()
+        except brotli.error as error:
+            logging.error(str(error))
+        return html
+    if 'script' in req.headers['content-type']:
+        return req.text
+    elif 'image' in req.headers['content-type']:
+        return req.content
+
+
+def extract_features(content_text):
+    """Return vectorization of features in content_text."""
+    tmp = {}
+    for feature in FEATURES:
+        if '|' not in feature:
+            tmp[feature] = (content_text.count("."+feature+"(") +
+                            content_text.count("."+feature+" ("))
+    for feature in FEATURES:
+        if '|' in feature:
+            feats = feature.split('|')
+            res = 1
+            for feat in feats:
+                try:
+                    if tmp[feat] == 0:
+                        res = 0
+                        break
+                except KeyError:
+                    if ("."+feat+"(") not in content_text and ("."+feat+" (") not in content_text:
+                        res = 0
+                        break
+            tmp[feature] = res
+    vector = pandas.Series(tmp)
+    return vector
 
 
 class MyPanel(wx.Panel):
@@ -184,11 +214,9 @@ class MyPanel(wx.Panel):
         self.scripts_panel.SetupScrolling()
         hbox.Add(self.scripts_panel)
 
-        vbox = wx.BoxSizer(wx.VERTICAL)
         self.content_panel = ScrolledPanel(self, size=(375, 550))
         self.content_panel.SetupScrolling()
-        vbox.Add(self.content_panel, flag=wx.CENTER, border=5)
-        hbox.Add(vbox)
+        hbox.Add(self.content_panel, flag=wx.CENTER, border=5)
         self.main_sizer.Add(hbox, flag=wx.CENTER | wx.BOTTOM, border=25)
 
         hbox = wx.BoxSizer(wx.HORIZONTAL)
@@ -255,7 +283,7 @@ class MyPanel(wx.Panel):
         else:
             event.Skip()
 
-    def add_button(self, script, index, depth):  # copies
+    def add_button(self, script, index, depth, vector):  # copies
         """Add script to self.script_buttons at index and update display."""
         hbox = wx.BoxSizer(wx.HORIZONTAL)
         hbox.AddSpacer(depth*25)
@@ -281,18 +309,14 @@ class MyPanel(wx.Panel):
         # self.number_of_buttons += 1
 
         # Add labels
-        matches = DOMAINS.get(script)
-        if matches:
-            for domain in matches:
-                category = domain['categories'][0]
-                name = domain['name']
-                label = wx.StaticText(self.scripts_panel,
-                                      label=category, style=wx.BORDER_RAISED)
-                label.SetBackgroundColour(tuple(CATEGORIES[category]['color']))
-                tool_tip = "Domain name: " + name + "\n" + \
-                    CATEGORIES[category]['description']
-                label.SetToolTip(tool_tip)
-                hbox.Add(label, flag=wx.ALL, border=5)
+        if vector is not None:
+            category = ML_MODEL.predict([vector]).item(0)
+            label = wx.StaticText(self.scripts_panel,
+                                  label=category, style=wx.BORDER_RAISED)
+            label.SetBackgroundColour(tuple(CATEGORIES[category]['color']))
+            tool_tip = CATEGORIES[category]['description']
+            label.SetToolTip(tool_tip)
+            hbox.Add(label, flag=wx.ALL, border=5)
 
         self.script_sizer.Insert(index, hbox)
         self.frame.frame_sizer.Layout()
@@ -356,6 +380,7 @@ class MyPanel(wx.Panel):
             self.number_of_buttons = 0
             # self.diff_btn.Show()
             self.apply_btn.Show()
+            # self.save_btn.Show()
             self.content_panel.Show()
             self.content_text.SetValue("Script code")
             while self.script_sizer.GetChildren():
@@ -391,7 +416,7 @@ class MyPanel(wx.Panel):
         def create_buttons():
             # Add checkboxes to display
             # Check all
-            self.add_button('Check all', 0, 1)
+            self.add_button('Check all', 0, 1, None)
 
             index = 1
             # All other script checkboxes
@@ -399,7 +424,9 @@ class MyPanel(wx.Panel):
                 if node.is_root:
                     continue
                 node.button = index
-                self.add_button(node.id, index, node.depth)  # node.count
+                vector = extract_features(node.content)
+                self.add_button(node.id, index, node.depth,
+                                vector)  # node.count
                 index += 1
             self.scripts_panel.SetSizer(self.script_sizer)
             self.frame.frame_sizer.Layout()
@@ -422,7 +449,7 @@ class MyPanel(wx.Panel):
                 scripts.append(node.content)
             results = similarity_comparison(scripts, similarity_threshold)
             logging.info("---" * 20)
-            logging.info('scripts with similarity > %d', similarity_threshold)
+            logging.info('scripts with similarity > %f', similarity_threshold)
             for tup in results:
                 logging.info(names[tup[0]], names[tup[1]], tup[2])
 
@@ -454,7 +481,7 @@ class MyPanel(wx.Panel):
                 self.images[url]['rh'] = img.size['height']
 
             logging.info("---" * 20)
-            logging.info("potential improvements:")
+            logging.info("potential image improvements:")
             for url, dimensions in self.images.items():
                 if len(dimensions.keys()) == 4:
                     # Successfully parsed original and rendered dimensions
@@ -552,7 +579,8 @@ class MyPanel(wx.Panel):
 
     def on_apply_press(self):
         """Send request for page with changes."""
-        self.driver.execute_cdp_cmd('Network.setBlockedURLs', {'urls': self.blocked_urls})
+        self.driver.execute_cdp_cmd('Network.setBlockedURLs', {
+            'urls': self.blocked_urls})
         self.suffix = "?JSTool="
         for btn in self.script_buttons:
             if btn.GetValue() and btn.myname[:6] == "script":
@@ -580,31 +608,6 @@ class MyPanel(wx.Panel):
             content_text = jsbeautifier.beautify(content_text)
             return content_text
 
-        def extract_features(content_text):
-            """Return vectorization of features in content_text."""
-            tmp = {}
-            for feature in FEATURES:
-                if '|' not in feature:
-                    tmp[feature] = content_text.count("."+feature+"(") + content_text.count("."+feature+" (")
-            for feature in FEATURES:
-                if '|' in feature:
-                    feats = feature.split('|')
-                    res = 1
-                    for feat in feats:
-                        try:
-                            if tmp[feat] == 0:
-                                res = 0
-                                break
-                        except KeyError:
-                            if content_text.count("."+feat+"(") + content_text.count("."+feat+" (") == 0:
-                                res = 0
-                                break
-                    tmp[feature] = res
-            vector = []
-            for feature in FEATURES:
-                vector.append(tmp[feature])
-            return vector
-
         name = event.GetEventObject().myname
         toggle = event.GetEventObject().GetValue()
         if name == 'Check all':
@@ -615,11 +618,8 @@ class MyPanel(wx.Panel):
 
         if not get_attribute(node, 'content'):
             node.content = get_content_from_src(node.id)
-        if not get_attribute(node, 'features'):
-            node.features = extract_features(node.content)
 
         self.content_text.SetValue(name + "\n\n" + node.content)
-        logging.debug(node.features)
 
         if toggle:
             while node.depth > 1:
