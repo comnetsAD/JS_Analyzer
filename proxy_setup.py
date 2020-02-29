@@ -30,8 +30,7 @@ class LocalCache:
         cursor.execute("USE js_analyzer;")
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS `resource_location` ("
-            "   `id` INT AUTO_INCREMENT PRIMARY KEY,"
-            "   `hashed_url` CHAR(64) NOT NULL,"
+            "   `hashed_url` CHAR(64) NOT NULL PRIMARY KEY,"
             "   `full_url` VARCHAR(2000) NOT NULL,"
             "   `file_name` CHAR(32) NOT NULL,"
             "   `datetime` DATETIME NOT NULL"

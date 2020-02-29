@@ -30,7 +30,9 @@ import base64
 import bisect
 import struct
 import pickle
+from collections import OrderedDict
 import pandas
+import numpy as np
 from anytree import AnyNode, RenderTree, PreOrderIter
 import anytree.cachedsearch
 import requests
@@ -40,12 +42,16 @@ from wx.lib.scrolledpanel import ScrolledPanel
 from wx.lib.expando import ExpandoTextCtrl, EVT_ETC_LAYOUT_NEEDED
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from selenium.common.exceptions import InvalidArgumentException, WebDriverException
+from selenium.common.exceptions import InvalidArgumentException
 from bs4 import BeautifulSoup
 import jsbeautifier
 from get_image_size import get_image_size_from_bytesio, UnknownImageFormat
 from data import CATEGORIES
 from jaccard_sim import similarity_comparison
+
+logging.getLogger('chardet.charsetprober').setLevel(logging.INFO)
+logging.getLogger(
+    'selenium.webdriver.remote.remote_connection').setLevel(logging.INFO)
 
 # PROXY_IP = "10.224.41.171"
 PROXY_IP = "127.0.0.1"
@@ -126,29 +132,35 @@ def get_attribute(obj, attribute):
 def get_resource(url):
     """Request resource from proxy and return response."""
     req = requests.get(url, proxies=PROXYDICT, verify=False)
-    if 'html' in req.headers['content-type']:
-        html = ""
-        try:
-            if req.headers['content-encoding'] == 'br':
-                html = BeautifulSoup(brotli.decompress(req.content).decode(
-                    ENCODING), 'html.parser').prettify()
-            else:
+    try:
+        if 'html' in req.headers['content-type']:
+            html = ""
+            try:
+                if req.headers['content-encoding'] == 'br':
+                    html = BeautifulSoup(brotli.decompress(req.content).decode(
+                        ENCODING), 'html.parser').prettify()
+                else:
+                    html = BeautifulSoup(req.text, 'html.parser').prettify()
+            except KeyError:
                 html = BeautifulSoup(req.text, 'html.parser').prettify()
-        except KeyError:
-            html = BeautifulSoup(req.text, 'html.parser').prettify()
-        except brotli.error as error:
-            logging.error(str(error))
-        return html
-    if 'script' in req.headers['content-type']:
-        return req.text
-    elif 'image' in req.headers['content-type']:
-        return req.content
+            except brotli.error as error:
+                logging.error(str(error))
+            return html
+        if 'script' in req.headers['content-type']:
+            return jsbeautifier.beautify(req.text)
+        if 'image' in req.headers['content-type']:
+            return req.content
+    except KeyError:
+        return None
 
 
 def extract_features(content_text):
     """Return vectorization of features in content_text."""
-    tmp = {}
+    if not content_text:
+        return None
+    tmp = OrderedDict()
     for feature in FEATURES:
+        tmp[feature] = None
         if '|' not in feature:
             tmp[feature] = (content_text.count("."+feature+"(") +
                             content_text.count("."+feature+" ("))
@@ -311,8 +323,12 @@ class MyPanel(wx.Panel):
         # Add labels
         if vector is not None:
             category = ML_MODEL.predict([vector]).item(0)
+            confidence = np.amax(ML_MODEL.predict_proba([vector]))
+            self.script_buttons[index].category = category
+            self.script_buttons[index].confidence = confidence
+            text = str(category) + ": " + str(int(confidence*100)) + "%"
             label = wx.StaticText(self.scripts_panel,
-                                  label=category, style=wx.BORDER_RAISED)
+                                  label=text, style=wx.BORDER_RAISED)
             label.SetBackgroundColour(tuple(CATEGORIES[category]['color']))
             tool_tip = CATEGORIES[category]['description']
             label.SetToolTip(tool_tip)
@@ -332,28 +348,6 @@ class MyPanel(wx.Panel):
             else:
                 src = self.url + src
         return src
-
-    def get_response_body(self, request_id, content_type):
-        """Return body of response with request_id."""
-        try:
-            response_body = self.driver.execute_cdp_cmd(
-                'Network.getResponseBody',
-                {'requestId': str(request_id)}
-            )
-        except WebDriverException as error:
-            logging.error(str(error))
-            return
-        body = response_body['body']
-        try:
-            if response_body['base64Encoded']:
-                logging.info('decoding body')
-                # not yet tested
-                body = base64.b64decode(body)
-        except KeyError as error:
-            logging.exception(str(error))
-        if content_type == 'script':
-            body = jsbeautifier.beautify(body)
-        return body
 
     def block_all_scripts(self):
         """Adds all scripts in self.script_tree to self.blocked_urls."""
@@ -427,6 +421,12 @@ class MyPanel(wx.Panel):
                 vector = extract_features(node.content)
                 self.add_button(node.id, index, node.depth,
                                 vector)  # node.count
+                checkbox = self.script_buttons[index]
+                if (get_attribute(checkbox, 'category') and get_attribute(checkbox, 'confidence')
+                        and not (checkbox.category in ['ads', 'marketing', 'customer-success']
+                                 and checkbox.confidence > 0.5)):  # toggle this level as desired
+                    # ads / marketing scripts disabled by default
+                    self.script_buttons[index].SetValue(True)
                 index += 1
             self.scripts_panel.SetSizer(self.script_sizer)
             self.frame.frame_sizer.Layout()
@@ -446,17 +446,25 @@ class MyPanel(wx.Panel):
                 if node.is_root:
                     continue
                 names.append(node.id)
-                scripts.append(node.content)
+                scripts.append(str(node.content))
             results = similarity_comparison(scripts, similarity_threshold)
-            logging.info("---" * 20)
-            logging.info('scripts with similarity > %f', similarity_threshold)
+            if results:
+                print("---" * 20)
+                print('scripts with similarity > %.2f' % similarity_threshold)
             for tup in results:
-                logging.info(names[tup[0]], names[tup[1]], tup[2])
+                print('%s %s %.2f' % (names[tup[0]], names[tup[1]], tup[2]))
 
         def compare_image_sizes(images):
             # Print difference in original and rendered image sizes for image URLs in images
             for url in images:
-                body = get_resource(url)
+                if url[:4] == 'data':
+                    # URI rather than URL
+                    url = url.partition(';')[-1]
+                    body = url.partition(',')[-1]
+                    if url[:6] == 'base64':
+                        body = base64.b64decode(body)
+                else:
+                    body = get_resource(url)
                 try:
                     stream = BytesIO(body)
                 except TypeError:
@@ -544,15 +552,7 @@ class MyPanel(wx.Panel):
         create_buttons()
 
         # Get page with all scripts removed
-        self.block_all_scripts()
-        self.driver.execute_cdp_cmd('Network.setBlockedURLs',
-                                    {'urls': self.blocked_urls})
-        try:
-            self.driver.get(self.url + self.suffix)
-            self.err_msg.SetLabel("")
-        except InvalidArgumentException as exception:
-            self.err_msg.SetLabel(str(exception))
-            return
+        self.on_apply_press()
 
         # Used for diff
         final_html = BeautifulSoup(self.driver.execute_script(
@@ -591,22 +591,6 @@ class MyPanel(wx.Panel):
 
     def on_script_press(self, event):
         """Handle script button press."""
-        def get_content_from_src(src):
-            """Get content from src as a string."""
-            logging.debug("getting %s", src)
-            req = requests.get(src, proxies=PROXYDICT, verify=False)
-            content_text = req.text
-            try:
-                if req.headers['content-encoding'] == 'br':
-                    content_text = brotli.decompress(
-                        req.content).decode(ENCODING)
-            except KeyError:
-                # no encoding
-                pass
-            except brotli.error as error:
-                logging.error(str(error))
-            content_text = jsbeautifier.beautify(content_text)
-            return content_text
 
         name = event.GetEventObject().myname
         toggle = event.GetEventObject().GetValue()
@@ -617,9 +601,9 @@ class MyPanel(wx.Panel):
             self.script_tree, lambda node: node.id == name)
 
         if not get_attribute(node, 'content'):
-            node.content = get_content_from_src(node.id)
+            node.content = get_resource(node.id)
 
-        self.content_text.SetValue(name + "\n\n" + node.content)
+        self.content_text.SetValue(name + "\n\n" + str(node.content))
 
         if toggle:
             while node.depth > 1:
@@ -627,7 +611,8 @@ class MyPanel(wx.Panel):
                 try:
                     self.blocked_urls.remove(node.id)
                 except ValueError:
-                    logging.debug("Could not remove %s", node.id)
+                    logging.debug(
+                        "Could not remove %s from blocked urls", node.id)
                 node = node.parent
             self.script_buttons[node.button].SetValue(True)
             if node.id[:6] != "script":
@@ -739,8 +724,7 @@ class MyPanel(wx.Panel):
         for request in script_requests:
             request_id, url, initiator = get_request_info(request)
             if request_id in data_received:
-                # content = self.get_response_body(request_id, 'script')
-                content = ""
+                content = get_resource(url)
                 scripts.append(
                     {'url': url, 'parent': initiator, 'content': content})
 

@@ -43,7 +43,10 @@ def similarity_comparison(scripts, threshold):
     pairs = all_pairs(shingles, similarity_func_name="jaccard",
                       similarity_threshold=threshold)
 
-    list_pairs = list(pairs)
+    try:
+        list_pairs = list(pairs)
+    except ValueError:
+        return []
 
     # for n in list_pairs:
     #     print(names[n[0]], names[n[1]], n[2])

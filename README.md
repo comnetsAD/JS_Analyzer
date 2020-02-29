@@ -39,6 +39,14 @@ $ mysql.server start
 ```
 Change config.py to use your login credentials
 
+## Download ML Classification Model
+
+The model exceeds Github's maximum file size limit, so it can be found here.
+
+https://drive.google.com/file/d/1Pta5pE9vQIAhUFwJEGqXZQmuys_2KMEW/view?usp=sharing
+
+Make sure to save it in this repository folder.
+
 ## Start JS Analyzer
 Enter the following command:
 ```
