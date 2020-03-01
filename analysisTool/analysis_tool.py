@@ -48,6 +48,7 @@ import jsbeautifier
 from get_image_size import get_image_size_from_bytesio, UnknownImageFormat
 from data import CATEGORIES
 from jaccard_sim import similarity_comparison
+from clustering.clustering import clustering
 
 logging.getLogger('chardet.charsetprober').setLevel(logging.INFO)
 logging.getLogger(
@@ -119,6 +120,9 @@ FEATURES = ['replace',
 PATH = os.getcwd()
 ML_MODEL = pickle.load(
     open(PATH + '/random_forest_clf_50_features.sav', 'rb'), encoding='latin-1')
+
+SIMILARITY_THRESHOLD = 0.8
+CONFIDENCE_THRESHOLD = 0.5
 
 
 def get_attribute(obj, attribute):
@@ -332,6 +336,7 @@ class MyPanel(wx.Panel):
             label.SetBackgroundColour(tuple(CATEGORIES[category]['color']))
             tool_tip = CATEGORIES[category]['description']
             label.SetToolTip(tool_tip)
+            self.script_buttons[index].label = label
             hbox.Add(label, flag=wx.ALL, border=5)
 
         self.script_sizer.Insert(index, hbox)
@@ -389,6 +394,8 @@ class MyPanel(wx.Panel):
         def parse_html(html):
             # Add index.html scripts to self.script_tree
             cnt = 1
+            if not html:
+                return
             while "<script" in html:
                 src = ""
                 script_name = "script" + str(cnt)
@@ -411,6 +418,11 @@ class MyPanel(wx.Panel):
             # Add checkboxes to display
             # Check all
             self.add_button('Check all', 0, 1, None)
+            cluster = clustering(
+                PATH + "/analysisTool/clustering/tf_model.sav",
+                PATH + "/analysisTool/clustering/cl_model.sav",
+                PATH + "/analysisTool/clustering/FinalFeatures.txt"
+            )
 
             index = 1
             # All other script checkboxes
@@ -422,9 +434,21 @@ class MyPanel(wx.Panel):
                 self.add_button(node.id, index, node.depth,
                                 vector)  # node.count
                 checkbox = self.script_buttons[index]
-                if (get_attribute(checkbox, 'category') and get_attribute(checkbox, 'confidence')
-                        and not (checkbox.category in ['ads', 'marketing', 'customer-success']
-                                 and checkbox.confidence > 0.5)):  # toggle this level as desired
+                if (get_attribute(checkbox, 'confidence') is not None and
+                        get_attribute(checkbox, 'confidence') < CONFIDENCE_THRESHOLD):
+                    # run clustering if confidence less than threshold
+                    checkbox.category = cluster.predict(
+                        script=str(node.content), preprocess=True)
+                    label = get_attribute(checkbox, 'label')
+                    if label:
+                        label.SetLabel(checkbox.category)
+                        label.SetBackgroundColour(
+                            tuple(CATEGORIES[checkbox.category]['color'])
+                        )
+                        label.SetToolTip(
+                            CATEGORIES[checkbox.category]['description'])
+                if (get_attribute(checkbox, 'category') not in
+                        ['ads', 'marketing', 'customer-success', 'non-critical']):
                     # ads / marketing scripts disabled by default
                     self.script_buttons[index].SetValue(True)
                 index += 1
@@ -438,8 +462,8 @@ class MyPanel(wx.Panel):
             self.err_msg.SetForegroundColour((255, 0, 0))
             self.Update()
 
-        def similarity(similarity_threshold):
-            # Print script pairs in self.script_tree with Jaccard similarity > similarity_threshold
+        def similarity():
+            # Print script pairs in self.script_tree with Jaccard similarity > SIMILARITY_THRESHOLD
             names = []
             scripts = []
             for node in PreOrderIter(self.script_tree):
@@ -447,10 +471,10 @@ class MyPanel(wx.Panel):
                     continue
                 names.append(node.id)
                 scripts.append(str(node.content))
-            results = similarity_comparison(scripts, similarity_threshold)
+            results = similarity_comparison(scripts, SIMILARITY_THRESHOLD)
             if results:
                 print("---" * 20)
-                print('scripts with similarity > %.2f' % similarity_threshold)
+                print('scripts with similarity > %.2f' % SIMILARITY_THRESHOLD)
             for tup in results:
                 print('%s %s %.2f' % (names[tup[0]], names[tup[1]], tup[2]))
 
@@ -535,7 +559,6 @@ class MyPanel(wx.Panel):
             else:
                 AnyNode(id=script['url'], parent=parent,
                         content=script['content'], count=1)
-        # self.print_scripts()
 
         # Check image differences
         compare_image_sizes(images)
@@ -543,10 +566,10 @@ class MyPanel(wx.Panel):
         # Parse inline scripts
         html = get_index_html()
         parse_html(html)
-        self.print_scripts()
+        # self.print_scripts()
 
         # Check similarity
-        similarity(0.8)
+        similarity()
 
         # Create buttons
         create_buttons()

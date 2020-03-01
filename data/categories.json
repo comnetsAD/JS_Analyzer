@@ -65,5 +65,20 @@
     "title": "Mixed / Other",
     "description":
       "These are miscellaneous scripts delivered via a shared origin with no precise category or attribution. Help us out by identifying more origins!"
+  },
+  "non-critical": {
+    "color": [245, 61, 245],
+    "title": "Non-critical",
+    "description": "These scripts can be safely removed without breaking functionality."
+  },
+  "critical": {
+    "color": [153, 245, 245],
+    "title": "Critical",
+    "description": "These scripts are necessary for the page to function properly."
+  },
+  "replaceable": {
+    "color": [245, 153, 153],
+    "title": "Translateable",
+    "description": "These scripts can be translated directly to HTML."
   }
 }
