@@ -325,7 +325,7 @@ class MyPanel(wx.Panel):
         # self.number_of_buttons += 1
 
         # Add labels
-        if vector is not None:
+        if script[:6] != 'script' and vector is not None:
             category = ML_MODEL.predict([vector]).item(0)
             confidence = np.amax(ML_MODEL.predict_proba([vector]))
             self.script_buttons[index].category = category
@@ -450,7 +450,13 @@ class MyPanel(wx.Panel):
                 if (get_attribute(checkbox, 'category') not in
                         ['ads', 'marketing', 'customer-success', 'non-critical']):
                     # ads / marketing scripts disabled by default
-                    self.script_buttons[index].SetValue(True)
+                    try:
+                        if node.id[:6] != "script":
+                            self.blocked_urls.remove(node.id)
+                    except ValueError:
+                        logging.debug(
+                            "Could not remove %s from blocked urls", node.id)
+                    checkbox.SetValue(True)
                 index += 1
             self.scripts_panel.SetSizer(self.script_sizer)
             self.frame.frame_sizer.Layout()
@@ -572,6 +578,7 @@ class MyPanel(wx.Panel):
         similarity()
 
         # Create buttons
+        self.block_all_scripts()
         create_buttons()
 
         # Get page with all scripts removed
