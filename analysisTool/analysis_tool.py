@@ -36,6 +36,7 @@ import numpy as np
 from anytree import AnyNode, RenderTree, PreOrderIter
 import anytree.cachedsearch
 import requests
+from urllib3.exceptions import InsecureRequestWarning
 import brotli
 import wx
 from wx.lib.scrolledpanel import ScrolledPanel
@@ -53,6 +54,7 @@ from clustering.clustering import clustering
 logging.getLogger('chardet.charsetprober').setLevel(logging.INFO)
 logging.getLogger(
     'selenium.webdriver.remote.remote_connection').setLevel(logging.INFO)
+requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 
 # PROXY_IP = "10.224.41.171"
 PROXY_IP = "127.0.0.1"
@@ -120,7 +122,11 @@ FEATURES = ['replace',
 PATH = os.getcwd()
 ML_MODEL = pickle.load(
     open(PATH + '/random_forest_clf_50_features.sav', 'rb'), encoding='latin-1')
-
+CLUSTER = clustering(
+    PATH + "/analysisTool/clustering/tf_model.sav",
+    PATH + "/analysisTool/clustering/cl_model.sav",
+    PATH + "/analysisTool/clustering/FinalFeatures.txt"
+)
 SIMILARITY_THRESHOLD = 0.8
 CONFIDENCE_THRESHOLD = 0.5
 
@@ -242,9 +248,10 @@ class MyPanel(wx.Panel):
         self.apply_btn.Hide()
         hbox.Add(self.apply_btn, border=5)
 
-        self.save_btn = wx.Button(self, label='Save Changes')
+        self.save_btn = wx.Button(self, label='Generate Report')
         self.save_btn.Bind(wx.EVT_BUTTON, self.on_button_press)
-        self.save_btn.SetToolTip('Push changes to the remote proxy.')
+        self.save_btn.SetToolTip(
+            'Save changes in new folder and push to the remote proxy.')
         self.save_btn.Hide()
         hbox.Add(self.save_btn, border=5)
 
@@ -379,7 +386,7 @@ class MyPanel(wx.Panel):
             self.number_of_buttons = 0
             # self.diff_btn.Show()
             self.apply_btn.Show()
-            # self.save_btn.Show()
+            self.save_btn.Show()
             self.content_panel.Show()
             self.content_text.SetValue("Script code")
             while self.script_sizer.GetChildren():
@@ -388,7 +395,7 @@ class MyPanel(wx.Panel):
             self.images.clear()
 
         def get_index_html():
-            # Get index.html from proxy
+            # Get index.html from remote proxy
             return get_resource(self.url)
 
         def parse_html(html):
@@ -418,11 +425,6 @@ class MyPanel(wx.Panel):
             # Add checkboxes to display
             # Check all
             self.add_button('Check all', 0, 1, None)
-            cluster = clustering(
-                PATH + "/analysisTool/clustering/tf_model.sav",
-                PATH + "/analysisTool/clustering/cl_model.sav",
-                PATH + "/analysisTool/clustering/FinalFeatures.txt"
-            )
 
             index = 1
             # All other script checkboxes
@@ -437,7 +439,7 @@ class MyPanel(wx.Panel):
                 if (get_attribute(checkbox, 'confidence') is not None and
                         get_attribute(checkbox, 'confidence') < CONFIDENCE_THRESHOLD):
                     # run clustering if confidence less than threshold
-                    checkbox.category = cluster.predict(
+                    checkbox.category = CLUSTER.predict(
                         script=str(node.content), preprocess=True)
                     label = get_attribute(checkbox, 'label')
                     if label:
@@ -677,6 +679,52 @@ class MyPanel(wx.Panel):
 
     def on_save(self):
         """Send report using Apache CGI Web Call."""
+        if not os.path.exists(PATH + "/reports"):
+            os.mkdir(PATH + "/reports")
+        file_path = PATH + "/reports/" + self.url.split("//", 1)[1]
+        if not os.path.exists(file_path):
+            os.mkdir(file_path)
+        critical = open(file_path + '/critical.txt', 'w')
+        noncritical = open(file_path + '/noncritical.txt', 'w')
+        translateable = open(file_path + '/translateable.txt', 'w')
+        webalmanac = open(file_path + '/webalmanac.txt', 'w')
+        for node in PreOrderIter(self.script_tree):
+            if node.is_root or node.id[:6] == 'script':
+                continue
+            checkbox = self.script_buttons[get_attribute(node, 'button')]
+            label = get_attribute(checkbox, 'label')
+            if label:
+                if label.GetLabel() == 'critical':
+                    critical.write(node.id + "\n")
+                elif label.GetLabel() == 'noncritical':
+                    noncritical.write(node.id + "\n")
+                elif label.GetLabel() == 'replaceable':
+                    translateable.write(node.id + "\n")
+                else:
+                    webalmanac.write(node.id + "\n")
+                    webalmanac.write(label.GetLabel() + "\n")
+                    webalmanac.write(CLUSTER.predict(
+                        script=str(node.content), preprocess=True) + "\n")
+        critical.close()
+        noncritical.close()
+        translateable.close()
+        webalmanac.close()
+        index = open(file_path + '/index.html', 'w')
+        index.write(get_resource(self.url + self.suffix) + "\n")
+        index.close()
+        images = open(file_path + '/images.txt', 'w')
+        for url, dimensions in self.images.items():
+            if len(dimensions.keys()) == 4:
+                images.write(url + "\n")
+                images.write("original: %d x %d\n" %
+                             (dimensions['ow'], dimensions['oh']))
+                images.write("rendered: %d x %d\n" %
+                             (dimensions['rw'], dimensions['rh']))
+        images.close()
+        self.err_msg.SetForegroundColour((0, 0, 0))
+        self.err_msg.SetLabel("Report generated in %s" % file_path)
+        self.err_msg.SetForegroundColour((255, 0, 0))
+
 
     def on_choice(self, event):
         """Handle choiceBox selection."""
