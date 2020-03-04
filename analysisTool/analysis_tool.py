@@ -127,9 +127,17 @@ CLUSTER = clustering(
     PATH + "/analysisTool/clustering/cl_model.sav",
     PATH + "/analysisTool/clustering/FinalFeatures.txt"
 )
+# Only scripts with similarity above threshold will be printed
 SIMILARITY_THRESHOLD = 0.8
+
+# Webalmanac classification with confidence below threshold will undergo clustering classification
 CONFIDENCE_THRESHOLD = 0.5
 
+# Scripts in these categories will be disabled by default upon clicking 'Analyze page'
+BLOCKED_CATEGORIES = ['ads', 'marketing', 'customer-success', 'non-critical']
+
+# Time (in seconds) for page to stop changing to be considered finished loading
+WAIT_LOAD_TIME = 0.5
 
 def get_attribute(obj, attribute):
     """Return the obj.attribute or None if it doesn't exist."""
@@ -371,10 +379,10 @@ class MyPanel(wx.Panel):
     def wait_for_load(self):
         """Wait for page source to stop changing."""
         html = self.driver.page_source
-        time.sleep(0.5)  # is this a reasonable amount of time?
+        time.sleep(WAIT_LOAD_TIME)
         while html != self.driver.page_source:
             html = self.driver.page_source
-            time.sleep(0.5)
+            time.sleep(WAIT_LOAD_TIME)
 
     def analyze(self):
         """Do everything."""
@@ -449,8 +457,7 @@ class MyPanel(wx.Panel):
                         )
                         label.SetToolTip(
                             CATEGORIES[checkbox.category]['description'])
-                if (get_attribute(checkbox, 'category') not in
-                        ['ads', 'marketing', 'customer-success', 'non-critical']):
+                if (get_attribute(checkbox, 'category') not in BLOCKED_CATEGORIES):
                     # ads / marketing scripts disabled by default
                     try:
                         if node.id[:6] != "script":
@@ -458,7 +465,7 @@ class MyPanel(wx.Panel):
                     except ValueError:
                         logging.debug(
                             "Could not remove %s from blocked urls", node.id)
-                    checkbox.SetValue(True)
+                    self.check_boxes(True, node)
                 index += 1
             self.scripts_panel.SetSizer(self.script_sizer)
             self.frame.frame_sizer.Layout()
@@ -636,7 +643,9 @@ class MyPanel(wx.Panel):
             node.content = get_resource(node.id)
 
         self.content_text.SetValue(name + "\n\n" + str(node.content))
+        self.check_boxes(toggle, node)
 
+    def check_boxes(self, toggle, node):
         if toggle:
             while node.depth > 1:
                 self.script_buttons[node.button].SetValue(True)
@@ -648,7 +657,11 @@ class MyPanel(wx.Panel):
                 node = node.parent
             self.script_buttons[node.button].SetValue(True)
             if node.id[:6] != "script":
-                self.blocked_urls.remove(node.id)
+                try:
+                    self.blocked_urls.remove(node.id)
+                except ValueError:
+                    logging.debug(
+                        "Could not remove %s from blocked urls", node.id)
         else:
             for descendant in node.descendants:
                 self.script_buttons[descendant.button].SetValue(False)

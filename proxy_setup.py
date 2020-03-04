@@ -133,6 +133,12 @@ class LocalCache:
                     temp_content = pickle.load(temp_file)
 
                 html = str(BeautifulSoup(temp_content, 'html.parser'))
+                # Remove comments
+                while "<!--" in html:
+                    start_index = html.find("<!--")
+                    end_index = html.find("-->") + 3
+                    html = html.replace(html[start_index:end_index], "")
+
                 cnt = 1
                 while "<script" in html:
                     html = html.replace(
