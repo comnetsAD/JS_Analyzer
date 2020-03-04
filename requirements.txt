@@ -1,0 +1,14 @@
+pandas==1.0.1
+mitmproxy==5.0.1
+anytree==2.8.0
+urllib3==1.25.8
+numpy==1.18.1
+Brotli==1.0.7
+requests==2.23.0
+wxPython==4.0.7.post2
+selenium==3.141.0
+jsbeautifier==1.10.3
+beautifulsoup4==4.8.2
+mysql_connector_repackaged==0.3.1
+SetSimilaritySearch==0.1.7
+treelib==1.6.1

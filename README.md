@@ -15,7 +15,7 @@ $ mitmdump --mode upstream:10.224.41.171:8080 --set upstream_cert=false --sl-ins
 ```
 
 ## Installing the proxy certificate
-To connect to the proxy, you should do the following:
+To connect to the proxy, do the following (instructions below are for macOS):
 Go to your WiFi, open network preferences, choose proxies, and check the following:
 
 Web Proxy (HTTP)
@@ -54,6 +54,12 @@ $ python3 analysisTool/analysis_tool.py
 ```
 
 Once the tool is initiated, enter a website into the window and click "Analyze page" to see how the page looks with all scripts removed. Select scripts to display the content of the script and click "Apply Selection" to reload the page with the selected scripts enabled.
+
+## Clear cache
+This repo includes a script that allows you to clear the local proxy cache. To run the script, enter the following:
+```
+$ python3 clear_cache.py
+```
 
 ## Troubleshooting
 If you encounter a proxy certification error that prevents you from running the tool, repeat the proxy certificate installation steps and replace the IP address with your local IP: 127.0.0.1

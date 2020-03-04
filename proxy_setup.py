@@ -206,5 +206,6 @@ class LocalCache:
                 pickle.dump(flow.response.content, temp_file)
         cursor.close()
 
+
 # pylint: disable=invalid-name
 addons = [LocalCache()]

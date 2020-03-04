@@ -8,17 +8,6 @@ About:
     This tool makes it possible to view the effect of individual scripts
     on the overall functionality of a webpage.
 
-Todo:
-    * Update the proxy to handle files with long URLs (in collaboration with Gabriel)
-    * How to deal with preloaded <link as="script"> tags?
-    * Figure out how best to display duplicate scripts
-    * What happens if two scripts together bring a new script? UNICEF example (script 0 and 7)
-    * How to highlight differences? Compare event listeners?
-    * Libraries?
-    * Image optimization
-    * Save copy of site locally using proxy to allow for direct comparison of performance
-    * Generate report showing changes
-
 """
 
 import logging
@@ -54,6 +43,7 @@ from clustering.clustering import clustering
 logging.getLogger('chardet.charsetprober').setLevel(logging.INFO)
 logging.getLogger(
     'selenium.webdriver.remote.remote_connection').setLevel(logging.INFO)
+# pylint: disable=no-member
 requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 
 # PROXY_IP = "10.224.41.171"
@@ -134,10 +124,11 @@ SIMILARITY_THRESHOLD = 0.8
 CONFIDENCE_THRESHOLD = 0.5
 
 # Scripts in these categories will be disabled by default upon clicking 'Analyze page'
-BLOCKED_CATEGORIES = ['ads', 'marketing', 'customer-success', 'non-critical']
+BLOCKED_CATEGORIES = ['ads', 'marketing', 'customer-success', 'non-critical', 'analytics']
 
 # Time (in seconds) for page to stop changing to be considered finished loading
 WAIT_LOAD_TIME = 0.5
+
 
 def get_attribute(obj, attribute):
     """Return the obj.attribute or None if it doesn't exist."""
@@ -232,7 +223,6 @@ class MyPanel(wx.Panel):
 
         # StaticText field for error messages
         self.err_msg = wx.StaticText(self, label="")
-        self.err_msg.SetForegroundColour((255, 0, 0))  # make text red
         self.main_sizer.Add(self.err_msg, flag=wx.LEFT, border=25)
 
         analyze_btn = wx.Button(self, label='Analyze page')
@@ -357,7 +347,7 @@ class MyPanel(wx.Panel):
         self.script_sizer.Insert(index, hbox)
         self.frame.frame_sizer.Layout()
 
-    def format_src(self, src):
+    def format_src(self, src: str):
         """Return formatted src string to be requested."""
         if src[:4] != "http":
             if src[0] == "/":
@@ -406,7 +396,7 @@ class MyPanel(wx.Panel):
             # Get index.html from remote proxy
             return get_resource(self.url)
 
-        def parse_html(html):
+        def parse_html(html: str):
             # Add index.html scripts to self.script_tree
             cnt = 1
             if not html:
@@ -457,7 +447,7 @@ class MyPanel(wx.Panel):
                         )
                         label.SetToolTip(
                             CATEGORIES[checkbox.category]['description'])
-                if (get_attribute(checkbox, 'category') not in BLOCKED_CATEGORIES):
+                if get_attribute(checkbox, 'category') not in BLOCKED_CATEGORIES:
                     # ads / marketing scripts disabled by default
                     try:
                         if node.id[:6] != "script":
@@ -474,7 +464,6 @@ class MyPanel(wx.Panel):
             # Never managed to get this part to display before spinning wheel of death
             self.err_msg.SetForegroundColour((0, 0, 0))
             self.err_msg.SetLabel("Loading page... please wait")
-            self.err_msg.SetForegroundColour((255, 0, 0))
             self.Update()
 
         def similarity():
@@ -556,6 +545,7 @@ class MyPanel(wx.Panel):
             self.driver.get(self.url)
             self.err_msg.SetLabel("")
         except InvalidArgumentException as exception:
+            self.err_msg.SetForegroundColour((255, 0, 0))  # make text red
             self.err_msg.SetLabel(str(exception))
             return
         self.wait_for_load()
@@ -645,7 +635,13 @@ class MyPanel(wx.Panel):
         self.content_text.SetValue(name + "\n\n" + str(node.content))
         self.check_boxes(toggle, node)
 
-    def check_boxes(self, toggle, node):
+    def check_boxes(self, toggle: bool, node: AnyNode):
+        """
+        Check (toggle = true) or uncheck (toggle = false) boxes
+        corresponding to node while keeping dependencies intact.
+        All ancestors of node are also checked if node is checked,
+        and all children of node are also unchecked if node is unchecked.
+        """
         if toggle:
             while node.depth > 1:
                 self.script_buttons[node.button].SetValue(True)
@@ -709,7 +705,7 @@ class MyPanel(wx.Panel):
             if label:
                 if label.GetLabel() == 'critical':
                     critical.write(node.id + "\n")
-                elif label.GetLabel() == 'noncritical':
+                elif label.GetLabel() == 'non-critical':
                     noncritical.write(node.id + "\n")
                 elif label.GetLabel() == 'replaceable':
                     translateable.write(node.id + "\n")
@@ -736,8 +732,6 @@ class MyPanel(wx.Panel):
         images.close()
         self.err_msg.SetForegroundColour((0, 0, 0))
         self.err_msg.SetLabel("Report generated in %s" % file_path)
-        self.err_msg.SetForegroundColour((255, 0, 0))
-
 
     def on_choice(self, event):
         """Handle choiceBox selection."""
