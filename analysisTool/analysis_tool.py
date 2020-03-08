@@ -40,6 +40,9 @@ from data import CATEGORIES
 from jaccard_sim import similarity_comparison
 from clustering.clustering import clustering
 
+import perf
+
+
 logging.getLogger('chardet.charsetprober').setLevel(logging.INFO)
 logging.getLogger(
     'selenium.webdriver.remote.remote_connection').setLevel(logging.INFO)
@@ -283,6 +286,7 @@ class MyPanel(wx.Panel):
 
         self.script_tree = AnyNode(id='root')
         self.images = {}
+        self.yasir = {}
 
     def on_button_press(self, event):
         """Handle wx.Button press."""
@@ -343,6 +347,8 @@ class MyPanel(wx.Panel):
             label.SetToolTip(tool_tip)
             self.script_buttons[index].label = label
             hbox.Add(label, flag=wx.ALL, border=5)
+
+            self.yasir[script] = self.script_buttons[index]
 
         self.script_sizer.Insert(index, hbox)
         self.frame.frame_sizer.Layout()
@@ -459,6 +465,32 @@ class MyPanel(wx.Panel):
                 index += 1
             self.scripts_panel.SetSizer(self.script_sizer)
             self.frame.frame_sizer.Layout()
+
+
+            tmp_dep = perf.get_dependency(self.url)
+            # tmp_dep = [['https://ws.sharethis.com/button/async-buttons.js', 'https://www.google-analytics.com/analytics.js', 'https://ws.sharethis.com/button/buttons.js'], ['https://www.googletagmanager.com/gtm.js?id=GTM-WBDQQ5', 'https://www.googleadservices.com/pagead/conversion_async.js'], ['https://www.unicef.org/sites/default/files/js/js_B7pS3ddmNLFYOJi3j28odiodelMu-EhaOeKlHZ8E6y0.js', 'https://www.unicef.org/themes/custom/unicef/assets/src/js/init-blazy.js?v=1.x', 'https://www.unicef.org/sites/default/files/js/js_dWWS6YNlsZWmXLboSy3PIiSD_Yg3sRxwjbMb52mdNyw.js', 'https://www.unicef.org/sites/default/files/js/js_cLlwgRdoiVfjtFxLqlXX-aVbv3xxfX_uMCsn7iJqNpA.js']]
+
+            print ("\n\n-------- DEPENDECY LABELS CHANGED --------")
+            mapping = {'non-critical': 0, 'translateable': 1, 'critical': 2}
+            mapping2 = {0: 'non-critical', 1: 'translateable', 2: 'critical'}
+            for a in tmp_dep:
+                tmp_label = 0
+
+                for i in a:
+                    if i not in self.yasir or self.yasir[i].category not in mapping:
+                        continue
+
+                    if mapping[self.yasir[i].category] > tmp_label:
+                        tmp_label = mapping[self.yasir[i].category]
+
+                for i in a:
+                    if i not in self.yasir or self.yasir[i].category not in mapping:
+                        continue
+
+                    if self.yasir[i].category != mapping2[tmp_label]:
+                        print ("****", i, mapping2[tmp_label], self.yasir[i].category)
+
+            print ("\n\n")
 
         def display_loading_message():
             # Never managed to get this part to display before spinning wheel of death
