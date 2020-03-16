@@ -4,8 +4,9 @@ Author:
     Jacinta Hu
 
 About:
-    This script intercepts requests and responses to act as a local cache
-    alters the index.html file of webpages to easily enable and disable scripts.
+    This script intercepts requests and responses to act as a local cache.
+    It alters the index.html file of webpages on the fly based on the request URL
+    to easily enable and disable scripts.
 
 """
 

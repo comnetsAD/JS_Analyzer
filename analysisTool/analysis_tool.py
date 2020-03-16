@@ -204,7 +204,7 @@ class MyPanel(wx.Panel):
         # start Chrome webdriver
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument('--proxy-server=%s' % PROXY)
-        chrome_options.add_argument('--auto-open-devtools-for-tabs')
+        # chrome_options.add_argument('--auto-open-devtools-for-tabs')
         caps = DesiredCapabilities.CHROME
         caps['goog:loggingPrefs'] = {'performance': 'INFO'}
         chrome_options.add_experimental_option(
@@ -214,7 +214,7 @@ class MyPanel(wx.Panel):
         self.driver.execute_cdp_cmd('Network.enable', {})
         self.driver.execute_cdp_cmd('Network.setCacheDisabled', {
             'cacheDisabled': True})
-
+        self.driver.set_window_size(1200, 750)
         self.main_sizer = wx.BoxSizer(wx.VERTICAL)
 
         # TextCtrl for user to input URL of site to analyze
@@ -466,11 +466,11 @@ class MyPanel(wx.Panel):
             self.scripts_panel.SetSizer(self.script_sizer)
             self.frame.frame_sizer.Layout()
 
-
+            # functional dependencies?
             tmp_dep = perf.get_dependency(self.url)
             # tmp_dep = [['https://ws.sharethis.com/button/async-buttons.js', 'https://www.google-analytics.com/analytics.js', 'https://ws.sharethis.com/button/buttons.js'], ['https://www.googletagmanager.com/gtm.js?id=GTM-WBDQQ5', 'https://www.googleadservices.com/pagead/conversion_async.js'], ['https://www.unicef.org/sites/default/files/js/js_B7pS3ddmNLFYOJi3j28odiodelMu-EhaOeKlHZ8E6y0.js', 'https://www.unicef.org/themes/custom/unicef/assets/src/js/init-blazy.js?v=1.x', 'https://www.unicef.org/sites/default/files/js/js_dWWS6YNlsZWmXLboSy3PIiSD_Yg3sRxwjbMb52mdNyw.js', 'https://www.unicef.org/sites/default/files/js/js_cLlwgRdoiVfjtFxLqlXX-aVbv3xxfX_uMCsn7iJqNpA.js']]
 
-            print ("\n\n-------- DEPENDECY LABELS CHANGED --------")
+            print ("\n\n-------- DEPENDENCY LABELS CHANGED --------")
             mapping = {'non-critical': 0, 'translateable': 1, 'critical': 2}
             mapping2 = {0: 'non-critical', 1: 'translateable', 2: 'critical'}
             for a in tmp_dep:
@@ -735,17 +735,22 @@ class MyPanel(wx.Panel):
             checkbox = self.script_buttons[get_attribute(node, 'button')]
             label = get_attribute(checkbox, 'label')
             if label:
-                if label.GetLabel() == 'critical':
-                    critical.write(node.id + "\n")
-                elif label.GetLabel() == 'non-critical':
-                    noncritical.write(node.id + "\n")
+                if label.GetLabel() == 'critical' or label.GetLabel() == 'non-critical':
+                    if checkbox.GetValue():
+                        critical.write(node.id + "\n")
+                    else:
+                        noncritical.write(node.id + "\n")
                 elif label.GetLabel() == 'replaceable':
                     translateable.write(node.id + "\n")
                 else:
                     webalmanac.write(node.id + "\n")
                     webalmanac.write(label.GetLabel() + "\n")
-                    webalmanac.write(CLUSTER.predict(
-                        script=str(node.content), preprocess=True) + "\n")
+                    # webalmanac.write(CLUSTER.predict(
+                    #    script=str(node.content), preprocess=True) + "\n")
+                    if checkbox.GetValue():
+                        webalmanac.write("critical\n")
+                    else:
+                        webalmanac.write("non-critical\n")
         critical.close()
         noncritical.close()
         translateable.close()
