@@ -11,7 +11,7 @@ http://jonathansoma.com/lede/foundations-2017/classes/more-scraping/selenium/
 ## Start the local proxy
 Enter the following command:
 ```
-$ mitmdump --mode upstream:10.224.41.171:8080 --set upstream_cert=false --sl-insecure --scripts proxy_setup.py
+$ mitmdump --mode upstream:10.224.41.171:8080 --set upstream_cert=false --ssl-insecure --scripts proxy_setup.py
 ```
 
 ## Installing the proxy certificate
