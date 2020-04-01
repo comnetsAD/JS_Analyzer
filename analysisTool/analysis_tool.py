@@ -127,7 +127,8 @@ SIMILARITY_THRESHOLD = 0.8
 CONFIDENCE_THRESHOLD = 0.5
 
 # Scripts in these categories will be disabled by default upon clicking 'Analyze page'
-BLOCKED_CATEGORIES = ['ads', 'marketing', 'customer-success', 'non-critical', 'analytics']
+BLOCKED_CATEGORIES = ['ads', 'marketing',
+                      'customer-success', 'non-critical', 'analytics']
 
 # Time (in seconds) for page to stop changing to be considered finished loading
 WAIT_LOAD_TIME = 0.5
@@ -204,7 +205,7 @@ class MyPanel(wx.Panel):
         # start Chrome webdriver
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument('--proxy-server=%s' % PROXY)
-        chrome_options.add_argument('--auto-open-devtools-for-tabs')
+        # chrome_options.add_argument('--auto-open-devtools-for-tabs')
         caps = DesiredCapabilities.CHROME
         caps['goog:loggingPrefs'] = {'performance': 'INFO'}
         chrome_options.add_experimental_option(
@@ -214,7 +215,7 @@ class MyPanel(wx.Panel):
         self.driver.execute_cdp_cmd('Network.enable', {})
         self.driver.execute_cdp_cmd('Network.setCacheDisabled', {
             'cacheDisabled': True})
-
+        self.driver.set_window_size(1200, 750)
         self.main_sizer = wx.BoxSizer(wx.VERTICAL)
 
         # TextCtrl for user to input URL of site to analyze
@@ -325,7 +326,7 @@ class MyPanel(wx.Panel):
 
         # Create combobox
         # choice_box = wx.ComboBox(self.scripts_panel, value="", style=wx.CB_READONLY, choices=(
-        #     "", "critical", "non-critical", "translatable"))
+        #     "", "critical", "non-critical", "replaceable"))
         # choice_box.Bind(wx.EVT_COMBOBOX, self.on_choice)
         # choice_box.index = len(self.choice_boxes)
         # self.choice_boxes.insert(index, choice_box)
@@ -413,8 +414,8 @@ class MyPanel(wx.Panel):
                 start_index = html.find("<script")
                 end_index = html.find("</script>")
                 text = html[start_index:end_index + 9]
-                new_node = AnyNode(
-                    id=script_name, parent=self.script_tree, content=text, count=1)
+                new_node = AnyNode(id=script_name, parent=self.script_tree, content=text,
+                                   vector=extract_features(text), count=1)
                 if ' src="' in text:  # BeautifulSoup turns all single quotes into double quotes
                     src = text.split(' src="')[1].split('"')[0]
                     src = self.format_src(src)
@@ -436,9 +437,9 @@ class MyPanel(wx.Panel):
                 if node.is_root:
                     continue
                 node.button = index
-                vector = extract_features(node.content)
+                # vector = extract_features(node.content)
                 self.add_button(node.id, index, node.depth,
-                                vector)  # node.count
+                                get_attribute(node, 'vector'))  # node.count
                 checkbox = self.script_buttons[index]
                 if (get_attribute(checkbox, 'confidence') is not None and
                         get_attribute(checkbox, 'confidence') < CONFIDENCE_THRESHOLD):
@@ -466,31 +467,36 @@ class MyPanel(wx.Panel):
             self.scripts_panel.SetSizer(self.script_sizer)
             self.frame.frame_sizer.Layout()
 
+            # functional dependencies?
+            try:
+                tmp_dep = perf.get_dependency(self.url)
+                # tmp_dep = [['https://ws.sharethis.com/button/async-buttons.js', 'https://www.google-analytics.com/analytics.js', 'https://ws.sharethis.com/button/buttons.js'], ['https://www.googletagmanager.com/gtm.js?id=GTM-WBDQQ5', 'https://www.googleadservices.com/pagead/conversion_async.js'], ['https://www.unicef.org/sites/default/files/js/js_B7pS3ddmNLFYOJi3j28odiodelMu-EhaOeKlHZ8E6y0.js', 'https://www.unicef.org/themes/custom/unicef/assets/src/js/init-blazy.js?v=1.x', 'https://www.unicef.org/sites/default/files/js/js_dWWS6YNlsZWmXLboSy3PIiSD_Yg3sRxwjbMb52mdNyw.js', 'https://www.unicef.org/sites/default/files/js/js_cLlwgRdoiVfjtFxLqlXX-aVbv3xxfX_uMCsn7iJqNpA.js']]
 
-            tmp_dep = perf.get_dependency(self.url)
-            # tmp_dep = [['https://ws.sharethis.com/button/async-buttons.js', 'https://www.google-analytics.com/analytics.js', 'https://ws.sharethis.com/button/buttons.js'], ['https://www.googletagmanager.com/gtm.js?id=GTM-WBDQQ5', 'https://www.googleadservices.com/pagead/conversion_async.js'], ['https://www.unicef.org/sites/default/files/js/js_B7pS3ddmNLFYOJi3j28odiodelMu-EhaOeKlHZ8E6y0.js', 'https://www.unicef.org/themes/custom/unicef/assets/src/js/init-blazy.js?v=1.x', 'https://www.unicef.org/sites/default/files/js/js_dWWS6YNlsZWmXLboSy3PIiSD_Yg3sRxwjbMb52mdNyw.js', 'https://www.unicef.org/sites/default/files/js/js_cLlwgRdoiVfjtFxLqlXX-aVbv3xxfX_uMCsn7iJqNpA.js']]
+                print("\n\n-------- DEPENDENCY LABELS CHANGED --------")
+                mapping = {'non-critical': 0, 'translatable': 1, 'critical': 2}
+                mapping2 = {0: 'non-critical',
+                            1: 'translatable', 2: 'critical'}
+                for a in tmp_dep:
+                    tmp_label = 0
 
-            print ("\n\n-------- DEPENDECY LABELS CHANGED --------")
-            mapping = {'non-critical': 0, 'translateable': 1, 'critical': 2}
-            mapping2 = {0: 'non-critical', 1: 'translateable', 2: 'critical'}
-            for a in tmp_dep:
-                tmp_label = 0
+                    for i in a:
+                        if i not in self.yasir or self.yasir[i].category not in mapping:
+                            continue
 
-                for i in a:
-                    if i not in self.yasir or self.yasir[i].category not in mapping:
-                        continue
+                        if mapping[self.yasir[i].category] > tmp_label:
+                            tmp_label = mapping[self.yasir[i].category]
 
-                    if mapping[self.yasir[i].category] > tmp_label:
-                        tmp_label = mapping[self.yasir[i].category]
+                    for i in a:
+                        if i not in self.yasir or self.yasir[i].category not in mapping:
+                            continue
 
-                for i in a:
-                    if i not in self.yasir or self.yasir[i].category not in mapping:
-                        continue
+                        if self.yasir[i].category != mapping2[tmp_label]:
+                            print(
+                                "****", i, mapping2[tmp_label], self.yasir[i].category)
 
-                    if self.yasir[i].category != mapping2[tmp_label]:
-                        print ("****", i, mapping2[tmp_label], self.yasir[i].category)
-
-            print ("\n\n")
+                print("\n\n")
+            except RuntimeError:
+                pass
 
         def display_loading_message():
             # Never managed to get this part to display before spinning wheel of death
@@ -594,8 +600,8 @@ class MyPanel(wx.Panel):
                 logging.warning('duplicate script! %s', script['url'])
                 node.count += 1
             else:
-                AnyNode(id=script['url'], parent=parent,
-                        content=script['content'], count=1)
+                AnyNode(id=script['url'], parent=parent, content=script['content'],
+                        vector=extract_features(script['content']), count=1)
 
         # Check image differences
         compare_image_sizes(images)
@@ -719,46 +725,52 @@ class MyPanel(wx.Panel):
         # os.system(r"diff before.html after.html | sed '/<!--script/,/<\/script>/d'")
 
     def on_save(self):
-        """Send report using Apache CGI Web Call."""
+        """Generate report and save in reports folder."""
         if not os.path.exists(PATH + "/reports"):
             os.mkdir(PATH + "/reports")
-        file_path = PATH + "/reports/" + self.url.split("//", 1)[1]
+        file_path = PATH + "/reports/" + self.url.split("/")[2]
         if not os.path.exists(file_path):
             os.mkdir(file_path)
+        logging.info("Writing script files...")
         critical = open(file_path + '/critical.txt', 'w')
         noncritical = open(file_path + '/noncritical.txt', 'w')
-        translateable = open(file_path + '/translateable.txt', 'w')
         webalmanac = open(file_path + '/webalmanac.txt', 'w')
+        labels = open(PATH + "/reports/labels.csv", 'a')
         for node in PreOrderIter(self.script_tree):
             if node.is_root or node.id[:6] == 'script':
                 continue
             checkbox = self.script_buttons[get_attribute(node, 'button')]
+            if checkbox.GetValue():
+                critical.write(node.id + "\n")
+            else:
+                noncritical.write(node.id + "\n")
             label = get_attribute(checkbox, 'label')
-            if label:
-                if label.GetLabel() == 'critical':
-                    critical.write(node.id + "\n")
-                elif label.GetLabel() == 'non-critical':
-                    noncritical.write(node.id + "\n")
-                elif label.GetLabel() == 'replaceable':
-                    translateable.write(node.id + "\n")
+            if label and label.GetLabel() != 'critical' and label.GetLabel() != 'non-critical':
+                webalmanac.write(node.id + "\n")
+                webalmanac.write(label.GetLabel() + "\n")
+                if checkbox.GetValue():
+                    labels.write(str(node.vector.to_list()) + "," +
+                                 label.GetLabel() + ",critical\n")
                 else:
-                    webalmanac.write(node.id + "\n")
-                    webalmanac.write(label.GetLabel() + "\n")
-                    webalmanac.write(CLUSTER.predict(
-                        script=str(node.content), preprocess=True) + "\n")
+                    labels.write(str(node.vector.to_list()) + "," +
+                                 label.GetLabel() + ",non-critical\n")
+
         critical.close()
         noncritical.close()
-        translateable.close()
         webalmanac.close()
+        labels.close()
+        logging.info("Writing index file...")
         index = open(file_path + '/index.html', 'w')
         index.write(get_resource(self.url + self.suffix) + "\n")
         index.close()
+        logging.info("Writing images file...")
         images = open(file_path + '/images.txt', 'w')
         for url, dimensions in self.images.items():
-            if len(dimensions.keys()) == 4:
-                images.write(url + "\n")
+            images.write(url + "\n")
+            if 'ow' in dimensions and 'oh' in dimensions:
                 images.write("original: %d x %d\n" %
                              (dimensions['ow'], dimensions['oh']))
+            if 'rw' in dimensions and 'rh' in dimensions:
                 images.write("rendered: %d x %d\n" %
                              (dimensions['rw'], dimensions['rh']))
         images.close()

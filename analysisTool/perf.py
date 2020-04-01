@@ -13,7 +13,7 @@ def get_dependency (webpage):
 
     print ("DEPENDENCY WEBPAGE", webpage)
 
-    if os.system("node perf.js " + webpage):
+    if os.system("node analysisTool/perf.js " + webpage):
         raise RuntimeError("couldnt execute script")
 
     split_webpage = webpage.split(".")
