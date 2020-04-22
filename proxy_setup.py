@@ -108,8 +108,11 @@ class LocalCache:
                     "WHERE `hashed_url` LIKE '%s'" %
                     (hashed_url)
                 )
-                os.remove(file_path + '.h')
-                os.remove(file_path + '.c')
+                try:
+                    os.remove(file_path + '.h')
+                    os.remove(file_path + '.c')
+                except FileNotFoundError:
+                    pass
         elif js_tool:
             full_url = flow.request.pretty_url.split("?")[0]
             hashed_url = hashlib.sha256(full_url.encode()).hexdigest()

@@ -215,8 +215,14 @@ class MyPanel(wx.Panel):
         self.driver.execute_cdp_cmd('Network.enable', {})
         self.driver.execute_cdp_cmd('Network.setCacheDisabled', {
             'cacheDisabled': True})
-        self.driver.set_window_size(1200, 750)
+        self.driver.set_window_size(650, 750)
+        self.driver.set_window_position(0, 0)
         self.main_sizer = wx.BoxSizer(wx.VERTICAL)
+        original_options = webdriver.ChromeOptions()
+        original_options.add_argument('--proxy-server=86.97.179.52:8083')
+        self.original = webdriver.Chrome(options=original_options)
+        self.original.set_window_size(650, 750)
+        self.original.set_window_position(650, 0)
 
         # TextCtrl for user to input URL of site to analyze
         self.url_input = wx.TextCtrl(self, style=wx.TE_LEFT)
@@ -250,7 +256,7 @@ class MyPanel(wx.Panel):
         self.apply_btn.Hide()
         hbox.Add(self.apply_btn, border=5)
 
-        self.save_btn = wx.Button(self, label='Generate Report')
+        self.save_btn = wx.Button(self, label='Save and load simplified page')
         self.save_btn.Bind(wx.EVT_BUTTON, self.on_button_press)
         self.save_btn.SetToolTip(
             'Save changes in new folder and push to the remote proxy.')
@@ -581,6 +587,7 @@ class MyPanel(wx.Panel):
         epoch_in_milliseconds = time.time() * 1000
         try:
             self.driver.get(self.url)
+            self.original.get(self.url)
             self.err_msg.SetLabel("")
         except InvalidArgumentException as exception:
             self.err_msg.SetForegroundColour((255, 0, 0))  # make text red
@@ -775,7 +782,31 @@ class MyPanel(wx.Panel):
                              (dimensions['rw'], dimensions['rh']))
         images.close()
         self.err_msg.SetForegroundColour((0, 0, 0))
-        self.err_msg.SetLabel("Report generated in %s" % file_path)
+        logging.info("Report generated in %s", file_path)
+
+        # Send report to proxy
+        multipart_form_data = {
+            'html_content': (open(file_path + '/index.html', 'rb')),
+            'blocked_URLs': (open(file_path + '/noncritical.txt', 'rb')),
+            'images':	(open(file_path + '/images.txt', 'rb')),
+            'url': self.url.split("/")[2],
+        }
+        response = requests.post(
+            "http://86.97.179.52:9000/JSCleaner/JSAnalyzer.py", files=multipart_form_data)
+        if response.status_code == 200:
+            self.err_msg.SetLabel("Report sent to external proxy")
+        else:
+            self.err_msg.SetLabel(
+                "Report could not be sent - report generated in %s" % file_path)
+
+        # Load simplified page from proxy
+        simplified_options = webdriver.ChromeOptions()
+        simplified_options.add_argument('--proxy-server=86.97.179.52:8082')
+        simplified = webdriver.Chrome(options=simplified_options)
+        simplified.set_window_size(600, 750)
+        simplified.get(self.url)
+        input()
+        simplified.close()
 
     def on_choice(self, event):
         """Handle choiceBox selection."""
