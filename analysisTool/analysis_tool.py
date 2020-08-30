@@ -23,6 +23,8 @@ from collections import OrderedDict
 import pandas
 import numpy as np
 from anytree import AnyNode, RenderTree, PreOrderIter
+from anytree.exporter import JsonExporter
+from anytree.importer import JsonImporter
 import anytree.cachedsearch
 import requests
 from urllib3.exceptions import InsecureRequestWarning
@@ -49,7 +51,7 @@ logging.getLogger(
 # pylint: disable=no-member
 requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 
-# PROXY_IP = "10.224.41.171"
+REMOTE_PROXY_IP = "92.99.20.210"
 PROXY_IP = "127.0.0.1"
 PROXY_PORT = 8080
 
@@ -191,8 +193,9 @@ def extract_features(content_text):
                         res = 0
                         break
             tmp[feature] = res
-    vector = pandas.Series(tmp)
-    return vector
+    # vector = pandas.Series(tmp)
+    # return vector
+    return tmp
 
 
 class MyPanel(wx.Panel):
@@ -219,7 +222,7 @@ class MyPanel(wx.Panel):
         self.driver.set_window_position(0, 0)
         self.main_sizer = wx.BoxSizer(wx.VERTICAL)
         original_options = webdriver.ChromeOptions()
-        original_options.add_argument('--proxy-server=86.97.179.52:8083')
+        original_options.add_argument('--proxy-server='+REMOTE_PROXY_IP+':8082')
         self.original = webdriver.Chrome(options=original_options)
         self.original.set_window_size(650, 750)
         self.original.set_window_position(650, 0)
@@ -342,8 +345,8 @@ class MyPanel(wx.Panel):
 
         # Add labels
         if script[:6] != 'script' and vector is not None:
-            category = ML_MODEL.predict([vector]).item(0)
-            confidence = np.amax(ML_MODEL.predict_proba([vector]))
+            category = ML_MODEL.predict([pandas.Series(vector)]).item(0)
+            confidence = np.amax(ML_MODEL.predict_proba([pandas.Series(vector)]))
             self.script_buttons[index].category = category
             self.script_buttons[index].confidence = confidence
             text = str(category) + ": " + str(int(confidence*100)) + "%"
@@ -356,7 +359,6 @@ class MyPanel(wx.Panel):
             hbox.Add(label, flag=wx.ALL, border=5)
 
             self.yasir[script] = self.script_buttons[index]
-
         self.script_sizer.Insert(index, hbox)
         self.frame.frame_sizer.Layout()
 
@@ -425,8 +427,11 @@ class MyPanel(wx.Panel):
                 if ' src="' in text:  # BeautifulSoup turns all single quotes into double quotes
                     src = text.split(' src="')[1].split('"')[0]
                     src = self.format_src(src)
-                    node = anytree.cachedsearch.find(
+                    try:
+                        node = anytree.cachedsearch.find(
                         self.script_tree, lambda node: node.id == src)
+                    except anytree.search.CountError:
+                        logging.warning('multiple possible parents: more than one node with id = %s', src)
                     if node:
                         node.parent = new_node
                 html = html.replace(text, "\n<!--" + script_name + "-->\n")
@@ -473,6 +478,7 @@ class MyPanel(wx.Panel):
             self.scripts_panel.SetSizer(self.script_sizer)
             self.frame.frame_sizer.Layout()
 
+        def functional_dependency():
             # functional dependencies?
             try:
                 tmp_dep = perf.get_dependency(self.url)
@@ -582,58 +588,90 @@ class MyPanel(wx.Panel):
         reset_display()
         self.script_tree = AnyNode(id=self.url)
 
-        # Get original page and parse external scripts
-        self.driver.execute_cdp_cmd('Network.setBlockedURLs', {'urls': []})
-        epoch_in_milliseconds = time.time() * 1000
         try:
-            self.driver.get(self.url)
-            self.original.get(self.url)
-            self.err_msg.SetLabel("")
-        except InvalidArgumentException as exception:
-            self.err_msg.SetForegroundColour((255, 0, 0))  # make text red
-            self.err_msg.SetLabel(str(exception))
-            return
-        self.wait_for_load()
-        scripts, images = self.parse_log(epoch_in_milliseconds)
-        for script in scripts:
-            # pylint: disable=undefined-loop-variable
-            # pylint: disable=cell-var-from-loop
-            parent = anytree.cachedsearch.find(self.script_tree,
-                                               lambda node: node.id == script['parent'])
-            # Check if this node already exists
-            node = anytree.cachedsearch.find(self.script_tree,
-                                             lambda node: node.id == script['url'])
-            if node and node.parent == parent:
-                logging.warning('duplicate script! %s', script['url'])
-                node.count += 1
-            else:
-                AnyNode(id=script['url'], parent=parent, content=script['content'],
-                        vector=extract_features(script['content']), count=1)
+            file_path = PATH + "/reports/" + self.url.split("/")[2]
+            if not os.path.exists(file_path):
+                os.mkdir(file_path)
+            with open(file_path + "/script_tree.txt", 'r') as f:
+                logging.debug('importing script tree...')
+                importer = JsonImporter()
+                self.script_tree = importer.read(f)
+            with open(file_path + "/images.json", 'r') as f:
+                images = json.load(f)
 
-        # Check image differences
-        compare_image_sizes(images)
+        except FileNotFoundError:
+            logging.debug('script tree does not yet exist, building now')
+            # Get original page and parse external scripts
+            self.driver.execute_cdp_cmd('Network.setBlockedURLs', {'urls': []})
+            epoch_in_milliseconds = time.time() * 1000
+            try:
+                self.driver.get(self.url)
+                self.err_msg.SetLabel("")
+            except InvalidArgumentException as exception:
+                self.err_msg.SetForegroundColour((255, 0, 0))  # make text red
+                self.err_msg.SetLabel(str(exception))
+                return
+            self.wait_for_load()
+            self.script_tree = AnyNode(id=self.url)
+            scripts, images = self.parse_log(epoch_in_milliseconds)
+            for script in scripts:
+                # pylint: disable=undefined-loop-variable
+                # pylint: disable=cell-var-from-loop
+                parent = anytree.cachedsearch.find(self.script_tree,
+                                                   lambda node: node.id == self.format_src(script['parent']))
+                # Check if this node already exists
+                node = anytree.cachedsearch.find(self.script_tree,
+                                                 lambda node: node.id == self.format_src(script['url']))
+                if node and node.parent == parent:
+                    logging.warning('duplicate script! %s', self.format_src(script['url']))
+                    node.count += 1
+                else:
+                    AnyNode(id=self.format_src(script['url']), parent=parent, content=script['content'],
+                            vector=extract_features(script['content']), count=1)
 
-        # Parse inline scripts
-        html = get_index_html()
-        parse_html(html)
-        # self.print_scripts()
+            # Check image differences
+            compare_image_sizes(images)
+
+            # Parse inline scripts
+            html = get_index_html()
+            parse_html(html)
+            # self.print_scripts()
+
+            # Export script tree
+            logging.debug('exporting script tree...')
+            exporter = JsonExporter()
+            with open(PATH + "/reports/" + self.url.split("/")[2] + "/script_tree.json", "w") as f:
+                exporter.write(self.script_tree, f)
+            logging.debug('done')
+
+            # Export images
+            with open(PATH + "/reports/" + self.url.split("/")[2] + "/images.json", "w") as f:
+                json.dump(images, f)
 
         # Check similarity
-        similarity()
+        # similarity()
 
         # Create buttons
         self.block_all_scripts()
         create_buttons()
 
+        # Print functional dependencies
+        # functional_dependency()
+
         # Get page with all scripts removed
         self.on_apply_press()
 
+        try:
+            self.original.get(self.url)
+        except InvalidArgumentException as e:
+            logging.error(e.what())
+
         # Used for diff
-        final_html = BeautifulSoup(self.driver.execute_script(
-            "return document.getElementsByTagName('html')[0].innerHTML"), 'html.parser')
-        file_stream = open("before.html", "w")
-        file_stream.write(final_html.prettify())
-        file_stream.close()
+        # final_html = BeautifulSoup(self.driver.execute_script(
+        #     "return document.getElementsByTagName('html')[0].innerHTML"), 'html.parser')
+        # file_stream = open("before.html", "w")
+        # file_stream.write(final_html.prettify())
+        # file_stream.close()
 
     def on_check_all(self, toggle):
         """Handle 'Select All' checkbox toggle."""
@@ -662,6 +700,7 @@ class MyPanel(wx.Panel):
         if self.suffix == "?JSTool=":
             self.suffix += "none"
         self.driver.get(self.url + self.suffix)
+        self.err_msg.SetLabel("")
 
     def on_script_press(self, event):
         """Handle script button press."""
@@ -742,7 +781,7 @@ class MyPanel(wx.Panel):
         critical = open(file_path + '/critical.txt', 'w')
         noncritical = open(file_path + '/noncritical.txt', 'w')
         webalmanac = open(file_path + '/webalmanac.txt', 'w')
-        labels = open(PATH + "/reports/labels.csv", 'a')
+        # labels = open(PATH + "/reports/labels.csv", 'a')
         for node in PreOrderIter(self.script_tree):
             if node.is_root or node.id[:6] == 'script':
                 continue
@@ -755,20 +794,23 @@ class MyPanel(wx.Panel):
             if label and label.GetLabel() != 'critical' and label.GetLabel() != 'non-critical':
                 webalmanac.write(node.id + "\n")
                 webalmanac.write(label.GetLabel() + "\n")
-                if checkbox.GetValue():
-                    labels.write(str(node.vector.to_list()) + "," +
-                                 label.GetLabel() + ",critical\n")
-                else:
-                    labels.write(str(node.vector.to_list()) + "," +
-                                 label.GetLabel() + ",non-critical\n")
+                # if checkbox.GetValue():
+                    # labels.write(str(node.vector.to_list()) + "," +
+                    # labels.write(str(node.vector) + "," +
+                    #             label.GetLabel() + ",critical\n")
+                # else:
+                    # labels.write(str(node.vector.to_list()) + "," +
+                    # labels.write(str(node.vector) + "," +
+                    #             label.GetLabel() + ",non-critical\n")
 
         critical.close()
         noncritical.close()
         webalmanac.close()
-        labels.close()
+        # labels.close()
         logging.info("Writing index file...")
         index = open(file_path + '/index.html', 'w')
-        index.write(get_resource(self.url + self.suffix) + "\n")
+        # pickle.dump(get_resource(self.url + self.suffix) + "\n", index)
+        index.write(get_resource(self.url + self.suffix))
         index.close()
         logging.info("Writing images file...")
         images = open(file_path + '/images.txt', 'w')
@@ -789,22 +831,25 @@ class MyPanel(wx.Panel):
             'html_content': (open(file_path + '/index.html', 'rb')),
             'blocked_URLs': (open(file_path + '/noncritical.txt', 'rb')),
             'images':	(open(file_path + '/images.txt', 'rb')),
-            'url': self.url.split("/")[2],
+            'url': self.url,
         }
         response = requests.post(
-            "http://86.97.179.52:9000/JSCleaner/JSAnalyzer.py", files=multipart_form_data)
+            "http://"+REMOTE_PROXY_IP+":9000/JSCleaner/JSAnalyzer.py", files=multipart_form_data)
         if response.status_code == 200:
             self.err_msg.SetLabel("Report sent to external proxy")
         else:
             self.err_msg.SetLabel(
                 "Report could not be sent - report generated in %s" % file_path)
-
+            logging.error(response.status_code)
+            logging.error(response.headers)
+        logging.debug(response.text)
         # Load simplified page from proxy
         simplified_options = webdriver.ChromeOptions()
-        simplified_options.add_argument('--proxy-server=86.97.179.52:8082')
+        simplified_options.add_argument('--proxy-server='+REMOTE_PROXY_IP+':8083')
         simplified = webdriver.Chrome(options=simplified_options)
         simplified.set_window_size(600, 750)
-        simplified.get(self.url)
+        simplified.set_window_position(650, 0)
+        simplified.get(self.url + '?JSCleaner')
         input()
         simplified.close()
 
@@ -911,7 +956,7 @@ class MyFrame(wx.Frame):
     """The outer frame of the tool."""
 
     def __init__(self):
-        wx.Frame.__init__(self, parent=None, title="JS Cleaner")
+        wx.Frame.__init__(self, parent=None, title="JSAnalyze")
 
         menu_bar = wx.MenuBar()
         file_menu = wx.Menu()
