@@ -2,7 +2,7 @@ pandas==1.0.1
 mitmproxy==5.0.1
 anytree==2.8.0
 urllib3==1.25.8
-numpy==1.18.1
+numpy==1.22.0
 Brotli==1.0.7
 requests==2.23.0
 wxPython==4.0.7.post2
